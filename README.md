@@ -1,9 +1,9 @@
-# Fluent.ts - A mordern way to build web.
+# fluentX - Fast, fluent, simple web builder.
 Inspired by jQuery, but not selecting query anymore, just create it.
 
 ## Usage
 ```ts
-import { $ } from 'fluent.ts'
+import { $ } from 'fluentx'
 
 const $app = $('app').content([
     $('h1').content('Hello World!')

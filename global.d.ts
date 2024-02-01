@@ -1,8 +1,8 @@
-import { $ as fluent } from "./$index";
+import { $ as fluentx } from "./$index";
 import { $Element } from "./lib/$Element";
 
 declare global {
-    const $ = fluent;
+    const $ = fluentx;
     type OrMatrix<T> = T | OrMatrix<T>[];
     type OrArray<T> = T | T[];
     type OrPromise<T> = T | Promise<T>;
