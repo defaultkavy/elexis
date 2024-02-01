@@ -11,13 +11,13 @@
         "url": "https://github.com/defaultkavy"
     },
     "keywords": ["web", "front-end", "lib", "fluent", "framework"],
-    "homepage": "https://github.com/defaultkavy/fluent",
+    "homepage": "https://github.com/defaultkavy/fluent.ts",
     "repository": {
       "type": "git",
-      "url": "git+https://github.com/defaultkavy/fluent.git"
+      "url": "git+https://github.com/defaultkavy/fluent.ts.git"
     },
     "bugs": {
-      "url": "https://github.com/defaultkavy/fluent/issues"
+      "url": "https://github.com/defaultkavy/fluent.ts/issues"
     },
     "license": "ISC"
 }
