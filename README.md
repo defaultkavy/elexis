@@ -3,7 +3,7 @@ Inspired by jQuery, but not selecting query anymore, just create it.
 
 ## Usage
 ```ts
-import { $ } from 'fluent'
+import { $ } from 'fluent.ts'
 
 const $app = $('app').content([
     $('h1').content('Hello World!')
