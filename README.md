@@ -1,4 +1,4 @@
-# Fluent - A mordern way to build web.
+# Fluent.ts - A mordern way to build web.
 Inspired by jQuery, but not selecting query anymore, just create it.
 
 ## Usage
