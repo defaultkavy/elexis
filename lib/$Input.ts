@@ -1,11 +1,14 @@
 import { $Element, $ElementOptions } from "./$Element";
+import { $FormElementMethod, FormElementMethod } from "./$Form";
 
 export interface $InputOptions extends $ElementOptions {}
+//@ts-expect-error
+export interface $Input extends $FormElementMethod {}
+@FormElementMethod
 export class $Input extends $Element<HTMLInputElement> {
-    constructor(options: $InputOptions) {
+    constructor(options?: $InputOptions) {
         super('input', options);
     }
-
     
     accept(): string[]
     accept(...filetype: string[]): this
@@ -26,27 +29,6 @@ export class $Input extends $Element<HTMLInputElement> {
     width(): number;
     width(wdith: number): this;
     width(width?: number) { return $.fluent(this, arguments, () => this.dom.width, () => $.set(this.dom, 'width', width))}
-
-    formAction(): string;
-    formAction(action: string): this;
-    formAction(action?: string) { return $.fluent(this, arguments, () => this.dom.formAction, () => $.set(this.dom, 'formAction', action))}
-
-    formEnctype(): string;
-    formEnctype(enctype: string): this;
-    formEnctype(enctype?: string) { return $.fluent(this, arguments, () => this.dom.formEnctype, () => $.set(this.dom, 'formEnctype', enctype))}
-    
-    formMethod(): string;
-    formMethod(method: string): this;
-    formMethod(method?: string) { return $.fluent(this, arguments, () => this.dom.formMethod, () => $.set(this.dom, 'formMethod', method))}
-
-    formNoValidate(): boolean;
-    formNoValidate(boolean: boolean): this;
-    formNoValidate(boolean?: boolean) { return $.fluent(this, arguments, () => this.dom.formNoValidate, () => $.set(this.dom, 'formNoValidate', boolean))}
-
-    formTarget(): string;
-    formTarget(target: string): this;
-    formTarget(target?: string) { return $.fluent(this, arguments, () => this.dom.formTarget, () => $.set(this.dom, 'formTarget', target))}
-    
 
     checked(): boolean;
     checked(boolean: boolean): this;
@@ -92,10 +74,6 @@ export class $Input extends $Element<HTMLInputElement> {
     multiple(multiple: boolean): this;
     multiple(multiple?: boolean) { return $.fluent(this, arguments, () => this.dom.multiple, () => $.set(this.dom, 'multiple', multiple))}
     
-    name(): string;
-    name(name: string): this;
-    name(name?: string) { return $.fluent(this, arguments, () => this.dom.name, () => $.set(this.dom, 'name', name))}
-    
     pattern(): string;
     pattern(pattern: string): this;
     pattern(pattern?: string) { return $.fluent(this, arguments, () => this.dom.pattern, () => $.set(this.dom, 'pattern', pattern))}
@@ -140,10 +118,6 @@ export class $Input extends $Element<HTMLInputElement> {
     type(type: InputType): this;
     type(type?: InputType) { return $.fluent(this, arguments, () => this.dom.type, () => $.set(this.dom, 'type', type))}
     
-    value(): string;
-    value(value: string): this;
-    value(value?: string) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
-    
     valueAsDate(): Date | null;
     valueAsDate(date: Date | null): this;
     valueAsDate(date?: Date | null) { return $.fluent(this, arguments, () => this.dom.valueAsDate, () => $.set(this.dom, 'valueAsDate', date))}
@@ -173,9 +147,5 @@ export class $Input extends $Element<HTMLInputElement> {
     checkValidity() { return this.dom.checkValidity() }
     reportValidity() { return this.dom.reportValidity() }
     get files() { return this.dom.files }
-    get labels() { return Array.from(this.dom.labels ?? []).map(label => $(label)) }
-    get validationMessage() { return this.dom.validationMessage }
-    get validity() { return this.dom.validity }
     get webkitEntries() { return this.dom.webkitEntries }
-    get willValidate() { return this.dom.willValidate }
 }

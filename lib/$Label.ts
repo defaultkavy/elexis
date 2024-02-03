@@ -1,7 +1,7 @@
 import { $Container, $ContainerOptions } from "./$Container";
 export interface $LabelOptions extends $ContainerOptions {}
 export class $Label extends $Container<HTMLLabelElement> {
-    constructor(options: $LabelOptions) {
+    constructor(options?: $LabelOptions) {
         super('label', options);
     }
 

@@ -23,7 +23,7 @@ export class $Element<H extends HTMLElement = HTMLElement> extends $Node<H> {
     /**Replace id of element. @example Element.id('customId');*/
     id(): string;
     id(name: string | undefined): this;
-    id(name?: string | undefined): this | string {return $.fluent(this, arguments, () => this.dom.id, () => {if (name) this.dom.id === name})}
+    id(name?: string | undefined): this | string {return $.fluent(this, arguments, () => this.dom.id, () => $.set(this.dom, 'id', name))}
 
     /**Replace list of class name to element. @example Element.class('name1', 'name2') */
     class(): DOMTokenList;

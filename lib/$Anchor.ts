@@ -8,13 +8,13 @@ export class $Anchor extends $Container<HTMLAnchorElement> {
         // Link Handler event
         this.dom.addEventListener('click', e => {
             if ($.anchorPreventDefault) e.preventDefault();
-            if ($.anchorHandler) $.anchorHandler(this.href(), e)
+            if ($.anchorHandler && !!this.href()) $.anchorHandler(this.href(), e)
         })
     }
     /**Set URL of anchor element. */
-    href(): URL;
+    href(): string;
     href(url: string | undefined): this;
-    href(url?: string | undefined) { return $.fluent(this, arguments, () => new URL(this.dom.href), () => {if (url) this.dom.href = url}) }
+    href(url?: string | undefined) { return $.fluent(this, arguments, () => this.dom.href, () => {if (url) this.dom.href = url}) }
     /**Link open with this window, new tab or other */
     target(): string;
     target(target: $AnchorTarget | undefined): this;

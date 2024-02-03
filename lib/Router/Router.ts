@@ -1,13 +1,12 @@
 import { $Container } from "../$Container";
 import { $EventManager, $EventMethod, EventMethod } from "../$EventManager";
-import { $Node } from "../$Node";
 import { $Text } from "../$Text";
-import { Route } from "./Route";
+import { PathResolverFn, Route, RouteRecord } from "./Route";
 export interface Router extends $EventMethod<RouterEventMap> {};
 @EventMethod
 export class Router {
-    routeMap = new Map<string, Route<any>>();
-    contentMap = new Map<string, $Node>();
+    routeMap = new Map<string | PathResolverFn, Route<any>>();
+    recordMap = new Map<string, RouteRecord>();
     view: $Container;
     index: number = 0;
     events = new $EventManager<RouterEventMap>().register('pathchange', 'notfound');
@@ -15,7 +14,6 @@ export class Router {
     constructor(basePath: string, view: $Container) {
         this.basePath = basePath;
         this.view = view
-        $.routers.add(this);
     }
 
     /**Add route to Router. @example Router.addRoute(new Route('/', 'Hello World')) */
@@ -35,13 +33,13 @@ export class Router {
         }
         addEventListener('popstate', this.popstate)
         this.resolvePath();
+        $.routers.add(this);
         return this;
     }
 
     /**Open path */
-    open(path: string | URL) {
-        if (path instanceof URL) path = path.pathname;
-        if (path === location.pathname) return this;
+    open(path: string) {
+        if (path === location.href) return this;
         this.index += 1;
         const routeData: RouteData = { index: this.index };
         history.pushState(routeData, '', path);
@@ -51,7 +49,14 @@ export class Router {
     }
 
     /**Back to previous page */
-    back() { history.back(); }
+    back() { history.back(); return this }
+
+    replace(path: string) {
+        history.replaceState({index: this.index}, '', path)
+        $.routers.forEach(router => router.resolvePath());
+        this.events.fire('pathchange', path, 'Forward');
+        return this;
+    }
 
     private popstate = (() => {
         // Forward
@@ -67,38 +72,56 @@ export class Router {
         if (!path.startsWith(this.basePath)) return;
         path = path.replace(this.basePath, '/').replace('//', '/')
         let found = false;
-        const openCached = () => {
-            const cacheContent = this.contentMap.get(path);
-            if (cacheContent) {
-                this.view.content(cacheContent);
+        const openCached = (pathId: string) => {
+            const record = this.recordMap.get(pathId);
+            if (record) {
                 found = true;
+                if (record.content && this.view.contains(record.content)) return true;
+                this.view.content(record.content);
+                record.events.fire('open', path, record);
                 return true;
             }
             return false;
         }
-        const create = (content: $Node | string) => {
+        const create = (pathId: string, route: Route<any>, data: any) => {
+            const record = new RouteRecord(pathId);
+            let content = route.builder(data, record);
             if (typeof content === 'string') content = new $Text(content);
-            this.contentMap.set(path, content)
+            (record as Mutable<RouteRecord>).content = content;
+            this.recordMap.set(pathId, record);
             this.view.content(content);
+            record.events.fire('open', path, record);
             found = true;
         }
-        for (const route of this.routeMap.values()) {
-            const [_routeParts, _pathParts] = [route.path.split('/').map(p => `/${p}`), path.split('/').map(p => `/${p}`)];
+        for (const [pathResolver, route] of this.routeMap.entries()) {
+            // PathResolverFn
+            if (pathResolver instanceof Function) {
+                const routeId = pathResolver(path)
+                if (routeId) { if (!openCached(routeId)) create(routeId, route, undefined) }
+                continue;
+            }
+            // string
+            const [_routeParts, _pathParts] = [pathResolver.split('/').map(p => `/${p}`), path.split('/').map(p => `/${p}`)];
             _routeParts.shift(); _pathParts.shift();
             const data = {};
+            let pathString = '';
             for (let i = 0; i < _pathParts.length; i++) {
                 const [routePart, pathPart] = [_routeParts.at(i), _pathParts.at(i)];
                 if (!routePart || !pathPart) continue;
                 if (routePart === pathPart) {
+                    pathString += pathPart;
                     if (routePart === _routeParts.at(-1)) {
-                        if (!openCached()) create(route.builder(data));
+                        if (!openCached(pathString)) create(pathString, route, data);
                         return;
                     }
                 }
                 else if (routePart.includes(':')) {
-                    Object.assign(data, {[routePart.split(':')[1]]: pathPart.replace('/', '')})
+                    const [prefix, param] = routePart.split(':');
+                    if (!pathPart.startsWith(prefix)) return;
+                    Object.assign(data, {[param]: pathPart.replace('/', '')})
+                    pathString += pathPart;
                     if (routePart === _routeParts.at(-1)) {
-                        if (!openCached()) create(route.builder(data));
+                        if (!openCached(pathString)) create(pathString, route, data);
                         return;
                     }
                 }
