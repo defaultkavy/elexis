@@ -1,7 +1,6 @@
 import { $Container } from "./$Container";
 import { $Node } from "./$Node";
 import { $Text } from "./$Text";
-import { $State } from "./$State";
 
 export class $NodeManager {
     #container: $Container;
@@ -12,18 +11,11 @@ export class $NodeManager {
         this.#dom = this.#container.dom
     }
 
-    add(element: $Node | string | $State<any>) {
+    add(element: $Node | string) {
         if (typeof element === 'string') {
             const text = new $Text(element);
             (text as Mutable<$Text>).parent = this.#container;
             this.elementList.add(text);
-        } else if (element instanceof $State) {
-            if (typeof element.value === 'string') {
-                const ele = new $Text(element.value);
-                element.contents.add(ele);
-                (ele as Mutable<$Text>).parent = this.#container;
-                this.elementList.add(ele);
-            }
         } else {
             (element as Mutable<$Node>).parent = this.#container;
             this.elementList.add(element);
@@ -31,26 +23,42 @@ export class $NodeManager {
     }
 
     remove(element: $Node) {
-        if (!this.elementList.has(element)) return;
+        if (!this.elementList.has(element)) return this;
         this.elementList.delete(element);
         (element as Mutable<$Node>).parent = undefined;
-
+        return this;
     }
 
     removeAll() {
         this.elementList.forEach(ele => this.remove(ele))
     }
 
+    replace(target: $Node, replace: $Node) {
+        const array = this.array.map(node => {
+            if (node === target) return replace;
+            else return node;
+        })
+        this.elementList.clear();
+        array.forEach(node => this.elementList.add(node));
+        (target as Mutable<$Node>).parent = undefined;
+        (replace as Mutable<$Node>).parent = this.#container;
+        return this;
+    }
+
     render() {
         const [domList, nodeList] = [this.array.map(node => node.dom), Array.from(this.#dom.childNodes)];
+        const appendedNodeList: Node[] = []; // appended node list
         // Rearrange
-        while (nodeList.length || domList.length) {
+        while (nodeList.length || domList.length) { // while nodeList or domList has item
             const [node, dom] = [nodeList.at(0), domList.at(0)];
-            if (!dom) { node?.remove(); nodeList.shift()} 
-            else if (!node) { if (!dom.$.hidden) this.#dom.append(dom); domList.shift();}
-            else if (dom !== node) { if (!dom.$.hidden) this.#dom.insertBefore(dom, node); domList.shift();}
+            if (!dom) { if (node && !appendedNodeList.includes(node)) node.remove(); nodeList.shift()} 
+            else if (!node) { if (!dom.$.$hidden) this.#dom.append(dom); domList.shift();}
+            else if (dom !== node) { 
+                if (!dom.$.$hidden) { this.#dom.insertBefore(dom, node); appendedNodeList.push(dom) }
+                domList.shift();
+            }
             else {
-                if (dom.$.hidden) this.#dom.removeChild(dom);
+                if (dom.$.$hidden) this.#dom.removeChild(dom);
                 domList.shift(); nodeList.shift();
             }
         }

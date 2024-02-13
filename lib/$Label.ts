@@ -6,8 +6,8 @@ export class $Label extends $Container<HTMLLabelElement> {
     }
 
     for(): string;
-    for(name: string): this;
-    for(name?: string | undefined) { return $.fluent(this, arguments, () => this.dom.htmlFor, () => {if (name) this.dom.htmlFor = name}) }
+    for(name?: string): this;
+    for(name?: string) { return $.fluent(this, arguments, () => this.dom.htmlFor, () => { $.set(this.dom, 'htmlFor', name, 'for')}) }
 
     get form() { return this.dom.form }
     get control() { return this.dom.control }

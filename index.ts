@@ -15,7 +15,9 @@ declare global {
     type InputType = "button" | "checkbox" | "color" | "date" | "datetime-local" | "email" | "file" | "hidden" | "image" | "month" | "number" | "password" | "radio" | "range" | "reset" | "search" | "submit" | "tel" | "text" | "time" | "url" | "week";
     type ButtonType = "submit" | "reset" | "button" | "menu";
     type TextDirection = 'ltr' | 'rtl' | 'auto' | '';
-
+    type ImageDecoding = "async" | "sync" | "auto";
+    type ImageLoading = "eager" | "lazy";
+    type ContructorType<T> = { new (...args: any[]): T }
     interface Node {
         $: import('./lib/$Node').$Node;
     }

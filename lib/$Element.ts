@@ -38,32 +38,69 @@ export class $Element<H extends HTMLElement = HTMLElement> extends $Node<H> {
     css(): CSSStyleDeclaration
     css(style: Partial<CSSStyleDeclaration>): this;
     css(style?: Partial<CSSStyleDeclaration>) { return $.fluent(this, arguments, () => this.dom.style, () => {Object.assign(this.dom.style, style)})}
-
-    /**Remove this element from parent */
-    remove() {
-        this.parent?.children.remove(this);
-        (this as Mutable<this>).parent = undefined;
-        this.dom.remove();
-        return this;
-    }
     
     autocapitalize(): Autocapitalize;
-    autocapitalize(autocapitalize: Autocapitalize): this;
+    autocapitalize(autocapitalize?: Autocapitalize): this;
     autocapitalize(autocapitalize?: Autocapitalize) { return $.fluent(this, arguments, () => this.dom.autocapitalize, () => $.set(this.dom, 'autocapitalize', autocapitalize))}
 
     dir(): TextDirection;
-    dir(dir: TextDirection): this;
+    dir(dir?: TextDirection): this;
     dir(dir?: TextDirection) { return $.fluent(this, arguments, () => this.dom.dir, () => $.set(this.dom, 'dir', dir))}
 
     innerText(): string;
-    innerText(text: string): this;
+    innerText(text?: string): this;
     innerText(text?: string) { return $.fluent(this, arguments, () => this.dom.innerText, () => $.set(this.dom, 'innerText', text))}
 
     title(): string;
-    title(title: string): this;
+    title(title?: string): this;
     title(title?: string) { return $.fluent(this, arguments, () => this.dom.title, () => $.set(this.dom, 'title', title))}
 
     translate(): boolean;
-    translate(translate: boolean): this;
+    translate(translate?: boolean): this;
     translate(translate?: boolean) { return $.fluent(this, arguments, () => this.dom.translate, () => $.set(this.dom, 'translate', translate))}
+
+    popover(): string | null;
+    popover(popover?: string | null): this;
+    popover(popover?: string | null) { return $.fluent(this, arguments, () => this.dom.popover, () => $.set(this.dom, 'popover', popover))}
+
+    spellcheck(): boolean;
+    spellcheck(spellcheck?: boolean): this;
+    spellcheck(spellcheck?: boolean) { return $.fluent(this, arguments, () => this.dom.spellcheck, () => $.set(this.dom, 'spellcheck', spellcheck))}
+
+    inert(): boolean;
+    inert(inert?: boolean): this;
+    inert(inert?: boolean) { return $.fluent(this, arguments, () => this.dom.inert, () => $.set(this.dom, 'inert', inert))}
+
+    lang(): string;
+    lang(lang?: string): this;
+    lang(lang?: string) { return $.fluent(this, arguments, () => this.dom.lang, () => $.set(this.dom, 'lang', lang))}
+
+    draggable(): boolean;
+    draggable(draggable?: boolean): this;
+    draggable(draggable?: boolean) { return $.fluent(this, arguments, () => this.dom.draggable, () => $.set(this.dom, 'draggable', draggable))}
+
+    hidden(): boolean;
+    hidden(hidden?: boolean): this;
+    hidden(hidden?: boolean) { return $.fluent(this, arguments, () => this.dom.hidden, () => $.set(this.dom, 'hidden', hidden))}
+
+    click() { this.dom.click(); return this; }
+    attachInternals() { return this.dom.attachInternals(); }
+    hidePopover() { this.dom.hidePopover(); return this; }
+    showPopover() { this.dom.showPopover(); return this; }
+    togglePopover() { this.dom.togglePopover(); return this; }
+
+    animate(keyframes: Keyframe[] | PropertyIndexedKeyframes | null, options?: number | KeyframeAnimationOptions, callback?: (animation: Animation) => void) {
+        const animation = this.dom.animate(keyframes, options);
+        if (callback) callback(animation);
+        return this;
+    }
+
+    getAnimations(options?: GetAnimationsOptions) { return this.dom.getAnimations(options) }
+
+    get accessKeyLabel() { return this.dom.accessKeyLabel }
+    get offsetHeight() { return this.dom.offsetHeight }
+    get offsetLeft() { return this.dom.offsetLeft }
+    get offsetParent() { return $(this.dom.offsetParent) }
+    get offsetTop() { return this.dom.offsetTop }
+    get offsetWidth() { return this.dom.offsetWidth }
 }

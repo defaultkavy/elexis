@@ -2,6 +2,7 @@ import { $Element, $ElementOptions } from "./$Element";
 import { $NodeManager } from "./$NodeManager";
 import { $Node } from "./$Node";
 import { $State } from "./$State";
+import { $Text } from "./$Text";
 
 export interface $ContainerOptions extends $ElementOptions {}
 
@@ -24,9 +25,13 @@ export class $Container<H extends HTMLElement = HTMLElement> extends $Element<H>
         if (children instanceof Function) children = children(this);
         children = $.multableResolve(children);
         for (const child of children) {
-            if (child === undefined) return;
+            if (child === undefined) continue;
             if (child instanceof Array) this.insert(child)
-            else this.children.add(child);
+            else if (child instanceof $State) {
+                const ele = new $Text(child.toString());
+                child.use(ele, 'content');
+                this.children.add(ele);
+            } else this.children.add(child);
         }
         this.children.render();
     })}

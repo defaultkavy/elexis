@@ -32,8 +32,9 @@ export class Router {
             this.index = history.state.index
         }
         addEventListener('popstate', this.popstate)
-        this.resolvePath();
         $.routers.add(this);
+        this.resolvePath();
+        this.events.fire('pathchange', location.href, 'Forward');
         return this;
     }
 
@@ -53,7 +54,7 @@ export class Router {
 
     replace(path: string) {
         history.replaceState({index: this.index}, '', path)
-        $.routers.forEach(router => router.resolvePath());
+        $.routers.forEach(router => router.resolvePath(path));
         this.events.fire('pathchange', path, 'Forward');
         return this;
     }
@@ -85,7 +86,7 @@ export class Router {
         }
         const create = (pathId: string, route: Route<any>, data: any) => {
             const record = new RouteRecord(pathId);
-            let content = route.builder(data, record);
+            let content = route.builder({params: data, record: record});
             if (typeof content === 'string') content = new $Text(content);
             (record as Mutable<RouteRecord>).content = content;
             this.recordMap.set(pathId, record);
@@ -117,8 +118,8 @@ export class Router {
                 }
                 else if (routePart.includes(':')) {
                     const [prefix, param] = routePart.split(':');
-                    if (!pathPart.startsWith(prefix)) return;
-                    Object.assign(data, {[param]: pathPart.replace('/', '')})
+                    if (!pathPart.startsWith(prefix)) continue;
+                    Object.assign(data, {[param]: pathPart.replace(prefix, '')})
                     pathString += pathPart;
                     if (routePart === _routeParts.at(-1)) {
                         if (!openCached(pathString)) create(pathString, route, data);

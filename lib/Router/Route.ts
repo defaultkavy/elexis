@@ -2,8 +2,8 @@ import { $EventManager, $EventMethod, EventMethod } from "../$EventManager";
 import { $Node } from "../$Node";
 export class Route<Path extends string | PathResolverFn> {
     path: string | PathResolverFn;
-    builder: (params: PathParamResolver<Path>, record: RouteRecord) => $Node | string;
-    constructor(path: Path, builder: (params: PathParamResolver<Path>, record: RouteRecord) => $Node | string) {
+    builder: (req: RouteRequest<Path>) => $Node | string;
+    constructor(path: Path, builder: (req: RouteRequest<Path>) => $Node | string) {
         this.path = path;
         this.builder = builder;
     }
@@ -36,4 +36,9 @@ export class RouteRecord {
 
 export interface RouteRecordEventMap {
     'open': [path: string, record: RouteRecord]
+}
+
+export interface RouteRequest<Path extends PathResolverFn | string> {
+    params: PathParamResolver<Path>,
+    record: RouteRecord,
 }

@@ -79,7 +79,7 @@ export class $Input extends $Element<HTMLInputElement> {
     pattern(pattern?: string) { return $.fluent(this, arguments, () => this.dom.pattern, () => $.set(this.dom, 'pattern', pattern))}
     
     placeholder(): string;
-    placeholder(placeholder: string): this;
+    placeholder(placeholder?: string): this;
     placeholder(placeholder?: string) { return $.fluent(this, arguments, () => this.dom.placeholder, () => $.set(this.dom, 'placeholder', placeholder))}
     
     readOnly(): boolean;
