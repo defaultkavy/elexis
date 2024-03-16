@@ -7,6 +7,7 @@ export interface $ElementOptions {
 
 export class $Element<H extends HTMLElement = HTMLElement> extends $Node<H> {
     readonly dom: H;
+    private static_classes = new Set<string>();
     constructor(tagname: string, options?: $ElementOptions) {
         super();
         this.dom = document.createElement(tagname) as H;
@@ -28,16 +29,37 @@ export class $Element<H extends HTMLElement = HTMLElement> extends $Node<H> {
     /**Replace list of class name to element. @example Element.class('name1', 'name2') */
     class(): DOMTokenList;
     class(...name: (string | undefined)[]): this;
-    class(...name: (string | undefined)[]): this | DOMTokenList {return $.fluent(this, arguments, () => this.dom.classList, () => {this.dom.className = ''; this.dom.classList.add(...name.detype())})}
+    class(...name: (string | undefined)[]): this | DOMTokenList {return $.fluent(this, arguments, () => this.dom.classList, () => {this.dom.classList.forEach(n => this.static_classes.has(n) ?? this.dom.classList.remove(n)); this.dom.classList.add(...name.detype())})}
     /**Add class name to dom. */
     addClass(...name: (string | undefined)[]): this {return $.fluent(this, arguments, () => this, () => {this.dom.classList.add(...name.detype())})}
     /**Remove class name from dom */
     removeClass(...name: (string | undefined)[]): this {return $.fluent(this, arguments, () => this, () => {this.dom.classList.remove(...name.detype())})}
 
+    staticClass(): Set<string>;
+    staticClass(...name: (string | undefined)[]): this;
+    staticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this.static_classes, () => {this.removeClass(...this.static_classes); this.static_classes.clear(); this.addStaticClass(...name);})}
+    addStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name.detype().forEach(n => this.static_classes.add(n)); this.addClass(...name)})}
+    removeStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name.detype().forEach(n => this.static_classes.delete(n)); this.removeClass(...name)})}
+
     /**Modify css of element. */
     css(): CSSStyleDeclaration
     css(style: Partial<CSSStyleDeclaration>): this;
     css(style?: Partial<CSSStyleDeclaration>) { return $.fluent(this, arguments, () => this.dom.style, () => {Object.assign(this.dom.style, style)})}
+    
+    attribute(qualifiedName: string | undefined): string | null;
+    attribute(qualifiedName: string | undefined, value?: string | number | boolean): this;
+    attribute(qualifiedName: string | undefined, value?: string | number | boolean): this | string | null { 
+        if (!arguments.length) return null;
+        if (arguments.length === 1) {
+            if (qualifiedName === undefined) return null;
+            return this.dom.getAttribute(qualifiedName);
+        }
+        if (arguments.length === 2) {
+            if (qualifiedName && value) this.dom.setAttribute(qualifiedName, `${value}`);
+            return this;
+        }
+        return this;
+    }
     
     autocapitalize(): Autocapitalize;
     autocapitalize(autocapitalize?: Autocapitalize): this;

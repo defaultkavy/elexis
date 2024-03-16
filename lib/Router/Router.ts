@@ -9,7 +9,7 @@ export class Router {
     recordMap = new Map<string, RouteRecord>();
     view: $Container;
     index: number = 0;
-    events = new $EventManager<RouterEventMap>().register('pathchange', 'notfound');
+    events = new $EventManager<RouterEventMap>().register('pathchange', 'notfound', 'load');
     basePath: string;
     constructor(basePath: string, view: $Container) {
         this.basePath = basePath;
@@ -26,7 +26,7 @@ export class Router {
     /**Start listen to the path change */
     listen() {
         if (!history.state || 'index' in history.state === false) {
-            const routeData: RouteData = {index: this.index}
+            const routeData: RouteData = {index: this.index, data: {}}
             history.replaceState(routeData, '')
         } else {
             this.index = history.state.index
@@ -39,10 +39,11 @@ export class Router {
     }
 
     /**Open path */
-    open(path: string) {
+    open(path: string | undefined) {
+        if (path === undefined) return;
         if (path === location.href) return this;
         this.index += 1;
-        const routeData: RouteData = { index: this.index };
+        const routeData: RouteData = { index: this.index, data: {} };
         history.pushState(routeData, '', path);
         $.routers.forEach(router => router.resolvePath())
         this.events.fire('pathchange', path, 'Forward');
@@ -56,6 +57,12 @@ export class Router {
         history.replaceState({index: this.index}, '', path)
         $.routers.forEach(router => router.resolvePath(path));
         this.events.fire('pathchange', path, 'Forward');
+        return this;
+    }
+
+    setStateData(key: string, value: any) {
+        if (history.state.data === undefined) history.state.data = {};
+        history.state.data[key] = value;
         return this;
     }
 
@@ -77,8 +84,7 @@ export class Router {
             const record = this.recordMap.get(pathId);
             if (record) {
                 found = true;
-                if (record.content && this.view.contains(record.content)) return true;
-                this.view.content(record.content);
+                if (record.content && !this.view.contains(record.content)) this.view.content(record.content);
                 record.events.fire('open', path, record);
                 return true;
             }
@@ -86,7 +92,14 @@ export class Router {
         }
         const create = (pathId: string, route: Route<any>, data: any) => {
             const record = new RouteRecord(pathId);
-            let content = route.builder({params: data, record: record});
+            let content = route.builder({
+                params: data, 
+                record: record, 
+                loaded: () => {
+                    record.events.fire('load', pathId, record);
+                    this.events.fire('load', pathId);
+                }
+            });
             if (typeof content === 'string') content = new $Text(content);
             (record as Mutable<RouteRecord>).content = content;
             this.recordMap.set(pathId, record);
@@ -134,10 +147,11 @@ export class Router {
 }
 interface RouterEventMap {
     pathchange: [path: string, navigation: 'Back' | 'Forward'];
-    notfound: [path: string]
+    notfound: [path: string];
+    load: [path: string];
 }
 
 type RouteData = {
     index: number;
-    data?: any;
+    data: {[key: string]: any};
 }

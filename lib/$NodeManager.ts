@@ -52,13 +52,13 @@ export class $NodeManager {
         while (nodeList.length || domList.length) { // while nodeList or domList has item
             const [node, dom] = [nodeList.at(0), domList.at(0)];
             if (!dom) { if (node && !appendedNodeList.includes(node)) node.remove(); nodeList.shift()} 
-            else if (!node) { if (!dom.$.$hidden) this.#dom.append(dom); domList.shift();}
+            else if (!node) { if (!dom.$.__hidden) this.#dom.append(dom); domList.shift();}
             else if (dom !== node) { 
-                if (!dom.$.$hidden) { this.#dom.insertBefore(dom, node); appendedNodeList.push(dom) }
+                if (!dom.$.__hidden) { this.#dom.insertBefore(dom, node); appendedNodeList.push(dom) }
                 domList.shift();
             }
             else {
-                if (dom.$.$hidden) this.#dom.removeChild(dom);
+                if (dom.$.__hidden) this.#dom.removeChild(dom);
                 domList.shift(); nodeList.shift();
             }
         }

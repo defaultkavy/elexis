@@ -28,17 +28,19 @@ export interface RouteRecord extends $EventMethod<RouteRecordEventMap> {};
 export class RouteRecord {
     id: string;
     readonly content?: $Node;
-    events = new $EventManager<RouteRecordEventMap>().register('open')
+    events = new $EventManager<RouteRecordEventMap>().register('open', 'load')
     constructor(id: string) {
         this.id = id;
     }
 }
 
 export interface RouteRecordEventMap {
-    'open': [path: string, record: RouteRecord]
+    'open': [path: string, record: RouteRecord];
+    'load': [path: string, record: RouteRecord];
 }
 
 export interface RouteRequest<Path extends PathResolverFn | string> {
     params: PathParamResolver<Path>,
     record: RouteRecord,
+    loaded: () => void;
 }
