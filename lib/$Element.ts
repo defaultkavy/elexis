@@ -105,11 +105,17 @@ export class $Element<H extends HTMLElement = HTMLElement> extends $Node<H> {
     hidden(hidden?: boolean): this;
     hidden(hidden?: boolean) { return $.fluent(this, arguments, () => this.dom.hidden, () => $.set(this.dom, 'hidden', hidden))}
 
+    tabIndex(): number;
+    tabIndex(tabIndex: number): this;
+    tabIndex(tabIndex?: number) { return $.fluent(this, arguments, () => this.dom.tabIndex, () => $.set(this.dom, 'tabIndex', tabIndex))}
+
     click() { this.dom.click(); return this; }
     attachInternals() { return this.dom.attachInternals(); }
     hidePopover() { this.dom.hidePopover(); return this; }
     showPopover() { this.dom.showPopover(); return this; }
     togglePopover() { this.dom.togglePopover(); return this; }
+    focus() { this.dom.focus(); return this; }
+    blur() { this.dom.blur(); return this; }
 
     animate(keyframes: Keyframe[] | PropertyIndexedKeyframes | null, options?: number | KeyframeAnimationOptions, callback?: (animation: Animation) => void) {
         const animation = this.dom.animate(keyframes, options);
@@ -125,4 +131,5 @@ export class $Element<H extends HTMLElement = HTMLElement> extends $Node<H> {
     get offsetParent() { return $(this.dom.offsetParent) }
     get offsetTop() { return this.dom.offsetTop }
     get offsetWidth() { return this.dom.offsetWidth }
+    get dataset() { return this.dom.dataset }
 }

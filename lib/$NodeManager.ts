@@ -29,8 +29,9 @@ export class $NodeManager {
         return this;
     }
 
-    removeAll() {
-        this.elementList.forEach(ele => this.remove(ele))
+    removeAll(render = true) {
+        this.elementList.forEach(ele => this.remove(ele));
+        if (render) this.render();
     }
 
     replace(target: $Node, replace: $Node) {

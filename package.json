@@ -1,7 +1,7 @@
 {
     "name": "fluentx",
     "description": "Fast, fluent, simple web builder",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "type": "module",
     "module": "index.ts",
     "author": {

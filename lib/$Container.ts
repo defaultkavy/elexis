@@ -16,7 +16,7 @@ export class $Container<H extends HTMLElement = HTMLElement> extends $Element<H>
      * @example Element.content([$('div')]) 
      * Element.content('Hello World')*/
     content(children: $ContainerContentBuilder<this>): this { return $.fluent(this, arguments, () => this, () => {
-        this.children.removeAll();
+        this.children.removeAll(false);
         this.insert(children);
     })}
 

@@ -22,7 +22,7 @@ $('a')
 $('h1').class('amazing-title').css({color: 'red'}).content('Fluuuuuuuuuuuuent!')
 ```
 
-## Router? I got you.
+## Single Page App with Router
 ```ts
 const router = new Router('/')
     // example.com
@@ -36,10 +36,8 @@ const router = new Router('/')
     }))
 
     .listen() // start resolve pathname and listen state change
-```
 
-## Single Page App
-```ts
+// prevent jump to other page from <a> link
 $.anchorPreventDefault = true;
 $.anchorHandler = (url) => { router.open(url) }
 

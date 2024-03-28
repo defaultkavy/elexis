@@ -35,8 +35,8 @@ export class RouteRecord {
 }
 
 export interface RouteRecordEventMap {
-    'open': [path: string, record: RouteRecord];
-    'load': [path: string, record: RouteRecord];
+    'open': [{path: string, record: RouteRecord}];
+    'load': [{path: string, record: RouteRecord}];
 }
 
 export interface RouteRequest<Path extends PathResolverFn | string> {

@@ -117,6 +117,10 @@ export class $Input extends $Element<HTMLInputElement> {
     type(): InputType;
     type(type: InputType): this;
     type(type?: InputType) { return $.fluent(this, arguments, () => this.dom.type, () => $.set(this.dom, 'type', type))}
+
+    inputMode(): InputMode;
+    inputMode(mode: InputMode): this;
+    inputMode(mode?: InputMode) { return $.fluent(this, arguments, () => this.dom.inputMode as InputMode, () => $.set(this.dom, 'inputMode', mode))}
     
     valueAsDate(): Date | null;
     valueAsDate(date: Date | null): this;

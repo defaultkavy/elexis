@@ -13,6 +13,7 @@ declare global {
     type Autocapitalize = 'none' | 'off' | 'sentences' | 'on' | 'words' | 'characters';
     type SelectionDirection = "forward" | "backward" | "none";
     type InputType = "button" | "checkbox" | "color" | "date" | "datetime-local" | "email" | "file" | "hidden" | "image" | "month" | "number" | "password" | "radio" | "range" | "reset" | "search" | "submit" | "tel" | "text" | "time" | "url" | "week";
+    type InputMode = "" | "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url";
     type ButtonType = "submit" | "reset" | "button" | "menu";
     type TextDirection = 'ltr' | 'rtl' | 'auto' | '';
     type ImageDecoding = "async" | "sync" | "auto";
