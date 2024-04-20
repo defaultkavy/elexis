@@ -116,19 +116,27 @@ export namespace $ {
     : H extends HTMLTextAreaElement ? $Textarea
     : $Container<H>;
 
+    /**
+     * A helper for fluent method design. Return the `instance` object when arguments length not equal 0. Otherwise, return the `value`.
+     * @param instance The object to return when arguments length not equal 0.
+     * @param args The method `arguments`.
+     * @param value The value to return when arguments length equal 0.
+     * @param action The action to execute when arguments length not equal 0.
+     * @returns 
+     */
     export function fluent<T, A, V>(instance: T, args: IArguments, value: () => V, action: (...args: any[]) => void) {
         if (!args.length) return value();
         action();
         return instance;
     }
     
-    export function multableResolve<T>(multable: OrArray<T>) {
+    export function orArrayResolve<T>(multable: OrArray<T>) {
         if (multable instanceof Array) return multable;
         else return [multable];
     }
     
     export function mixin(target: any, constructors: OrArray<any>) {
-        multableResolve(constructors).forEach(constructor => {
+        orArrayResolve(constructors).forEach(constructor => {
             Object.getOwnPropertyNames(constructor.prototype).forEach(name => {
             if (name === 'constructor') return;
             Object.defineProperty(
@@ -140,15 +148,24 @@ export namespace $ {
         })
         return target;
     }
-    
-    export function set<O, K extends keyof O>(object: O, key: K, value: any, methodKey?: string) {
+    /**
+     * A helper for $State.set() which apply value to target.
+     * @param object Target object.
+     * @param key The key of target object.
+     * @param value Value of target property or parameter of method(Using Tuple to apply parameter).
+     * @param methodKey Variant key name when apply value on $State.set()
+     * @returns 
+     */
+    export function set<O, K extends keyof O>(object: O, key: K, value: O[K] extends (...args: any) => any ? (Parameters<O[K]> | $State<Parameters<O[K]>>) : O[K] | undefined | $State<O[K]>, methodKey?: string) {
         if (value === undefined) return;
         if (value instanceof $State && object instanceof Node) {
             value.use(object.$, methodKey ?? key as any);
-            object[key] = value.value;
+            const prop = object[key];
+            if (prop instanceof Function) prop(value.value);
+            else object[key] = value.value;
             return;
         }
-        object[key] = value;
+        object[key] = value as any;
     }
     
     export function state<T>(value: T) {

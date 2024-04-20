@@ -1,10 +1,7 @@
 import { $Element, $ElementOptions } from "./$Element";
-import { $FormElementMethod, FormElementMethod } from "./$Form";
+import { $State } from "./$State";
 
 export interface $InputOptions extends $ElementOptions {}
-//@ts-expect-error
-export interface $Input extends $FormElementMethod {}
-@FormElementMethod
 export class $Input extends $Element<HTMLInputElement> {
     constructor(options?: $InputOptions) {
         super('input', options);
@@ -152,4 +149,39 @@ export class $Input extends $Element<HTMLInputElement> {
     reportValidity() { return this.dom.reportValidity() }
     get files() { return this.dom.files }
     get webkitEntries() { return this.dom.webkitEntries }
+    
+
+    formAction(): string;
+    formAction(action: string | undefined): this;
+    formAction(action?: string) { return $.fluent(this, arguments, () => this.dom.formAction, () => $.set(this.dom, 'formAction', action))}
+
+    formEnctype(): string;
+    formEnctype(enctype: string | undefined): this;
+    formEnctype(enctype?: string) { return $.fluent(this, arguments, () => this.dom.formEnctype, () => $.set(this.dom, 'formEnctype', enctype))}
+    
+    formMethod(): string;
+    formMethod(method: string | undefined): this;
+    formMethod(method?: string) { return $.fluent(this, arguments, () => this.dom.formMethod, () => $.set(this.dom, 'formMethod', method))}
+
+    formNoValidate(): boolean;
+    formNoValidate(boolean: boolean | undefined): this;
+    formNoValidate(boolean?: boolean) { return $.fluent(this, arguments, () => this.dom.formNoValidate, () => $.set(this.dom, 'formNoValidate', boolean))}
+
+    formTarget(): string;
+    formTarget(target: string | undefined): this;
+    formTarget(target?: string) { return $.fluent(this, arguments, () => this.dom.formTarget, () => $.set(this.dom, 'formTarget', target))}
+    
+    name(): string;
+    name(name?: string | $State<string>): this;
+    name(name?: string | $State<string>) { return $.fluent(this, arguments, () => this.dom.name, () => $.set(this.dom, 'name', name))}
+    
+    value(): string;
+    value(value?: string | $State<string>): this;
+    value(value?: string | $State<string>) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
+
+    get form() { return this.dom.form ? $(this.dom.form) : null }
+    get labels() { return Array.from(this.dom.labels ?? []).map(label => $(label)) }
+    get validationMessage() { return this.dom.validationMessage }
+    get validity() { return this.dom.validity }
+    get willValidate() { return this.dom.willValidate }
 }

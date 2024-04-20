@@ -1,13 +1,9 @@
 import { $Container, $ContainerOptions } from "./$Container";
-import { $FormElementMethod, FormElementMethod } from "./$Form";
 import { $OptGroup } from "./$OptGroup";
 import { $Option } from "./$Option";
 import { $State } from "./$State";
 
 export interface $SelectOptions extends $ContainerOptions {}
-//@ts-expect-error
-export interface $Select extends $FormElementMethod {}
-@FormElementMethod
 export class $Select extends $Container<HTMLSelectElement> {
     constructor() {
         super('select')
@@ -42,6 +38,20 @@ export class $Select extends $Container<HTMLSelectElement> {
     get options() { return Array.from(this.dom.options).map($option => $($option)) }
     get selectedIndex() { return this.dom.selectedIndex }
     get selectedOptions() { return Array.from(this.dom.selectedOptions).map($option => $($option)) }
+    
+    name(): string;
+    name(name?: string | $State<string>): this;
+    name(name?: string | $State<string>) { return $.fluent(this, arguments, () => this.dom.name, () => $.set(this.dom, 'name', name))}
+    
+    value(): string;
+    value(value?: string | $State<string>): this;
+    value(value?: string | $State<string>) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
+
+    get form() { return this.dom.form ? $(this.dom.form) : null }
+    get labels() { return Array.from(this.dom.labels ?? []).map(label => $(label)) }
+    get validationMessage() { return this.dom.validationMessage }
+    get validity() { return this.dom.validity }
+    get willValidate() { return this.dom.willValidate }
 }
 
 export type $SelectContentType = $Option | $OptGroup | undefined;

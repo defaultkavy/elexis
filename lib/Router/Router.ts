@@ -17,7 +17,7 @@ export class Router {
 
     /**Add route to Router. @example Router.addRoute(new Route('/', 'Hello World')) */
     addRoute(routes: OrArray<Route<any>>) {
-        routes = $.multableResolve(routes);
+        routes = $.orArrayResolve(routes);
         for (const route of routes) this.routeMap.set(route.path, route);
         return this;
     }

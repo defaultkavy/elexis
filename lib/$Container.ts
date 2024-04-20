@@ -23,7 +23,7 @@ export class $Container<H extends HTMLElement = HTMLElement> extends $Element<H>
     /**Insert element to this element */
     insert(children: $ContainerContentBuilder<this>): this { return $.fluent(this, arguments, () => this, () => {
         if (children instanceof Function) children = children(this);
-        children = $.multableResolve(children);
+        children = $.orArrayResolve(children);
         for (const child of children) {
             if (child === undefined) continue;
             if (child instanceof Array) this.insert(child)
