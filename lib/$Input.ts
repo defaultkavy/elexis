@@ -34,13 +34,13 @@ export class $Input extends $Element<HTMLInputElement> {
     checked(boolean: boolean): this;
     checked(boolean?: boolean) { return $.fluent(this, arguments, () => this.dom.checked, () => $.set(this.dom, 'checked', boolean))}
     
-    max(): string;
-    max(max: string): this;
-    max(max?: string) { return $.fluent(this, arguments, () => this.dom.max, () => $.set(this.dom, 'max', max))}
+    max(): number;
+    max(max: number): this;
+    max(max?: number) { return $.fluent(this, arguments, () => this.dom.max === '' ? null : parseInt(this.dom.min), () => $.set(this.dom, 'max', max?.toString()))}
     
-    min(): string;
-    min(min: string): this;
-    min(min?: string) { return $.fluent(this, arguments, () => this.dom.min, () => $.set(this.dom, 'min', min))}
+    min(): number;
+    min(min: number): this;
+    min(min?: number) { return $.fluent(this, arguments, () => this.dom.min === '' ? null : parseInt(this.dom.min), () => $.set(this.dom, 'min', min?.toString()))}
     
     maxLength(): number;
     maxLength(maxLength: number): this;
@@ -110,9 +110,9 @@ export class $Input extends $Element<HTMLInputElement> {
     src(src: string): this;
     src(src?: string) { return $.fluent(this, arguments, () => this.dom.src, () => $.set(this.dom, 'src', src))}
     
-    step(): string;
-    step(step: string): this;
-    step(step?: string) { return $.fluent(this, arguments, () => this.dom.step, () => $.set(this.dom, 'step', step))}
+    step(): number;
+    step(step: number): this;
+    step(step?: number) { return $.fluent(this, arguments, () => Number(this.dom.step), () => $.set(this.dom, 'step', step?.toString()))}
     
     type(): InputType;
     type(type: InputType): this;

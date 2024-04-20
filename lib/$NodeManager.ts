@@ -4,11 +4,9 @@ import { $Text } from "./$Text";
 
 export class $NodeManager {
     #container: $Container;
-    #dom: HTMLElement;
     elementList = new Set<$Node>
     constructor(container: $Container) {
         this.#container = container;
-        this.#dom = this.#container.dom
     }
 
     add(element: $Node | string) {
@@ -47,23 +45,25 @@ export class $NodeManager {
     }
 
     render() {
-        const [domList, nodeList] = [this.array.map(node => node.dom), Array.from(this.#dom.childNodes)];
+        const [domList, nodeList] = [this.array.map(node => node.dom), Array.from(this.dom.childNodes)];
         const appendedNodeList: Node[] = []; // appended node list
         // Rearrange
         while (nodeList.length || domList.length) { // while nodeList or domList has item
             const [node, dom] = [nodeList.at(0), domList.at(0)];
             if (!dom) { if (node && !appendedNodeList.includes(node)) node.remove(); nodeList.shift()} 
-            else if (!node) { if (!dom.$.__hidden) this.#dom.append(dom); domList.shift();}
+            else if (!node) { if (!dom.$.__hidden) this.dom.append(dom); domList.shift();}
             else if (dom !== node) { 
-                if (!dom.$.__hidden) { this.#dom.insertBefore(dom, node); appendedNodeList.push(dom) }
+                if (!dom.$.__hidden) { this.dom.insertBefore(dom, node); appendedNodeList.push(dom) }
                 domList.shift();
             }
             else {
-                if (dom.$.__hidden) this.#dom.removeChild(dom);
+                if (dom.$.__hidden) this.dom.removeChild(dom);
                 domList.shift(); nodeList.shift();
             }
         }
     }
 
     get array() {return [...this.elementList.values()]};
+
+    get dom() {return this.#container.dom}
 }

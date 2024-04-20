@@ -35,6 +35,18 @@ export class $Container<H extends HTMLElement = HTMLElement> extends $Element<H>
         }
         this.children.render();
     })}
+
+    /**Remove all children elemetn from this element */
+    clear() {
+        this.children.removeAll();
+        return this;
+    }
+
+    //**Query selector one of child element */
+    $<E extends $Element>(query: string) { return $(this.dom.querySelector(query)) as E | null }
+
+    //**Query selector of child elements */
+    $all<E extends $Element>(query: string) { return Array.from(this.dom.querySelectorAll(query)).map($dom => $($dom) as E) }
 }
 
 export type $ContainerContentBuilder<P extends $Container> = OrMatrix<$ContainerContentType> | (($node: P) => OrMatrix<$ContainerContentType>)

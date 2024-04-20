@@ -12,10 +12,10 @@ export class $Element<H extends HTMLElement = HTMLElement> extends $Node<H> {
         super();
         this.dom = document.createElement(tagname) as H;
         this.dom.$ = this;
-        this.options(options);
+        this.setOptions(options);
     }
 
-    options(options: $ElementOptions | undefined) {
+    setOptions(options: $ElementOptions | undefined) {
         this.id(options?.id)
         if (options && options.class) this.class(...options.class)
         return this;

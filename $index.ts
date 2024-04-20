@@ -10,7 +10,14 @@ import { Router } from "./lib/Router/Router";
 import { $Image } from "./lib/$Image";
 import { $Canvas } from "./lib/$Canvas";
 import { $Dialog } from "./lib/$Dialog";
+import { $View } from "./lib/$View";
+import { $Select } from "./lib/$Select";
+import { $Option } from "./lib/$Option";
+import { $OptGroup } from "./lib/$OptGroup";
+import { $Textarea } from "./lib/$Textarea";
 export type $ = typeof $;
+export function $<E extends $Element = $Element>(query: `::${string}`): E[];
+export function $<E extends $Element = $Element>(query: `:${string}`): E | null;
 export function $(element: null): null;
 export function $<K extends keyof $.TagNameTypeMap>(resolver: K): $.TagNameTypeMap[K];
 export function $<K extends string>(resolver: K): $Container;
@@ -23,7 +30,9 @@ export function $(resolver: any) {
     if (typeof resolver === 'undefined') return resolver;
     if (resolver === null) return resolver;
     if (typeof resolver === 'string') {
-        if (resolver in $.TagNameElementMap) {
+        if (resolver.startsWith('::')) return Array.from(document.querySelectorAll(resolver.replace(/^::/, ''))).map(dom => $(dom));
+        else if (resolver.startsWith(':')) return $(document.querySelector(resolver.replace(/^:/, '')));
+        else if (resolver in $.TagNameElementMap) {
             const instance = $.TagNameElementMap[resolver as keyof typeof $.TagNameElementMap]
             switch (instance) {
                 case $Element: return new $Element(resolver);
@@ -36,6 +45,11 @@ export function $(resolver: any) {
                 case $Image: return new $Image();
                 case $Canvas: return new $Canvas();
                 case $Dialog: return new $Dialog();
+                case $View: return new $View();
+                case $Select: return new $Select();
+                case $Option: return new $Option();
+                case $OptGroup: return new $OptGroup();
+                case $Textarea: return new $Textarea();
             }
         } else return new $Container(resolver);
     }
@@ -45,7 +59,6 @@ export function $(resolver: any) {
     }
     throw '$: NOT SUPPORT TARGET ELEMENT TYPE'
 }
-
 export namespace $ {
     export let anchorHandler: null | ((url: string, e: Event) => void) = null;
     export let anchorPreventDefault: boolean = false;
@@ -74,7 +87,12 @@ export namespace $ {
         'form': $Form,
         'img': $Image,
         'dialog': $Dialog,
-        'canvas': $Canvas
+        'canvas': $Canvas,
+        'view': $View,
+        'select': $Select,
+        'option': $Option,
+        'optgroup': $OptGroup,
+        'textarea': $Textarea
     }
     export type TagNameTypeMap = {
         [key in keyof typeof $.TagNameElementMap]: InstanceType<typeof $.TagNameElementMap[key]>;
@@ -92,7 +110,11 @@ export namespace $ {
     : H extends HTMLFormElement ? $Form
     : H extends HTMLCanvasElement ? $Canvas
     : H extends HTMLDialogElement ? $Dialog
-    : $Element<H>;
+    : H extends HTMLSelectElement ? $Select
+    : H extends HTMLOptionElement ? $Option
+    : H extends HTMLOptGroupElement ? $OptGroup
+    : H extends HTMLTextAreaElement ? $Textarea
+    : $Container<H>;
 
     export function fluent<T, A, V>(instance: T, args: IArguments, value: () => V, action: (...args: any[]) => void) {
         if (!args.length) return value();
@@ -199,3 +221,4 @@ export namespace $ {
 type BuildNodeFunction = (...args: any[]) => $Node;
 type BuilderSelfFunction<K extends $Node> = (self: K) => void;
 globalThis.$ = $;
+

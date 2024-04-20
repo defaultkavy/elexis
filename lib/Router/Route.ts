@@ -1,11 +1,11 @@
-import { $EventManager, $EventMethod, EventMethod } from "../$EventManager";
+import { $EventManager, $EventMethod } from "../$EventManager";
 import { $Node } from "../$Node";
 export class Route<Path extends string | PathResolverFn> {
     path: string | PathResolverFn;
-    builder: (req: RouteRequest<Path>) => $Node | string;
-    constructor(path: Path, builder: (req: RouteRequest<Path>) => $Node | string) {
+    builder: (req: RouteRequest<Path>) => RouteContent;
+    constructor(path: Path, builder: ((req: RouteRequest<Path>) => RouteContent) | RouteContent) {
         this.path = path;
-        this.builder = builder;
+        this.builder = builder instanceof Function ? builder : (req: RouteRequest<Path>) => builder;
     }
 }
 
@@ -24,7 +24,6 @@ type PathParamResolver<P extends PathResolverFn | string> = P extends PathResolv
 
 
 export interface RouteRecord extends $EventMethod<RouteRecordEventMap> {};
-@EventMethod
 export class RouteRecord {
     id: string;
     readonly content?: $Node;
@@ -33,7 +32,7 @@ export class RouteRecord {
         this.id = id;
     }
 }
-
+$.mixin(RouteRecord, $EventMethod)
 export interface RouteRecordEventMap {
     'open': [{path: string, record: RouteRecord}];
     'load': [{path: string, record: RouteRecord}];
@@ -44,3 +43,5 @@ export interface RouteRequest<Path extends PathResolverFn | string> {
     record: RouteRecord,
     loaded: () => void;
 }
+
+export type RouteContent = $Node | string | void;

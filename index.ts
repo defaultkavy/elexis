@@ -42,3 +42,8 @@ export * from "./lib/$Button";
 export * from "./lib/$Form";
 export * from "./lib/$EventManager";
 export * from "./lib/$State";
+export * from "./lib/$View";
+export * from "./lib/$Select";
+export * from "./lib/$Option";
+export * from "./lib/$OptGroup";
+export * from "./lib/$Textarea";

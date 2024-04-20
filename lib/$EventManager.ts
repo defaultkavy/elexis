@@ -1,4 +1,3 @@
-export function EventMethod<T>(target: T) {return $.mixin(target, $EventMethod)}
 export abstract class $EventMethod<EM> {
     abstract events: $EventManager<EM>;
     //@ts-expect-error
