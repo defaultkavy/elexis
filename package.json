@@ -1,7 +1,7 @@
 {
     "name": "fluentx",
     "description": "Fast, fluent, simple web builder",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "type": "module",
     "module": "index.ts",
     "author": {
@@ -10,13 +10,13 @@
         "url": "https://github.com/defaultkavy"
     },
     "keywords": ["web", "front-end", "lib", "fluent", "framework"],
-    "homepage": "https://github.com/defaultkavy/fluent.ts",
+    "homepage": "https://github.com/defaultkavy/fluentx",
     "repository": {
       "type": "git",
-      "url": "git+https://github.com/defaultkavy/fluent.ts.git"
+      "url": "git+https://github.com/defaultkavy/fluentx.git"
     },
     "bugs": {
-      "url": "https://github.com/defaultkavy/fluent.ts/issues"
+      "url": "https://github.com/defaultkavy/fluentx/issues"
     },
     "license": "ISC"
 }
