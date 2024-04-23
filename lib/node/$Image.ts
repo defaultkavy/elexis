@@ -6,11 +6,36 @@ export class $Image extends $HTMLElement<HTMLImageElement> {
         super('img', options);
     }
 
-    async load(src: string): Promise<$Image> {
+    async load(src: Promise<string> | string): Promise<$Image> {
         return new Promise(resolve => {
             const $img = this.once('load', () => {
                 resolve($img)
-            }).src(src)
+            })
+            if (typeof src === 'string') $img.src(src);
+            else src.then(src => $img.src(src));
+        })
+    }
+
+    static resize(src: string | File, size: number | [number, number]): Promise<string> {
+        return new Promise(resolve => {
+            const img = new Image();
+            img.addEventListener('load', () => {
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                if (!context) throw '$Image.resize: context undefined';
+                const ratio = img.width / img.height;
+                const [landscape, portrait, square] = [ratio > 1, ratio < 1, ratio === 1];
+                const w = size instanceof Array ? size[0] : portrait ? size : size * ratio;
+                const h = size instanceof Array ? size[1] : landscape ? size : size / ratio;
+                canvas.height = h; canvas.width = w;
+                context.drawImage(img, 0, 0, w, h);
+                resolve(canvas.toDataURL());
+            }, {once: true})
+            if (src instanceof File) {
+                const fr = new FileReader()
+                fr.addEventListener('load', () => img.src = fr.result as string)
+                fr.readAsDataURL(src);
+            } else img.src = src;
         })
     }
 
