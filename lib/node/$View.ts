@@ -1,5 +1,5 @@
 import { $Container, $ContainerOptions } from "./$Container";
-import { $EventManager } from "./$EventManager";
+import { $EventManager } from "../$EventManager";
 import { $Node } from "./$Node";
 
 export interface $ViewOptions extends $ContainerOptions {}
@@ -28,7 +28,7 @@ export class $View extends $Container {
 
     switchView(id: string) {
         const target_content = this.view_cache.get(id);
-        if (target_content === undefined) throw '$View.switch(): target content is undefined';
+        if (target_content === undefined) return this;
         this.content(target_content);
         this.content_id = id;
         this.event.fire('switch', id);

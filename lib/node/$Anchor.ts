@@ -8,7 +8,7 @@ export class $Anchor extends $Container<HTMLAnchorElement> {
         // Link Handler event
         this.dom.addEventListener('click', e => {
             if ($.anchorPreventDefault) e.preventDefault();
-            if ($.anchorHandler && !!this.href()) $.anchorHandler(this.href(), e)
+            if ($.anchorHandler && !!this.href()) $.anchorHandler(this, e)
         })
     }
     /**Set URL of anchor element. */
@@ -16,9 +16,9 @@ export class $Anchor extends $Container<HTMLAnchorElement> {
     href(url: string | undefined): this;
     href(url?: string | undefined) { return $.fluent(this, arguments, () => this.dom.href, () => {if (url) this.dom.href = url}) }
     /**Link open with this window, new tab or other */
-    target(): string;
+    target(): $AnchorTarget | undefined;
     target(target: $AnchorTarget | undefined): this;
-    target(target?: $AnchorTarget | undefined) { return $.fluent(this, arguments, () => this.dom.target, () => {if (target) this.dom.target = target}) }
+    target(target?: $AnchorTarget | undefined) { return $.fluent(this, arguments, () => (this.dom.target ?? undefined) as $AnchorTarget | undefined, () => {if (target) this.dom.target = target}) }
 }
 
 export type $AnchorTarget = '_blank' | '_self' | '_parent' | '_top';

@@ -1,9 +1,17 @@
-import { $Element, $ElementOptions } from "./$Element";
-import { $State } from "./$State";
-export interface $ImageOptions extends $ElementOptions {}
-export class $Image extends $Element<HTMLImageElement> {
+import { $HTMLElement, $HTMLElementOptions } from "./$HTMLElement";
+import { $State } from "../$State";
+export interface $ImageOptions extends $HTMLElementOptions {}
+export class $Image extends $HTMLElement<HTMLImageElement> {
     constructor(options?: $ImageOptions) {
         super('img', options);
+    }
+
+    async load(src: string): Promise<$Image> {
+        return new Promise(resolve => {
+            const $img = this.once('load', () => {
+                resolve($img)
+            }).src(src)
+        })
     }
 
     /**HTMLImageElement base property */

@@ -1,5 +1,5 @@
 import { $Container, $ContainerOptions } from "./$Container";
-import { $State } from "./$State";
+import { $StateArgument } from "../$State";
 
 export interface $TextareaOptions extends $ContainerOptions {}
 export class $Textarea extends $Container<HTMLTextAreaElement> {
@@ -12,16 +12,16 @@ export class $Textarea extends $Container<HTMLTextAreaElement> {
     cols(cols?: number) { return $.fluent(this, arguments, () => this.dom.cols, () => $.set(this.dom, 'cols', cols))}
     
     name(): string;
-    name(name?: string | $State<string>): this;
-    name(name?: string | $State<string>) { return $.fluent(this, arguments, () => this.dom.name, () => $.set(this.dom, 'name', name))}
+    name(name?: $StateArgument<string> | undefined): this;
+    name(name?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.name, () => $.set(this.dom, 'name', name))}
     
     wrap(): string;
-    wrap(wrap?: string | $State<string>): this;
-    wrap(wrap?: string | $State<string>) { return $.fluent(this, arguments, () => this.dom.wrap, () => $.set(this.dom, 'wrap', wrap))}
+    wrap(wrap?: $StateArgument<string> | undefined): this;
+    wrap(wrap?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.wrap, () => $.set(this.dom, 'wrap', wrap))}
     
     value(): string;
-    value(value?: string | $State<string>): this;
-    value(value?: string | $State<string>) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
+    value(value?: $StateArgument<string> | undefined): this;
+    value(value?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
     
     maxLength(): number;
     maxLength(maxLength: number): this;

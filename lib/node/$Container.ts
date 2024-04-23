@@ -1,12 +1,12 @@
 import { $Element, $ElementOptions } from "./$Element";
-import { $NodeManager } from "./$NodeManager";
+import { $NodeManager } from "../$NodeManager";
 import { $Node } from "./$Node";
-import { $State } from "./$State";
+import { $State } from "../$State";
 import { $Text } from "./$Text";
+import { $HTMLElement, $HTMLElementOptions } from "./$HTMLElement";
 
-export interface $ContainerOptions extends $ElementOptions {}
-
-export class $Container<H extends HTMLElement = HTMLElement> extends $Element<H> {
+export interface $ContainerOptions extends $HTMLElementOptions {}
+export class $Container<H extends HTMLElement = HTMLElement> extends $HTMLElement<H> {
     readonly children: $NodeManager = new $NodeManager(this);
     constructor(tagname: string, options?: $ContainerOptions) {
         super(tagname, options)

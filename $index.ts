@@ -1,41 +1,47 @@
-import { $Node, $State } from "./index";
-import { $Anchor } from "./lib/$Anchor";
-import { $Button } from "./lib/$Button";
-import { $Form } from "./lib/$Form";
-import { $Input } from "./lib/$Input";
-import { $Container } from "./lib/$Container";
-import { $Element } from "./lib/$Element";
-import { $Label } from "./lib/$Label";
-import { Router } from "./lib/Router/Router";
-import { $Image } from "./lib/$Image";
-import { $Canvas } from "./lib/$Canvas";
-import { $Dialog } from "./lib/$Dialog";
-import { $View } from "./lib/$View";
-import { $Select } from "./lib/$Select";
-import { $Option } from "./lib/$Option";
-import { $OptGroup } from "./lib/$OptGroup";
-import { $Textarea } from "./lib/$Textarea";
+import { $Node, $State, $StateOption } from "./index";
+import { $Anchor } from "./lib/node/$Anchor";
+import { $Button } from "./lib/node/$Button";
+import { $Form } from "./lib/node/$Form";
+import { $Input } from "./lib/node/$Input";
+import { $Container } from "./lib/node/$Container";
+import { $Element } from "./lib/node/$Element";
+import { $Label } from "./lib/node/$Label";
+import { Router } from "./lib/router/Router";
+import { $Image } from "./lib/node/$Image";
+import { $Canvas } from "./lib/node/$Canvas";
+import { $Dialog } from "./lib/node/$Dialog";
+import { $View } from "./lib/node/$View";
+import { $Select } from "./lib/node/$Select";
+import { $Option } from "./lib/node/$Option";
+import { $OptGroup } from "./lib/node/$OptGroup";
+import { $Textarea } from "./lib/node/$Textarea";
+import { $Util } from "./lib/$Util";
+import { $HTMLElement } from "./lib/node/$HTMLElement";
+import { $AsyncNode } from "./lib/node/$AsyncNode";
+
 export type $ = typeof $;
 export function $<E extends $Element = $Element>(query: `::${string}`): E[];
 export function $<E extends $Element = $Element>(query: `:${string}`): E | null;
 export function $(element: null): null;
 export function $<K extends keyof $.TagNameTypeMap>(resolver: K): $.TagNameTypeMap[K];
 export function $<K extends string>(resolver: K): $Container;
-export function $<H extends HTMLElement>(htmlElement: H): $.HTMLElementTo$ElementMap<H>;
+export function $<H extends HTMLElement>(htmlElement: H): $.$HTMLElementMap<H>;
 export function $<H extends Element>(element: H): $Element;
+export function $<N extends $Node>(node: N): N;
 export function $<H extends EventTarget>(element: H): $Element;
 export function $(element: null | HTMLElement | EventTarget): $Element | null;
 export function $(element: undefined): undefined;
 export function $(resolver: any) {
     if (typeof resolver === 'undefined') return resolver;
     if (resolver === null) return resolver;
+    if (resolver instanceof $Node) return resolver;
     if (typeof resolver === 'string') {
         if (resolver.startsWith('::')) return Array.from(document.querySelectorAll(resolver.replace(/^::/, ''))).map(dom => $(dom));
         else if (resolver.startsWith(':')) return $(document.querySelector(resolver.replace(/^:/, '')));
         else if (resolver in $.TagNameElementMap) {
             const instance = $.TagNameElementMap[resolver as keyof typeof $.TagNameElementMap]
             switch (instance) {
-                case $Element: return new $Element(resolver);
+                case $HTMLElement: return new $HTMLElement(resolver);
                 case $Anchor: return new $Anchor();
                 case $Container: return new $Container(resolver);
                 case $Input: return new $Input();
@@ -50,20 +56,22 @@ export function $(resolver: any) {
                 case $Option: return new $Option();
                 case $OptGroup: return new $OptGroup();
                 case $Textarea: return new $Textarea();
+                case $AsyncNode: return new $AsyncNode();
             }
         } else return new $Container(resolver);
     }
-    if (resolver instanceof HTMLElement || resolver instanceof Text) {
+    if (resolver instanceof HTMLElement || resolver instanceof Text || resolver instanceof SVGElement) {
         if (resolver.$) return resolver.$;
-        else return $Node.from(resolver);
+        else return $Util.from(resolver);
     }
-    throw '$: NOT SUPPORT TARGET ELEMENT TYPE'
+    throw `$: NOT SUPPORT TARGET ELEMENT TYPE ('${resolver}')`
 }
 export namespace $ {
-    export let anchorHandler: null | ((url: string, e: Event) => void) = null;
+    export let anchorHandler: null | (($a: $Anchor, e: Event) => void) = null;
     export let anchorPreventDefault: boolean = false;
     export const routers = new Set<Router>;
     export const TagNameElementMap = {
+        'body': $Container,
         'a': $Anchor,
         'p': $Container,
         'pre': $Container,
@@ -92,7 +100,8 @@ export namespace $ {
         'select': $Select,
         'option': $Option,
         'optgroup': $OptGroup,
-        'textarea': $Textarea
+        'textarea': $Textarea,
+        'async': $AsyncNode,
     }
     export type TagNameTypeMap = {
         [key in keyof typeof $.TagNameElementMap]: InstanceType<typeof $.TagNameElementMap[key]>;
@@ -100,7 +109,7 @@ export namespace $ {
     export type ContainerTypeTagName = Exclude<keyof TagNameTypeMap, 'input'>;
     export type SelfTypeTagName = 'input';
 
-    export type HTMLElementTo$ElementMap<H extends HTMLElement> = 
+    export type $HTMLElementMap<H extends HTMLElement> = 
     H extends HTMLLabelElement ? $Label 
     : H extends HTMLInputElement ? $Input
     : H extends HTMLAnchorElement ? $Anchor
@@ -115,6 +124,10 @@ export namespace $ {
     : H extends HTMLOptGroupElement ? $OptGroup
     : H extends HTMLTextAreaElement ? $Textarea
     : $Container<H>;
+
+    export function open(path: string | URL | undefined) { return Router.open(path) }
+    export function replace(path: string | URL | undefined) { return Router.replace(path) }
+    export function back() { return Router.back() }
 
     /**
      * A helper for fluent method design. Return the `instance` object when arguments length not equal 0. Otherwise, return the `value`.
@@ -135,41 +148,34 @@ export namespace $ {
         else return [multable];
     }
     
-    export function mixin(target: any, constructors: OrArray<any>) {
-        orArrayResolve(constructors).forEach(constructor => {
-            Object.getOwnPropertyNames(constructor.prototype).forEach(name => {
-            if (name === 'constructor') return;
-            Object.defineProperty(
-                target.prototype,
-                name,
-                Object.getOwnPropertyDescriptor(constructor.prototype, name) || Object.create(null)
-            )
-            })
-        })
-        return target;
-    }
+    export function mixin(target: any, constructors: OrArray<any>) { return $Util.mixin(target, constructors) }
     /**
-     * A helper for $State.set() which apply value to target.
+     * A helper for undefined able value and $State.set() which apply value to target.
      * @param object Target object.
      * @param key The key of target object.
      * @param value Value of target property or parameter of method(Using Tuple to apply parameter).
      * @param methodKey Variant key name when apply value on $State.set()
      * @returns 
      */
-    export function set<O, K extends keyof O>(object: O, key: K, value: O[K] extends (...args: any) => any ? (Parameters<O[K]> | $State<Parameters<O[K]>>) : O[K] | undefined | $State<O[K]>, methodKey?: string) {
-        if (value === undefined) return;
-        if (value instanceof $State && object instanceof Node) {
-            value.use(object.$, methodKey ?? key as any);
-            const prop = object[key];
-            if (prop instanceof Function) prop(value.value);
-            else object[key] = value.value;
-            return;
-        }
-        object[key] = value as any;
+    export function set<O, K extends keyof O>(
+        object: O, key: K, 
+        value: O[K] extends (...args: any) => any 
+            ? (Parameters<O[K]> | $State<Parameters<O[K]> | undefined>) 
+            : (O[K] | undefined | $State<O[K] | undefined>), 
+        methodKey?: string) {
+            if (value === undefined) return;
+            if (value instanceof $State && object instanceof Node) {
+                value.use(object.$, methodKey ?? key as any);
+                if (object[key] instanceof Function) (object[key] as Function)(value)
+                else object[key] = value.value;
+                return;
+            }
+            if (object[key] instanceof Function) (object[key] as Function)(value);
+            else object[key] = value as any;
     }
     
-    export function state<T>(value: T) {
-        return new $State<T>(value)
+    export function state<T>(value: T, options?: $StateOption<T>) {
+        return new $State<T>(value, options)
     }
 
     export async function resize(object: Blob, size: number): Promise<string> {
@@ -198,6 +204,11 @@ export namespace $ {
 
     export function rem(amount: number = 1) {
         return parseInt(getComputedStyle(document.documentElement).fontSize) * amount
+    }
+
+    export function html(html: string) {
+        const body = new DOMParser().parseFromString(html, 'text/html').body;
+        return Array.from(body.children).map(child => $(child))
     }
 
     /**Build multiple element in once. */
@@ -238,4 +249,3 @@ export namespace $ {
 type BuildNodeFunction = (...args: any[]) => $Node;
 type BuilderSelfFunction<K extends $Node> = (self: K) => void;
 globalThis.$ = $;
-

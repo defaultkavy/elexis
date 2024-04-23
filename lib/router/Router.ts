@@ -1,15 +1,18 @@
 import { $EventManager, $EventMethod } from "../$EventManager";
-import { $Text } from "../$Text";
-import { $View } from "../$View";
+import { $Text } from "../node/$Text";
+import { $Util } from "../$Util";
+import { $View } from "../node/$View";
 import { PathResolverFn, Route, RouteRecord } from "./Route";
 export interface Router extends $EventMethod<RouterEventMap> {};
 export class Router {
     routeMap = new Map<string | PathResolverFn, Route<any>>();
     recordMap = new Map<string, RouteRecord>();
     $view: $View;
-    index: number = 0;
-    events = new $EventManager<RouterEventMap>().register('pathchange', 'notfound', 'load');
+    static index: number = 0;
+    static events = new $EventManager<RouterGlobalEventMap>().register('pathchange', 'notfound', 'load');
+    events = new $EventManager<RouterEventMap>().register('notfound', 'load');
     basePath: string;
+    static currentPath: URL = new URL(location.href);
     constructor(basePath: string, view?: $View) {
         this.basePath = basePath;
         this.$view = view ?? new $View();
@@ -25,39 +28,54 @@ export class Router {
     /**Start listen to the path change */
     listen() {
         if (!history.state || 'index' in history.state === false) {
-            const routeData: RouteData = {index: this.index, data: {}}
+            const routeData: RouteData = {index: Router.index, data: {}}
             history.replaceState(routeData, '')
         } else {
-            this.index = history.state.index
+            Router.index = history.state.index
         }
         addEventListener('popstate', this.popstate)
         $.routers.add(this);
         this.resolvePath();
-        this.events.fire('pathchange', {path: location.href, navigation: 'Forward'});
+        Router.events.fire('pathchange', {prevURL: undefined, nextURL: Router.currentPath, navigation: 'Forward'});
         return this;
     }
 
-    /**Open path */
-    open(path: string | undefined) {
-        if (path === undefined) return;
-        if (path === location.pathname) return this;
+    /**Open URL */
+    static open(url: string | URL | undefined) {
+        if (url === undefined) return this;
+        url = new URL(url);
+        if (url.origin !== location.origin) return this;
+        if (url.href === location.href) return this;
+        const prevPath = Router.currentPath;
         this.index += 1;
         const routeData: RouteData = { index: this.index, data: {} };
-        history.pushState(routeData, '', path);
+        history.pushState(routeData, '', url);
+        Router.currentPath = new URL(location.href);
         $.routers.forEach(router => router.resolvePath())
-        this.events.fire('pathchange', {path, navigation: 'Forward'});
+        Router.events.fire('pathchange', {prevURL: prevPath, nextURL: Router.currentPath, navigation: 'Forward'});
         return this;
     }
 
     /**Back to previous page */
-    back() { history.back(); return this }
+    static back() { 
+        const prevPath = Router.currentPath;
+        history.back(); 
+        Router.currentPath = new URL(location.href);
+        Router.events.fire('pathchange', {prevURL: prevPath, nextURL: Router.currentPath, navigation: 'Back'});
+        return this 
+    }
 
-    replace(path: string | undefined) {
-        if (path === undefined) return;
-        if (path === location.pathname) return this;
-        history.replaceState({index: this.index}, '', path)
-        $.routers.forEach(router => router.resolvePath(path));
-        this.events.fire('pathchange', {path, navigation: 'Forward'});
+    static replace(url: string | URL | undefined) {
+        if (url === undefined) return this;
+        if (typeof url === 'string' && !url.startsWith(location.origin)) url = location.origin + url;
+        url = new URL(url);
+        if (url.origin !== location.origin) return this;
+        if (url.href === location.href) return this;
+        const prevPath = Router.currentPath;
+        history.replaceState({index: Router.index}, '', url)
+        Router.currentPath = new URL(location.href);
+        $.routers.forEach(router => router.resolvePath(url.pathname));
+        Router.events.fire('pathchange', {prevURL: prevPath, nextURL: Router.currentPath, navigation: 'Forward'});
         return this;
     }
 
@@ -69,12 +87,14 @@ export class Router {
 
     private popstate = (() => {
         // Forward
-        if (history.state.index > this.index) { }
+        if (history.state.index > Router.index) { }
         // Back
-        else if (history.state.index < this.index) {  }
-        this.index = history.state.index;
+        else if (history.state.index < Router.index) {  }
+        const prevPath = Router.currentPath;
+        Router.index = history.state.index;
         this.resolvePath();
-        this.events.fire('pathchange', {path: location.pathname, navigation: 'Forward'});
+        Router.currentPath = new URL(location.href);
+        Router.events.fire('pathchange', {prevURL: prevPath, nextURL: Router.currentPath, navigation: 'Forward'});
     }).bind(this)
 
     private resolvePath(path = location.pathname) {
@@ -151,12 +171,19 @@ export class Router {
             if (!preventDefaultState) this.$view.clear();
         }
     }
+
+    static on<K extends keyof RouterGlobalEventMap>(type: K, callback: (...args: RouterGlobalEventMap[K]) => any) { this.events.on(type, callback); return this }
+    static off<K extends keyof RouterGlobalEventMap>(type: K, callback: (...args: RouterGlobalEventMap[K]) => any) { this.events.off(type, callback); return this }
+    static once<K extends keyof RouterGlobalEventMap>(type: K, callback: (...args: RouterGlobalEventMap[K]) => any) { this.events.once(type, callback); return this }
 }
-$.mixin(Router, $EventMethod);
+$Util.mixin(Router, $EventMethod);
 interface RouterEventMap {
-    pathchange: [{path: string, navigation: 'Back' | 'Forward'}];
-    notfound: [{path: string, preventDefault: () => void}];
+    notfound: [{path: string, preventDefault: () => any}];
     load: [{path: string}];
+}
+
+interface RouterGlobalEventMap {
+    pathchange: [{prevURL?: URL, nextURL: URL, navigation: 'Back' | 'Forward'}];
 }
 
 type RouteData = {

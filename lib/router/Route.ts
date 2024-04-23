@@ -1,5 +1,6 @@
 import { $EventManager, $EventMethod } from "../$EventManager";
-import { $Node } from "../$Node";
+import { $Node } from "../node/$Node";
+import { $Util } from "../$Util";
 export class Route<Path extends string | PathResolverFn> {
     path: string | PathResolverFn;
     builder: (req: RouteRequest<Path>) => RouteContent;
@@ -32,7 +33,7 @@ export class RouteRecord {
         this.id = id;
     }
 }
-$.mixin(RouteRecord, $EventMethod)
+$Util.mixin(RouteRecord, $EventMethod)
 export interface RouteRecordEventMap {
     'open': [{path: string, record: RouteRecord}];
     'load': [{path: string, record: RouteRecord}];

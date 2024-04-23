@@ -1,6 +1,6 @@
-import { $Container } from "./$Container";
-import { $Node } from "./$Node";
-import { $Text } from "./$Text";
+import { $Container } from "./node/$Container";
+import { $Node } from "./node/$Node";
+import { $Text } from "./node/$Text";
 
 export class $NodeManager {
     #container: $Container;
@@ -12,10 +12,8 @@ export class $NodeManager {
     add(element: $Node | string) {
         if (typeof element === 'string') {
             const text = new $Text(element);
-            (text as Mutable<$Text>).parent = this.#container;
             this.elementList.add(text);
         } else {
-            (element as Mutable<$Node>).parent = this.#container;
             this.elementList.add(element);
         }
     }
@@ -23,7 +21,6 @@ export class $NodeManager {
     remove(element: $Node) {
         if (!this.elementList.has(element)) return this;
         this.elementList.delete(element);
-        (element as Mutable<$Node>).parent = undefined;
         return this;
     }
 
@@ -39,8 +36,6 @@ export class $NodeManager {
         })
         this.elementList.clear();
         array.forEach(node => this.elementList.add(node));
-        (target as Mutable<$Node>).parent = undefined;
-        (replace as Mutable<$Node>).parent = this.#container;
         return this;
     }
 

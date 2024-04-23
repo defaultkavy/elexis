@@ -1,5 +1,5 @@
 import { $Container, $ContainerOptions } from "./$Container";
-import { $State } from "./$State";
+import { $State, $StateArgument } from "../$State";
 export interface $ButtonOptions extends $ContainerOptions {}
 export class $Button extends $Container<HTMLButtonElement> {
     constructor(options?: $ButtonOptions) {
@@ -7,8 +7,8 @@ export class $Button extends $Container<HTMLButtonElement> {
     }
     
     disabled(): boolean;
-    disabled(disabled: boolean | $State<boolean>): this;
-    disabled(disabled?: boolean | $State<boolean>) { return $.fluent(this, arguments, () => this.dom.disabled, () => $.set(this.dom, 'disabled', disabled))}
+    disabled(disabled: $StateArgument<boolean>): this;
+    disabled(disabled?: $StateArgument<boolean>) { return $.fluent(this, arguments, () => this.dom.disabled, () => $.set(this.dom, 'disabled', disabled))}
     
     type(): ButtonType;
     type(type: ButtonType): this;

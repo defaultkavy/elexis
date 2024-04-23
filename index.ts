@@ -20,7 +20,7 @@ declare global {
     type ImageLoading = "eager" | "lazy";
     type ContructorType<T> = { new (...args: any[]): T }
     interface Node {
-        $: import('./lib/$Node').$Node;
+        $: import('./lib/node/$Node').$Node;
     }
 }
 Array.prototype.detype = function <T extends undefined | null, O>(this: O[], ...types: T[]) {
@@ -30,20 +30,22 @@ Array.prototype.detype = function <T extends undefined | null, O>(this: O[], ...
     }) as Exclude<O, T>[];
 }
 export * from "./$index";
-export * from "./lib/Router/Route";
-export * from "./lib/Router/Router";
-export * from "./lib/$Node";
-export * from "./lib/$Anchor";
-export * from "./lib/$Element";
+export * from "./lib/router/Route";
+export * from "./lib/router/Router";
+export * from "./lib/node/$Node";
+export * from "./lib/node/$Anchor";
+export * from "./lib/node/$Element";
 export * from "./lib/$NodeManager";
-export * from "./lib/$Text";
-export * from "./lib/$Container";
-export * from "./lib/$Button";
-export * from "./lib/$Form";
+export * from "./lib/node/$Text";
+export * from "./lib/node/$Container";
+export * from "./lib/node/$Button";
+export * from "./lib/node/$Form";
 export * from "./lib/$EventManager";
 export * from "./lib/$State";
-export * from "./lib/$View";
-export * from "./lib/$Select";
-export * from "./lib/$Option";
-export * from "./lib/$OptGroup";
-export * from "./lib/$Textarea";
+export * from "./lib/node/$View";
+export * from "./lib/node/$Select";
+export * from "./lib/node/$Option";
+export * from "./lib/node/$OptGroup";
+export * from "./lib/node/$Textarea";
+export * from "./lib/node/$Image";
+export * from "./lib/node/$AsyncNode";

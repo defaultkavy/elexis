@@ -1,11 +1,11 @@
 import { $Container, $ContainerOptions } from "./$Container";
 import { $OptGroup } from "./$OptGroup";
 import { $Option } from "./$Option";
-import { $State } from "./$State";
+import { $State, $StateArgument } from "../$State";
 
 export interface $SelectOptions extends $ContainerOptions {}
 export class $Select extends $Container<HTMLSelectElement> {
-    constructor() {
+    constructor(options?: $SelectOptions) {
         super('select')
     }
 
@@ -18,12 +18,12 @@ export class $Select extends $Container<HTMLSelectElement> {
     namedItem(name: string) { return $(this.dom.namedItem(name)) }
     
     disabled(): boolean;
-    disabled(disabled: boolean | $State<boolean>): this;
-    disabled(disabled?: boolean | $State<boolean>) { return $.fluent(this, arguments, () => this.dom.disabled, () => $.set(this.dom, 'disabled', disabled))}
+    disabled(disabled: $StateArgument<boolean> | undefined): this;
+    disabled(disabled?: $StateArgument<boolean> | undefined) { return $.fluent(this, arguments, () => this.dom.disabled, () => $.set(this.dom, 'disabled', disabled))}
     
     multiple(): boolean;
-    multiple(multiple: boolean | $State<boolean>): this;
-    multiple(multiple?: boolean | $State<boolean>) { return $.fluent(this, arguments, () => this.dom.multiple, () => $.set(this.dom, 'multiple', multiple))}
+    multiple(multiple: $StateArgument<boolean> | undefined): this;
+    multiple(multiple?: $StateArgument<boolean> | undefined) { return $.fluent(this, arguments, () => this.dom.multiple, () => $.set(this.dom, 'multiple', multiple))}
 
     required(): boolean;
     required(required: boolean): this;
@@ -40,12 +40,12 @@ export class $Select extends $Container<HTMLSelectElement> {
     get selectedOptions() { return Array.from(this.dom.selectedOptions).map($option => $($option)) }
     
     name(): string;
-    name(name?: string | $State<string>): this;
-    name(name?: string | $State<string>) { return $.fluent(this, arguments, () => this.dom.name, () => $.set(this.dom, 'name', name))}
+    name(name?: $StateArgument<string> | undefined): this;
+    name(name?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.name, () => $.set(this.dom, 'name', name))}
     
     value(): string;
-    value(value?: string | $State<string>): this;
-    value(value?: string | $State<string>) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
+    value(value?: $StateArgument<string> | undefined): this;
+    value(value?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
 
     get form() { return this.dom.form ? $(this.dom.form) : null }
     get labels() { return Array.from(this.dom.labels ?? []).map(label => $(label)) }

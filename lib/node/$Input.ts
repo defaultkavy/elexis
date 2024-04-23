@@ -1,5 +1,5 @@
 import { $Element, $ElementOptions } from "./$Element";
-import { $State } from "./$State";
+import { $State, $StateArgument } from "../$State";
 
 export interface $InputOptions extends $ElementOptions {}
 export class $Input extends $Element<HTMLInputElement> {
@@ -172,12 +172,12 @@ export class $Input extends $Element<HTMLInputElement> {
     formTarget(target?: string) { return $.fluent(this, arguments, () => this.dom.formTarget, () => $.set(this.dom, 'formTarget', target))}
     
     name(): string;
-    name(name?: string | $State<string>): this;
-    name(name?: string | $State<string>) { return $.fluent(this, arguments, () => this.dom.name, () => $.set(this.dom, 'name', name))}
+    name(name?: $StateArgument<string> | undefined): this;
+    name(name?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.name, () => $.set(this.dom, 'name', name))}
     
     value(): string;
-    value(value?: string | $State<string>): this;
-    value(value?: string | $State<string>) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
+    value(value: $StateArgument<string> | undefined): this;
+    value(value?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
 
     get form() { return this.dom.form ? $(this.dom.form) : null }
     get labels() { return Array.from(this.dom.labels ?? []).map(label => $(label)) }

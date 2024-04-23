@@ -1,11 +1,11 @@
 export abstract class $EventMethod<EM> {
     abstract events: $EventManager<EM>;
     //@ts-expect-error
-    on<K extends keyof EM>(type: K, callback: (...args: EM[K]) => void) { this.events.on(type, callback); return this }
+    on<K extends keyof EM>(type: K, callback: (...args: EM[K]) => any) { this.events.on(type, callback); return this }
     //@ts-expect-error
-    off<K extends keyof EM>(type: K, callback: (...args: EM[K]) => void) { this.events.off(type, callback); return this }
+    off<K extends keyof EM>(type: K, callback: (...args: EM[K]) => any) { this.events.off(type, callback); return this }
     //@ts-expect-error
-    once<K extends keyof EM>(type: K, callback: (...args: EM[K]) => void) { this.events.once(type, callback); return this }
+    once<K extends keyof EM>(type: K, callback: (...args: EM[K]) => any) { this.events.once(type, callback); return this }
 }
 export class $EventManager<EM> {
     private eventMap = new Map<string, $Event>();
@@ -25,17 +25,17 @@ export class $EventManager<EM> {
         return this
     }
     //@ts-expect-error
-    on<K extends keyof EM>(type: K, callback: (...args: EM[K]) => void) { 
+    on<K extends keyof EM>(type: K, callback: (...args: EM[K]) => any) { 
         this.get(type).add(callback);
         return this
     }
     //@ts-expect-error
-    off<K extends keyof EM>(type: K, callback: (...args: EM[K]) => void) {
+    off<K extends keyof EM>(type: K, callback: (...args: EM[K]) => any) {
         this.get(type).delete(callback);
         return this
     }
     //@ts-expect-error
-    once<K extends keyof EM>(type: K, callback: (...args: EM[K]) => void) {
+    once<K extends keyof EM>(type: K, callback: (...args: EM[K]) => any) {
         //@ts-expect-error
         const onceFn = (...args: EM[K]) => {
             this.get(type).delete(onceFn);
