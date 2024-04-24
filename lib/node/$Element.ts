@@ -92,4 +92,22 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement> extends 
     getAnimations(options?: GetAnimationsOptions) { return this.dom.getAnimations(options) }
 
     get dataset() { return this.dom.dataset }
+
+    domRect(target?: $Element | $DOMRect) {
+        const this_rect = this.dom.getBoundingClientRect();
+        if (!target) return this_rect;
+        const target_rect = target instanceof $Element ? target.dom.getBoundingClientRect() : target;
+        const rect: $DOMRect = {
+            ...this_rect,
+            top: this_rect.top - target_rect.top,
+            left: this_rect.left - target_rect.left,
+            right: this_rect.right - target_rect.left,
+            bottom: this_rect.bottom - target_rect.top,
+            x: this_rect.x - target_rect.x,
+            y: this_rect.y - target_rect.y,
+        }
+        return rect;
+    }
 }
+
+export type $DOMRect = Omit<DOMRect, 'toJSON'>;

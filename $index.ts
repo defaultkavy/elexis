@@ -1,4 +1,6 @@
-import { $Node, $State, $StateOption } from "./index";
+import { $State, $StateArgument, $StateOption } from "./index";
+import { $Node } from "./lib/node/$Node"
+import { $Document } from "./lib/node/$Document"
 import { $Anchor } from "./lib/node/$Anchor";
 import { $Button } from "./lib/node/$Button";
 import { $Form } from "./lib/node/$Form";
@@ -60,7 +62,7 @@ export function $(resolver: any) {
             }
         } else return new $Container(resolver);
     }
-    if (resolver instanceof HTMLElement || resolver instanceof Text || resolver instanceof SVGElement) {
+    if (resolver instanceof Node) {
         if (resolver.$) return resolver.$;
         else return $Util.from(resolver);
     }
@@ -71,6 +73,7 @@ export namespace $ {
     export let anchorPreventDefault: boolean = false;
     export const routers = new Set<Router>;
     export const TagNameElementMap = {
+        'document': $Document,
         'body': $Container,
         'a': $Anchor,
         'p': $Container,
@@ -158,10 +161,11 @@ export namespace $ {
      * @returns 
      */
     export function set<O, K extends keyof O>(
-        object: O, key: K, 
+        object: O, 
+        key: K, 
         value: O[K] extends (...args: any) => any 
-            ? (Parameters<O[K]> | $State<Parameters<O[K]> | undefined>) 
-            : (O[K] | undefined | $State<O[K] | undefined>), 
+            ? (undefined | $StateArgument<Parameters<O[K]>>) 
+            : (undefined | $StateArgument<O[K]>), 
         methodKey?: string) {
             if (value === undefined) return;
             if (value instanceof $State && object instanceof Node) {

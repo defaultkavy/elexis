@@ -1,5 +1,7 @@
 import { $State } from "./$State";
+import { $AsyncNode } from "./node/$AsyncNode";
 import { $Container } from "./node/$Container";
+import { $Document } from "./node/$Document";
 import { $Node } from "./node/$Node";
 import { $SVGElement } from "./node/$SVGElement";
 import { $Text } from "./node/$Text";
@@ -38,14 +40,18 @@ export namespace $Util {
         return new $State<T>(value)
     }
 
-    export function from(element: HTMLElement | Text | Node): $Node {
+    export function from(element: Node): $Node {
         if (element.$) return element.$;
         if (element.nodeName.toLowerCase() === 'body') return new $Container('body', {dom: element as HTMLBodyElement});
+        if (element.nodeName.toLowerCase() === '#document') return $Document.from(element as Document);
         else if (element instanceof HTMLElement) {
             const instance = $.TagNameElementMap[element.tagName.toLowerCase() as keyof typeof $.TagNameElementMap];
-            const $node = instance === $Container ? new instance(element.tagName, {dom: element}) : new instance({dom: element} as any);
+            const $node = instance === $Container 
+                ? new instance(element.tagName, {dom: element})
+                //@ts-expect-error
+                : new instance({dom: element} as any);
             if ($node instanceof $Container) for (const childnode of Array.from($node.dom.childNodes)) {
-                $node.children.add($(childnode));
+                $node.children.add($(childnode as any));
             }
             return $node as $Node;
         }

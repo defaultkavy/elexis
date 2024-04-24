@@ -60,9 +60,9 @@ export abstract class $Node<N extends Node = Node> {
 
     self(callback: ($node: this) => void) { callback(this); return this; }
     inDOM() { return document.contains(this.dom); }
-    isElement(): $Element | undefined {
-        if (this instanceof $Element) return this;
-        else return undefined;
+    isElement(): this is $Element {
+        if (this instanceof $Element) return true;
+        else return false;
     }
 
     get parent() {

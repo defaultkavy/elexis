@@ -49,3 +49,4 @@ export * from "./lib/node/$OptGroup";
 export * from "./lib/node/$Textarea";
 export * from "./lib/node/$Image";
 export * from "./lib/node/$AsyncNode";
+export * from "./lib/node/$Document";

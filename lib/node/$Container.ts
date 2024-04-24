@@ -1,7 +1,7 @@
 import { $Element, $ElementOptions } from "./$Element";
 import { $NodeManager } from "../$NodeManager";
 import { $Node } from "./$Node";
-import { $State } from "../$State";
+import { $State, $StateArgument } from "../$State";
 import { $Text } from "./$Text";
 import { $HTMLElement, $HTMLElementOptions } from "./$HTMLElement";
 
@@ -47,6 +47,17 @@ export class $Container<H extends HTMLElement = HTMLElement> extends $HTMLElemen
 
     //**Query selector of child elements */
     $all<E extends $Element>(query: string) { return Array.from(this.dom.querySelectorAll(query)).map($dom => $($dom) as E) }
+
+    get scrollHeight() { return this.dom.scrollHeight }
+    get scrollWidth() { return this.dom.scrollWidth }
+    
+    scrollTop(): number;
+    scrollTop(scrollTop: $StateArgument<number> | undefined): this
+    scrollTop(scrollTop?: $StateArgument<number> | undefined) { return $.fluent(this, arguments, () => this.dom.scrollTop, () => $.set(this.dom, 'scrollTop', scrollTop as any))}
+    
+    scrollLeft(): number;
+    scrollLeft(scrollLeft: $StateArgument<number> | undefined): this
+    scrollLeft(scrollLeft?: $StateArgument<number> | undefined) { return $.fluent(this, arguments, () => this.dom.scrollLeft, () => $.set(this.dom, 'scrollLeft', scrollLeft as any))}
 }
 
 export type $ContainerContentBuilder<P extends $Container> = OrMatrix<$ContainerContentType> | (($node: P) => OrMatrix<$ContainerContentType>)
