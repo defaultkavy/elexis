@@ -3,39 +3,41 @@ import { $Node } from "./node/$Node";
 import { $Text } from "./node/$Text";
 
 export class $NodeManager {
-    #container: $Container;
-    elementList = new Set<$Node>
+    $container: $Container;
+    $elementList = new Set<$Node>
     constructor(container: $Container) {
-        this.#container = container;
+        this.$container = container;
     }
 
     add(element: $Node | string) {
         if (typeof element === 'string') {
             const text = new $Text(element);
-            this.elementList.add(text);
+            this.$elementList.add(text);
+            (text as Mutable<$Node>).parent = this.$container;
         } else {
-            this.elementList.add(element);
+            this.$elementList.add(element);
+            (element as Mutable<$Node>).parent = this.$container;
         }
     }
 
     remove(element: $Node) {
-        if (!this.elementList.has(element)) return this;
-        this.elementList.delete(element);
+        if (!this.$elementList.has(element)) return this;
+        this.$elementList.delete(element);
+        (element as Mutable<$Node>).parent = undefined;
         return this;
     }
 
     removeAll(render = true) {
-        this.elementList.forEach(ele => this.remove(ele));
+        this.$elementList.forEach(ele => this.remove(ele));
         if (render) this.render();
     }
 
     replace(target: $Node, replace: $Node) {
-        const array = this.array.map(node => {
-            if (node === target) return replace;
-            else return node;
-        })
-        this.elementList.clear();
-        array.forEach(node => this.elementList.add(node));
+        const array = this.array
+        array.splice(array.indexOf(target), 1, replace);
+        target.remove();
+        this.$elementList.clear();
+        array.forEach(node => this.$elementList.add(node));
         return this;
     }
 
@@ -58,7 +60,7 @@ export class $NodeManager {
         }
     }
 
-    get array() {return [...this.elementList.values()]};
+    get array() {return [...this.$elementList.values()]};
 
-    get dom() {return this.#container.dom}
+    get dom() {return this.$container.dom}
 }

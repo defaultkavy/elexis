@@ -1,22 +1,25 @@
 {
-    "name": "fluentx",
-    "description": "Fast, fluent, simple web builder",
-    "version": "0.0.9",
-    "type": "module",
-    "module": "index.ts",
-    "author": {
-        "name": "defaultkavy",
-        "email": "defaultkavy@gmail.com",
-        "url": "https://github.com/defaultkavy"
-    },
-    "keywords": ["web", "front-end", "lib", "fluent", "framework"],
-    "homepage": "https://github.com/defaultkavy/fluentx",
-    "repository": {
-      "type": "git",
-      "url": "git+https://github.com/defaultkavy/fluentx.git"
-    },
-    "bugs": {
-      "url": "https://github.com/defaultkavy/fluentx/issues"
-    },
-    "license": "ISC"
+  "name": "fluentx",
+  "version": "0.0.9",
+  "author": {
+    "name": "defaultkavy",
+    "email": "defaultkavy@gmail.com",
+    "url": "https://github.com/defaultkavy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/defaultkavy/fluentx.git"
+  },
+  "module": "index.ts",
+  "bugs": {
+    "url": "https://github.com/defaultkavy/fluentx/issues"
+  },
+  "description": "Fast, fluent, simple web builder",
+  "homepage": "https://github.com/defaultkavy/fluentx",
+  "keywords": ["web", "front-end", "lib", "fluent", "framework"],
+  "license": "ISC",
+  "type": "module",
+  "workspaces": [
+    "extensions/*"
+  ]
 }

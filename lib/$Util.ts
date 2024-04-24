@@ -1,5 +1,4 @@
 import { $State } from "./$State";
-import { $AsyncNode } from "./node/$AsyncNode";
 import { $Container } from "./node/$Container";
 import { $Document } from "./node/$Document";
 import { $Node } from "./node/$Node";

@@ -5,6 +5,7 @@ export abstract class $Node<N extends Node = Node> {
     abstract readonly dom: N;
     readonly __hidden: boolean = false;
     private domEvents: {[key: string]: Map<Function, Function>} = {};
+    readonly parent?: $Container;
 
     on<K extends keyof HTMLElementEventMap>(type: K, callback: (event: HTMLElementEventMap[K], $node: this) => any, options?: AddEventListenerOptions | boolean) { 
         if (!this.domEvents[type]) this.domEvents[type] = new Map()
@@ -30,12 +31,12 @@ export abstract class $Node<N extends Node = Node> {
     }
 
     hide(): boolean; 
-    hide(hide?: boolean | $State<boolean>): this; 
-    hide(hide?: boolean | $State<boolean>) { return $.fluent(this, arguments, () => this.__hidden, () => {
+    hide(hide?: boolean | $State<boolean>, render?: boolean): this; 
+    hide(hide?: boolean | $State<boolean>, render = true) { return $.fluent(this, arguments, () => this.__hidden, () => {
         if (hide === undefined) return;
         if (hide instanceof $State) { (this as Mutable<$Node>).__hidden = hide.value; hide.use(this, 'hide')}
-        else (this as Mutable<$Node>).__hidden = hide; 
-        this.parent?.children.render(); 
+        else (this as Mutable<$Node>).__hidden = hide;
+        if (render) this.parent?.children.render();
         return this;
     })}
 
@@ -63,9 +64,5 @@ export abstract class $Node<N extends Node = Node> {
     isElement(): this is $Element {
         if (this instanceof $Element) return true;
         else return false;
-    }
-
-    get parent() {
-        return this.dom.parentElement?.$ as $Container | undefined;
     }
 }
