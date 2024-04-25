@@ -18,7 +18,7 @@ declare global {
     type TextDirection = 'ltr' | 'rtl' | 'auto' | '';
     type ImageDecoding = "async" | "sync" | "auto";
     type ImageLoading = "eager" | "lazy";
-    type ContructorType<T> = { new (...args: any[]): T }
+    type ConstructorType<T> = { new (...args: any[]): T }
     interface Node {
         $: import('./lib/node/$Node').$Node;
     }
@@ -30,8 +30,6 @@ Array.prototype.detype = function <T extends undefined | null, O>(this: O[], ...
     }) as Exclude<O, T>[];
 }
 export * from "./$index";
-export * from "./lib/router/Route";
-export * from "./lib/router/Router";
 export * from "./lib/node/$Node";
 export * from "./lib/node/$Anchor";
 export * from "./lib/node/$Element";
@@ -48,5 +46,5 @@ export * from "./lib/node/$Option";
 export * from "./lib/node/$OptGroup";
 export * from "./lib/node/$Textarea";
 export * from "./lib/node/$Image";
-export * from "./lib/node/$AsyncNode";
+export * from "./lib/node/$Async";
 export * from "./lib/node/$Document";

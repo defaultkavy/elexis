@@ -8,7 +8,6 @@ import { $Input } from "./lib/node/$Input";
 import { $Container } from "./lib/node/$Container";
 import { $Element } from "./lib/node/$Element";
 import { $Label } from "./lib/node/$Label";
-import { Router } from "./lib/router/Router";
 import { $Image } from "./lib/node/$Image";
 import { $Canvas } from "./lib/node/$Canvas";
 import { $Dialog } from "./lib/node/$Dialog";
@@ -19,7 +18,7 @@ import { $OptGroup } from "./lib/node/$OptGroup";
 import { $Textarea } from "./lib/node/$Textarea";
 import { $Util } from "./lib/$Util";
 import { $HTMLElement } from "./lib/node/$HTMLElement";
-import { $AsyncNode } from "./lib/node/$AsyncNode";
+import { $Async } from "./lib/node/$Async";
 
 export type $ = typeof $;
 export function $<E extends $Element = $Element>(query: `::${string}`): E[];
@@ -41,25 +40,11 @@ export function $(resolver: any) {
         if (resolver.startsWith('::')) return Array.from(document.querySelectorAll(resolver.replace(/^::/, ''))).map(dom => $(dom));
         else if (resolver.startsWith(':')) return $(document.querySelector(resolver.replace(/^:/, '')));
         else if (resolver in $.TagNameElementMap) {
-            const instance = $.TagNameElementMap[resolver as keyof typeof $.TagNameElementMap]
-            switch (instance) {
-                case $HTMLElement: return new $HTMLElement(resolver);
-                case $Anchor: return new $Anchor();
-                case $Container: return new $Container(resolver);
-                case $Input: return new $Input();
-                case $Label: return new $Label();
-                case $Form: return new $Form();
-                case $Button: return new $Button();
-                case $Image: return new $Image();
-                case $Canvas: return new $Canvas();
-                case $Dialog: return new $Dialog();
-                case $View: return new $View();
-                case $Select: return new $Select();
-                case $Option: return new $Option();
-                case $OptGroup: return new $OptGroup();
-                case $Textarea: return new $Textarea();
-                case $AsyncNode: return new $AsyncNode();
-            }
+            const instance = $.TagNameElementMap[resolver as keyof $.TagNameElementMap]
+            if (instance === $HTMLElement) return new $HTMLElement(resolver);
+            if (instance === $Container) return new $Container(resolver);
+            //@ts-expect-error
+            return new instance();
         } else return new $Container(resolver);
     }
     if (resolver instanceof Node) {
@@ -71,7 +56,6 @@ export function $(resolver: any) {
 export namespace $ {
     export let anchorHandler: null | (($a: $Anchor, e: Event) => void) = null;
     export let anchorPreventDefault: boolean = false;
-    export const routers = new Set<Router>;
     export const TagNameElementMap = {
         'document': $Document,
         'body': $Container,
@@ -104,10 +88,12 @@ export namespace $ {
         'option': $Option,
         'optgroup': $OptGroup,
         'textarea': $Textarea,
-        'async': $AsyncNode,
+        'async': $Async,
     }
+    export type TagNameElementMapType = typeof TagNameElementMap;
+    export interface TagNameElementMap extends TagNameElementMapType {} 
     export type TagNameTypeMap = {
-        [key in keyof typeof $.TagNameElementMap]: InstanceType<typeof $.TagNameElementMap[key]>;
+        [key in keyof $.TagNameElementMap]: InstanceType<$.TagNameElementMap[key]>;
     };
     export type ContainerTypeTagName = Exclude<keyof TagNameTypeMap, 'input'>;
     export type SelfTypeTagName = 'input';
@@ -127,10 +113,6 @@ export namespace $ {
     : H extends HTMLOptGroupElement ? $OptGroup
     : H extends HTMLTextAreaElement ? $Textarea
     : $Container<H>;
-
-    export function open(path: string | URL | undefined) { return Router.open(path) }
-    export function replace(path: string | URL | undefined) { return Router.replace(path) }
-    export function back() { return Router.back() }
 
     /**
      * A helper for fluent method design. Return the `instance` object when arguments length not equal 0. Otherwise, return the `value`.
@@ -248,6 +230,11 @@ export namespace $ {
             if (target instanceof Array && target[0] instanceof Function) return true;
             else return false; 
         }
+    }
+
+    export function registerTagName(string: string, node: {new(...args: undefined[]): $Node}) {
+        Object.assign($.TagNameElementMap, {[string]: node});
+        return $.TagNameElementMap;
     }
 }
 type BuildNodeFunction = (...args: any[]) => $Node;

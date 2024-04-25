@@ -43,10 +43,10 @@ export class $Container<H extends HTMLElement = HTMLElement> extends $HTMLElemen
     }
 
     //**Query selector one of child element */
-    $<E extends $Element>(query: string) { return $(this.dom.querySelector(query)) as E | null }
+    $<E extends $Element>(query: string): E | null { return $(this.dom.querySelector(query)) as E | null }
 
     //**Query selector of child elements */
-    $all<E extends $Element>(query: string) { return Array.from(this.dom.querySelectorAll(query)).map($dom => $($dom) as E) }
+    $all<E extends $Element>(query: string): E[] { return Array.from(this.dom.querySelectorAll(query)).map($dom => $($dom) as E) }
 
     get scrollHeight() { return this.dom.scrollHeight }
     get scrollWidth() { return this.dom.scrollWidth }

@@ -1,6 +1,7 @@
 {
-  "name": "fluentx",
-  "version": "0.0.9",
+  "name": "elexis",
+  "description": "Web library design for JS/TS lover.",
+  "version": "0.1.0",
   "author": {
     "name": "defaultkavy",
     "email": "defaultkavy@gmail.com",
@@ -8,18 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/defaultkavy/fluentx.git"
+    "url": "git+https://github.com/defaultkavy/elexis.git"
   },
   "module": "index.ts",
   "bugs": {
-    "url": "https://github.com/defaultkavy/fluentx/issues"
+    "url": "https://github.com/defaultkavy/elexis/issues"
   },
-  "description": "Fast, fluent, simple web builder",
-  "homepage": "https://github.com/defaultkavy/fluentx",
+  "homepage": "https://github.com/defaultkavy/elexis",
   "keywords": ["web", "front-end", "lib", "fluent", "framework"],
   "license": "ISC",
-  "type": "module",
-  "workspaces": [
-    "extensions/*"
-  ]
+  "type": "module"
 }
