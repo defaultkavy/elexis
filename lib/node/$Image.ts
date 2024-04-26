@@ -1,5 +1,5 @@
 import { $HTMLElement, $HTMLElementOptions } from "./$HTMLElement";
-import { $State } from "../$State";
+import { $StateArgument } from "../$State";
 export interface $ImageOptions extends $HTMLElementOptions {}
 export class $Image extends $HTMLElement<HTMLImageElement> {
     constructor(options?: $ImageOptions) {
@@ -81,8 +81,8 @@ export class $Image extends $HTMLElement<HTMLImageElement> {
 
     /**HTMLImageElement base property */
     src(): string;
-    src(src?: string | $State<string | undefined>): this;
-    src(src?: string | $State<string | undefined>) { return $.fluent(this, arguments, () => this.dom.src, () => $.set(this.dom, 'src', src))}
+    src(src: $StateArgument<string>): this;
+    src(src?: $StateArgument<string>) { return $.fluent(this, arguments, () => this.dom.src, () => $.set(this.dom, 'src', src))}
 
     /**HTMLImageElement base property */
     srcset(): string;

@@ -46,6 +46,7 @@ export namespace $Util {
         else if (element instanceof HTMLElement) {
             const instance = $.TagNameElementMap[element.tagName.toLowerCase() as keyof typeof $.TagNameElementMap];
             const $node = instance === $Container 
+                //@ts-expect-error
                 ? new instance(element.tagName, {dom: element})
                 //@ts-expect-error
                 : new instance({dom: element} as any);
