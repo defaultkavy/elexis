@@ -1,7 +1,7 @@
 <picture style="display: flex; justify-content: center">
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/defaultkavy/elexis/blob/assets/logo_light.png?raw=true">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/defaultkavy/elexis/blob/assets/logo_dark.png?raw=true">
-  <img alt="Elexis Logo">
+  <img src="https://github.com/defaultkavy/elexis/blob/assets/logo_dark.png?raw=true" alt="Elexis Logo">
 </picture>
 <p style="text-align: center">Build Web in Native JavaScript Syntax</p>
 
