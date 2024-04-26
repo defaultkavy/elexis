@@ -2,14 +2,27 @@ import { $Element, $ElementOptions } from "./$Element";
 import { $State, $StateArgument } from "../$State";
 
 export interface $InputOptions extends $ElementOptions {}
-export class $Input extends $Element<HTMLInputElement> {
+export class $Input<T extends string | number = string> extends $Element<HTMLInputElement> {
     constructor(options?: $InputOptions) {
         super('input', options);
     }
     
-    accept(): string[]
-    accept(...filetype: string[]): this
-    accept(...filetype: string[]) { return $.fluent(this, arguments, () => this.dom.accept.split(','), () => this.dom.accept = filetype.toString() )}
+    value(): T;
+    value(value: $StateArgument<T>): this;
+    value(value?: $StateArgument<T>) { return $.fluent(this, arguments, () => {
+        if (this.type() === 'number') return Number(this.dom.value);
+        return this.dom.value as T;
+    }, () => $.set(this.dom, 'value', value as $State<string> | string, (value$) => {
+        this.on('input', () => {
+            if (value$.attributes.has(this.dom) === false) return;
+            if (typeof value$.value === 'string') (value$ as $State<string>).set(`${this.value()}`)
+            if (typeof value$.value === 'number') (value$ as unknown as $State<number>).set(Number(this.value()))
+        })
+    }))}
+    
+    type(): InputType;
+    type<T extends InputType>(type: T): $InputType<T>;
+    type<T extends InputType>(type?: T) { return $.fluent(this, arguments, () => this.dom.type, () => $.set(this.dom, 'type', type)) as unknown as $InputType<T> | InputType}
 
     capture(): string;
     capture(capture: string): this;
@@ -26,26 +39,6 @@ export class $Input extends $Element<HTMLInputElement> {
     width(): number;
     width(wdith: number): this;
     width(width?: number) { return $.fluent(this, arguments, () => this.dom.width, () => $.set(this.dom, 'width', width))}
-
-    checked(): boolean;
-    checked(boolean: boolean): this;
-    checked(boolean?: boolean) { return $.fluent(this, arguments, () => this.dom.checked, () => $.set(this.dom, 'checked', boolean))}
-    
-    max(): number;
-    max(max: number): this;
-    max(max?: number) { return $.fluent(this, arguments, () => this.dom.max === '' ? null : parseInt(this.dom.min), () => $.set(this.dom, 'max', max?.toString()))}
-    
-    min(): number;
-    min(min: number): this;
-    min(min?: number) { return $.fluent(this, arguments, () => this.dom.min === '' ? null : parseInt(this.dom.min), () => $.set(this.dom, 'min', min?.toString()))}
-    
-    maxLength(): number;
-    maxLength(maxLength: number): this;
-    maxLength(maxLength?: number) { return $.fluent(this, arguments, () => this.dom.maxLength, () => $.set(this.dom, 'maxLength', maxLength))}
-    
-    minLength(): number;
-    minLength(minLength: number): this;
-    minLength(minLength?: number) { return $.fluent(this, arguments, () => this.dom.minLength, () => $.set(this.dom, 'minLength', minLength))}
     
     autocomplete(): AutoFill;
     autocomplete(autocomplete: AutoFill): this;
@@ -55,10 +48,6 @@ export class $Input extends $Element<HTMLInputElement> {
     defaultValue(defaultValue: string): this;
     defaultValue(defaultValue?: string) { return $.fluent(this, arguments, () => this.dom.defaultValue, () => $.set(this.dom, 'defaultValue', defaultValue))}
     
-    defaultChecked(): boolean;
-    defaultChecked(defaultChecked: boolean): this;
-    defaultChecked(defaultChecked?: boolean) { return $.fluent(this, arguments, () => this.dom.defaultChecked, () => $.set(this.dom, 'defaultChecked', defaultChecked))}
-    
     dirName(): string;
     dirName(dirName: string): this;
     dirName(dirName?: string) { return $.fluent(this, arguments, () => this.dom.dirName, () => $.set(this.dom, 'dirName', dirName))}
@@ -66,10 +55,6 @@ export class $Input extends $Element<HTMLInputElement> {
     disabled(): boolean;
     disabled(disabled: boolean): this;
     disabled(disabled?: boolean) { return $.fluent(this, arguments, () => this.dom.disabled, () => $.set(this.dom, 'disabled', disabled))}
-    
-    multiple(): boolean;
-    multiple(multiple: boolean): this;
-    multiple(multiple?: boolean) { return $.fluent(this, arguments, () => this.dom.multiple, () => $.set(this.dom, 'multiple', multiple))}
     
     pattern(): string;
     pattern(pattern: string): this;
@@ -106,14 +91,6 @@ export class $Input extends $Element<HTMLInputElement> {
     src(): string;
     src(src: string): this;
     src(src?: string) { return $.fluent(this, arguments, () => this.dom.src, () => $.set(this.dom, 'src', src))}
-    
-    step(): number;
-    step(step: number): this;
-    step(step?: number) { return $.fluent(this, arguments, () => Number(this.dom.step), () => $.set(this.dom, 'step', step?.toString()))}
-    
-    type(): InputType;
-    type(type: InputType): this;
-    type(type?: InputType) { return $.fluent(this, arguments, () => this.dom.type, () => $.set(this.dom, 'type', type))}
 
     inputMode(): InputMode;
     inputMode(mode: InputMode): this;
@@ -142,8 +119,6 @@ export class $Input extends $Element<HTMLInputElement> {
     }
     setSelectionRange(start: number | null, end: number | null, direction?: SelectionDirection) { this.dom.setSelectionRange(start, end, direction); return this }
     showPicker() { this.dom.showPicker(); return this }
-    stepDown() { this.dom.stepDown(); return this }
-    stepUp() { this.dom.stepUp(); return this }
     
     checkValidity() { return this.dom.checkValidity() }
     reportValidity() { return this.dom.reportValidity() }
@@ -174,10 +149,14 @@ export class $Input extends $Element<HTMLInputElement> {
     name(): string;
     name(name?: $StateArgument<string> | undefined): this;
     name(name?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.name, () => $.set(this.dom, 'name', name))}
+
+    maxLength(): number;
+    maxLength(maxLength: number): this;
+    maxLength(maxLength?: number) { return $.fluent(this, arguments, () => this.dom.maxLength, () => $.set(this.dom, 'maxLength', maxLength))}
     
-    value(): string;
-    value(value: $StateArgument<string> | undefined): this;
-    value(value?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
+    minLength(): number;
+    minLength(minLength: number): this;
+    minLength(minLength?: number) { return $.fluent(this, arguments, () => this.dom.minLength, () => $.set(this.dom, 'minLength', minLength))}
 
     get form() { return this.dom.form ? $(this.dom.form) : null }
     get labels() { return Array.from(this.dom.labels ?? []).map(label => $(label)) }
@@ -185,3 +164,68 @@ export class $Input extends $Element<HTMLInputElement> {
     get validity() { return this.dom.validity }
     get willValidate() { return this.dom.willValidate }
 }
+
+export class $NumberInput extends $Input<number> {
+    constructor(options?: $InputOptions) {
+        super(options)
+        this.type('number')
+    }
+
+    static from($input: $Input) {
+        return $.mixin($Input, this) as $NumberInput;
+    }
+    stepDown() { this.dom.stepDown(); return this }
+    stepUp() { this.dom.stepUp(); return this }
+    
+    max(): number;
+    max(max: number): this;
+    max(max?: number) { return $.fluent(this, arguments, () => this.dom.max === '' ? null : parseInt(this.dom.min), () => $.set(this.dom, 'max', max?.toString()))}
+    
+    min(): number;
+    min(min: number): this;
+    min(min?: number) { return $.fluent(this, arguments, () => this.dom.min === '' ? null : parseInt(this.dom.min), () => $.set(this.dom, 'min', min?.toString()))}
+    
+    step(): number;
+    step(step: number): this;
+    step(step?: number) { return $.fluent(this, arguments, () => Number(this.dom.step), () => $.set(this.dom, 'step', step?.toString()))}
+}
+
+export class $CheckInput extends $Input<string> {
+    constructor(options?: $InputOptions) {
+        super(options)
+        this.type('radio')
+    }
+
+    static from($input: $Input) {
+        return $.mixin($Input, this) as $CheckInput;
+    }
+
+    checked(): boolean;
+    checked(boolean: boolean): this;
+    checked(boolean?: boolean) { return $.fluent(this, arguments, () => this.dom.checked, () => $.set(this.dom, 'checked', boolean))}
+    
+    defaultChecked(): boolean;
+    defaultChecked(defaultChecked: boolean): this;
+    defaultChecked(defaultChecked?: boolean) { return $.fluent(this, arguments, () => this.dom.defaultChecked, () => $.set(this.dom, 'defaultChecked', defaultChecked))}
+}
+
+export class $FileInput extends $Input<string> {
+    constructor(options?: $InputOptions) {
+        super(options)
+        this.type('file')
+    }
+
+    static from($input: $Input) {
+        return $.mixin($Input, this) as $CheckInput;
+    }
+    
+    multiple(): boolean;
+    multiple(multiple: boolean): this;
+    multiple(multiple?: boolean) { return $.fluent(this, arguments, () => this.dom.multiple, () => $.set(this.dom, 'multiple', multiple))}
+    
+    accept(): string[]
+    accept(...filetype: string[]): this
+    accept(...filetype: string[]) { return $.fluent(this, arguments, () => this.dom.accept.split(','), () => this.dom.accept = filetype.toString() )}
+}
+
+export type $InputType<T extends InputType> = T extends 'number' ? $NumberInput : T extends 'radio' | 'checkbox' ? $CheckInput : T extends 'file' ? $FileInput : $Input<string>;

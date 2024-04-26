@@ -142,18 +142,19 @@ export namespace $ {
      * @param methodKey Variant key name when apply value on $State.set()
      * @returns 
      */
-    export function set<O, K extends keyof O>(
+    export function set<O extends Object, K extends keyof O, V>(
         object: O, 
         key: K, 
         value: O[K] extends (...args: any) => any 
             ? (undefined | $StateArgument<Parameters<O[K]>>) 
             : (undefined | $StateArgument<O[K]>), 
-        methodKey?: string) {
+        handle?: ($state: $State<O[K]>) => any) {
             if (value === undefined) return;
-            if (value instanceof $State && object instanceof Node) {
-                value.use(object.$, methodKey ?? key as any);
+            if (value instanceof $State) {
+                value.use(object, key);
                 if (object[key] instanceof Function) (object[key] as Function)(value)
-                else object[key] = value.value;
+                    else object[key] = value.value;
+                if (handle) handle(value);
                 return;
             }
             if (object[key] instanceof Function) (object[key] as Function)(value);
