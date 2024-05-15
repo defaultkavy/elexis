@@ -2,18 +2,18 @@ export interface $StateOption<T> {
     format: (value: T) => string;
 }
 export class $State<T> {
-    readonly value: T;
+    readonly value!: T;
     readonly attributes = new Map<Object, Set<string | number | symbol>>();
     options: Partial<$StateOption<T>> = {}
     constructor(value: T, options?: $StateOption<T>) {
-        this.value = value;
+        this.set(value);
         if (options) this.options = options;
     }
     set(value: T) {
         (this as Mutable<$State<T>>).value = value;
+        // update element content for eatch attributes
         for (const [node, attrList] of this.attributes.entries()) {
             for (const attr of attrList) {
-                console.debug(node, attr)
                 //@ts-expect-error
                 if (node[attr] instanceof Function) {
                     //@ts-expect-error
