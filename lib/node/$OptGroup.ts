@@ -1,5 +1,7 @@
 import { $Container, $ContainerOptions } from "./$Container";
-import { $State, $StateArgument } from "../$State";
+import { $StateArgument } from "../$State";
+import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
+import { $Util } from "../$Util";
 
 export interface $OptGroupOptions extends $ContainerOptions {}
 export class $OptGroup extends $Container<HTMLOptGroupElement> {
@@ -10,8 +12,7 @@ export class $OptGroup extends $Container<HTMLOptGroupElement> {
     disabled(): boolean;
     disabled(disabled: $StateArgument<boolean> | undefined): this;
     disabled(disabled?: $StateArgument<boolean> | undefined) { return $.fluent(this, arguments, () => this.dom.disabled, () => $.set(this.dom, 'disabled', disabled))}
-    
-    label(): string;
-    label(label: $StateArgument<string> | undefined): this;
-    label(label?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.label, () => $.set(this.dom, 'label', label))}
 }
+
+export interface $OptGroup extends $HTMLElementAPIFilter<$OptGroup, 'disabled' | 'label'> {}
+$Util.mixin($OptGroup, $HTMLElementAPIs.create('disabled', 'label'))

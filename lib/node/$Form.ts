@@ -1,13 +1,11 @@
+import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
+import { $Util } from "../$Util";
 import { $Container, $ContainerOptions } from "./$Container";
 export interface $FormOptions extends $ContainerOptions {}
 export class $Form extends $Container<HTMLFormElement> {
     constructor(options?: $FormOptions) {
         super('form', options);
     }
-    
-    autocomplete(): AutoFill;
-    autocomplete(autocomplete: AutoFill | undefined): this;
-    autocomplete(autocomplete?: AutoFill) { return $.fluent(this, arguments, () => this.dom.autocomplete as AutoFill, () => $.set(this.dom, 'autocomplete', autocomplete as AutoFillBase))}
     
     action(): string;
     action(action: string | undefined): this;
@@ -36,9 +34,10 @@ export class $Form extends $Container<HTMLFormElement> {
     requestSubmit() { this.dom.requestSubmit(); return this }
     reset(): this { this.dom.reset(); return this }
     submit() { this.dom.submit(); return this }
-    checkValidity() { return this.dom.checkValidity() }
-    reportValidity() { return this.dom.reportValidity() }
 
     get length() { return this.dom.length }
     get elements() { return Array.from(this.dom.elements).map(ele => $(ele)) }
 }
+
+export interface $Form extends $HTMLElementAPIFilter<$Form, 'checkValidity' | 'reportValidity' | 'autocomplete'> {}
+$Util.mixin($Form, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete'))

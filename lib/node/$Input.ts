@@ -1,5 +1,7 @@
 import { $Element, $ElementOptions } from "./$Element";
 import { $State, $StateArgument } from "../$State";
+import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
+import { $Util } from "../$Util";
 
 export interface $InputOptions extends $ElementOptions {}
 export class $Input<T extends string | number = string> extends $Element<HTMLInputElement> {
@@ -40,10 +42,6 @@ export class $Input<T extends string | number = string> extends $Element<HTMLInp
     width(wdith: number): this;
     width(width?: number) { return $.fluent(this, arguments, () => this.dom.width, () => $.set(this.dom, 'width', width))}
     
-    autocomplete(): AutoFill;
-    autocomplete(autocomplete: AutoFill): this;
-    autocomplete(autocomplete?: AutoFill) { return $.fluent(this, arguments, () => this.dom.autocomplete, () => $.set(this.dom, 'autocomplete', autocomplete))}
-    
     defaultValue(): string;
     defaultValue(defaultValue: string): this;
     defaultValue(defaultValue?: string) { return $.fluent(this, arguments, () => this.dom.defaultValue, () => $.set(this.dom, 'defaultValue', defaultValue))}
@@ -51,10 +49,6 @@ export class $Input<T extends string | number = string> extends $Element<HTMLInp
     dirName(): string;
     dirName(dirName: string): this;
     dirName(dirName?: string) { return $.fluent(this, arguments, () => this.dom.dirName, () => $.set(this.dom, 'dirName', dirName))}
-    
-    disabled(): boolean;
-    disabled(disabled: boolean): this;
-    disabled(disabled?: boolean) { return $.fluent(this, arguments, () => this.dom.disabled, () => $.set(this.dom, 'disabled', disabled))}
     
     pattern(): string;
     pattern(pattern: string): this;
@@ -67,10 +61,6 @@ export class $Input<T extends string | number = string> extends $Element<HTMLInp
     readOnly(): boolean;
     readOnly(readOnly: boolean): this;
     readOnly(readOnly?: boolean) { return $.fluent(this, arguments, () => this.dom.readOnly, () => $.set(this.dom, 'readOnly', readOnly))}
-    
-    required(): boolean;
-    required(required: boolean): this;
-    required(required?: boolean) { return $.fluent(this, arguments, () => this.dom.required, () => $.set(this.dom, 'required', required))}
     
     selectionDirection(): SelectionDirection | null;
     selectionDirection(selectionDirection: SelectionDirection | null): this;
@@ -119,51 +109,14 @@ export class $Input<T extends string | number = string> extends $Element<HTMLInp
     }
     setSelectionRange(start: number | null, end: number | null, direction?: SelectionDirection) { this.dom.setSelectionRange(start, end, direction); return this }
     showPicker() { this.dom.showPicker(); return this }
-    
-    checkValidity() { return this.dom.checkValidity() }
-    reportValidity() { return this.dom.reportValidity() }
+
     get files() { return this.dom.files }
     get webkitEntries() { return this.dom.webkitEntries }
-    
-
-    formAction(): string;
-    formAction(action: string | undefined): this;
-    formAction(action?: string) { return $.fluent(this, arguments, () => this.dom.formAction, () => $.set(this.dom, 'formAction', action))}
-
-    formEnctype(): string;
-    formEnctype(enctype: string | undefined): this;
-    formEnctype(enctype?: string) { return $.fluent(this, arguments, () => this.dom.formEnctype, () => $.set(this.dom, 'formEnctype', enctype))}
-    
-    formMethod(): string;
-    formMethod(method: string | undefined): this;
-    formMethod(method?: string) { return $.fluent(this, arguments, () => this.dom.formMethod, () => $.set(this.dom, 'formMethod', method))}
-
-    formNoValidate(): boolean;
-    formNoValidate(boolean: boolean | undefined): this;
-    formNoValidate(boolean?: boolean) { return $.fluent(this, arguments, () => this.dom.formNoValidate, () => $.set(this.dom, 'formNoValidate', boolean))}
-
-    formTarget(): string;
-    formTarget(target: string | undefined): this;
-    formTarget(target?: string) { return $.fluent(this, arguments, () => this.dom.formTarget, () => $.set(this.dom, 'formTarget', target))}
-    
-    name(): string;
-    name(name?: $StateArgument<string> | undefined): this;
-    name(name?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.name, () => $.set(this.dom, 'name', name))}
-
-    maxLength(): number;
-    maxLength(maxLength: number): this;
-    maxLength(maxLength?: number) { return $.fluent(this, arguments, () => this.dom.maxLength, () => $.set(this.dom, 'maxLength', maxLength))}
-    
-    minLength(): number;
-    minLength(minLength: number): this;
-    minLength(minLength?: number) { return $.fluent(this, arguments, () => this.dom.minLength, () => $.set(this.dom, 'minLength', minLength))}
-
-    get form() { return this.dom.form ? $(this.dom.form) : null }
     get labels() { return Array.from(this.dom.labels ?? []).map(label => $(label)) }
-    get validationMessage() { return this.dom.validationMessage }
-    get validity() { return this.dom.validity }
-    get willValidate() { return this.dom.willValidate }
 }
+
+export interface $Input extends $HTMLElementAPIFilter<$Input, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'validationMessage' | 'validity' | 'willValidate' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget'> {}
+$Util.mixin($Input, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'validationMessage', 'validity', 'willValidate', 'formAction', 'formEnctype', 'formMethod', 'formNoValidate', 'formTarget'))
 
 export class $NumberInput extends $Input<number> {
     constructor(options?: $InputOptions) {

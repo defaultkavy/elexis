@@ -1,5 +1,7 @@
 import { $Container, $ContainerOptions } from "./$Container";
 import { $StateArgument } from "../$State";
+import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
+import { $Util } from "../$Util";
 
 export interface $TextareaOptions extends $ContainerOptions {}
 export class $Textarea extends $Container<HTMLTextAreaElement> {
@@ -11,10 +13,6 @@ export class $Textarea extends $Container<HTMLTextAreaElement> {
     cols(cols: number): this;
     cols(cols?: number) { return $.fluent(this, arguments, () => this.dom.cols, () => $.set(this.dom, 'cols', cols))}
     
-    name(): string;
-    name(name?: $StateArgument<string> | undefined): this;
-    name(name?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.name, () => $.set(this.dom, 'name', name))}
-    
     wrap(): string;
     wrap(wrap?: $StateArgument<string> | undefined): this;
     wrap(wrap?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.wrap, () => $.set(this.dom, 'wrap', wrap))}
@@ -22,18 +20,6 @@ export class $Textarea extends $Container<HTMLTextAreaElement> {
     value(): string;
     value(value?: $StateArgument<string> | undefined): this;
     value(value?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
-    
-    maxLength(): number;
-    maxLength(maxLength: number): this;
-    maxLength(maxLength?: number) { return $.fluent(this, arguments, () => this.dom.maxLength, () => $.set(this.dom, 'maxLength', maxLength))}
-    
-    minLength(): number;
-    minLength(minLength: number): this;
-    minLength(minLength?: number) { return $.fluent(this, arguments, () => this.dom.minLength, () => $.set(this.dom, 'minLength', minLength))}
-    
-    autocomplete(): AutoFill;
-    autocomplete(autocomplete: AutoFill): this;
-    autocomplete(autocomplete?: AutoFill) { return $.fluent(this, arguments, () => this.dom.autocomplete, () => $.set(this.dom, 'autocomplete', autocomplete))}
     
     defaultValue(): string;
     defaultValue(defaultValue: string): this;
@@ -43,10 +29,6 @@ export class $Textarea extends $Container<HTMLTextAreaElement> {
     dirName(dirName: string): this;
     dirName(dirName?: string) { return $.fluent(this, arguments, () => this.dom.dirName, () => $.set(this.dom, 'dirName', dirName))}
     
-    disabled(): boolean;
-    disabled(disabled: boolean): this;
-    disabled(disabled?: boolean) { return $.fluent(this, arguments, () => this.dom.disabled, () => $.set(this.dom, 'disabled', disabled))}
-    
     placeholder(): string;
     placeholder(placeholder?: string): this;
     placeholder(placeholder?: string) { return $.fluent(this, arguments, () => this.dom.placeholder, () => $.set(this.dom, 'placeholder', placeholder))}
@@ -54,10 +36,6 @@ export class $Textarea extends $Container<HTMLTextAreaElement> {
     readOnly(): boolean;
     readOnly(readOnly: boolean): this;
     readOnly(readOnly?: boolean) { return $.fluent(this, arguments, () => this.dom.readOnly, () => $.set(this.dom, 'readOnly', readOnly))}
-    
-    required(): boolean;
-    required(required: boolean): this;
-    required(required?: boolean) { return $.fluent(this, arguments, () => this.dom.required, () => $.set(this.dom, 'required', required))}
     
     selectionDirection(): SelectionDirection;
     selectionDirection(selectionDirection: SelectionDirection): this;
@@ -89,12 +67,9 @@ export class $Textarea extends $Container<HTMLTextAreaElement> {
         return this 
     }
     setSelectionRange(start: number | null, end: number | null, direction?: SelectionDirection) { this.dom.setSelectionRange(start, end, direction); return this }
-    
-    checkValidity() { return this.dom.checkValidity() }
-    reportValidity() { return this.dom.reportValidity() }
 
-    get validationMessage() { return this.dom.validationMessage }
-    get validity() { return this.dom.validity }
-    get form() { return this.dom.form ? $(this.dom.form) : null }
     get labels() { return Array.from(this.dom.labels ?? []).map(label => $(label)) }
 }
+
+export interface $Textarea extends $HTMLElementAPIFilter<$Textarea, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'disabled' | 'minLength' | 'maxLength' | 'validationMessage' | 'validity' | 'willValidate'> {}
+$Util.mixin($Textarea, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'disabled', 'minLength', 'maxLength', 'validationMessage', 'validity', 'willValidate'))

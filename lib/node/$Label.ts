@@ -1,4 +1,6 @@
+import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
 import { $StateArgument } from "../$State";
+import { $Util } from "../$Util";
 import { $Container, $ContainerOptions } from "./$Container";
 export interface $LabelOptions extends $ContainerOptions {}
 export class $Label extends $Container<HTMLLabelElement> {
@@ -10,6 +12,8 @@ export class $Label extends $Container<HTMLLabelElement> {
     for(name: $StateArgument<string>): this;
     for(name?: $StateArgument<string>) { return $.fluent(this, arguments, () => this.dom.htmlFor, () => { $.set(this.dom, 'htmlFor', name)}) }
 
-    get form() { return this.dom.form }
     get control() { return this.dom.control }
 }
+
+export interface $Label extends $HTMLElementAPIFilter<$Label, 'form'> {}
+$Util.mixin($Label, $HTMLElementAPIs.create('form',))

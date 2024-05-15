@@ -1,5 +1,7 @@
 import { $Container, $ContainerOptions } from "./$Container";
 import { $State, $StateArgument } from "../$State";
+import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
+import { $Util } from "../$Util";
 
 export interface $OptionOptions extends $ContainerOptions {}
 export class $Option extends $Container<HTMLOptionElement> {
@@ -10,14 +12,6 @@ export class $Option extends $Container<HTMLOptionElement> {
     defaultSelected(): boolean;
     defaultSelected(defaultSelected: $StateArgument<boolean> | undefined): this;
     defaultSelected(defaultSelected?: $StateArgument<boolean> | undefined) { return $.fluent(this, arguments, () => this.dom.defaultSelected, () => $.set(this.dom, 'defaultSelected', defaultSelected))}
-    
-    disabled(): boolean;
-    disabled(disabled: $StateArgument<boolean> | undefined): this;
-    disabled(disabled?: $StateArgument<boolean> | undefined) { return $.fluent(this, arguments, () => this.dom.disabled, () => $.set(this.dom, 'disabled', disabled))}
-    
-    label(): string;
-    label(label: $StateArgument<string> | undefined): this;
-    label(label?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.label, () => $.set(this.dom, 'label', label))}
     
     selected(): boolean;
     selected(selected: $StateArgument<boolean> | undefined): this;
@@ -35,3 +29,6 @@ export class $Option extends $Container<HTMLOptionElement> {
     get index() { return this.dom.index }
 
 }
+
+export interface $Option extends $HTMLElementAPIFilter<$Option, 'form' | 'disabled' | 'label'> {}
+$Util.mixin($Option, $HTMLElementAPIs.create('form', 'disabled', 'label'))

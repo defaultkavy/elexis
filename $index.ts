@@ -122,7 +122,7 @@ export namespace $ {
      * @param action The action to execute when arguments length not equal 0.
      * @returns 
      */
-    export function fluent<T, A, V>(instance: T, args: IArguments, value: () => V, action: (...args: any[]) => void) {
+    export function fluent<T, A, V>(instance: T, args: IArguments, value: () => V, action: (...args: any[]) => void): T | V {
         if (!args.length) return value();
         action();
         return instance;
@@ -138,8 +138,8 @@ export namespace $ {
      * A helper for undefined able value and $State.set() which apply value to target.
      * @param object Target object.
      * @param key The key of target object.
-     * @param value Value of target property or parameter of method(Using Tuple to apply parameter).
-     * @param methodKey Variant key name when apply value on $State.set()
+     * @param value Value of target property or parameter of method (Using Tuple to apply parameter).
+     * @param handle callback when param `value` is $State object.
      * @returns 
      */
     export function set<O extends Object, K extends keyof O, V>(
