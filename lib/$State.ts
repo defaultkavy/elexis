@@ -2,28 +2,35 @@ export interface $StateOption<T> {
     format: (value: T) => string;
 }
 export class $State<T> {
-    readonly value!: T;
+    protected _value!: T | $State<T>;
     readonly attributes = new Map<Object, Set<string | number | symbol>>();
+    readonly linkStates = new Set<$State<T>>;
     options: Partial<$StateOption<T>> = {}
     constructor(value: T, options?: $StateOption<T>) {
         this.set(value);
         if (options) this.options = options;
     }
-    set(value: T) {
-        (this as Mutable<$State<T>>).value = value;
+    set(value: T | $State<T>) {
+        this._value = value;
+        if (value instanceof $State) value.linkStates.add(this as any);
+        this.update();
+        this.linkStates.forEach($state => $state.update());
+    }
+
+    protected update() {
         // update element content for eatch attributes
         for (const [node, attrList] of this.attributes.entries()) {
             for (const attr of attrList) {
                 //@ts-expect-error
                 if (node[attr] instanceof Function) {
                     //@ts-expect-error
-                    if (this.options.format) node[attr](this.options.format(value))
+                    if (this.options.format) node[attr](this.options.format(this.value))
                     //@ts-expect-error
-                    else node[attr](value)
+                    else node[attr](this.value)
                 }
                 else if (attr in node) {
                     //@ts-expect-error
-                    node[attr] = value
+                    node[attr] = this.value
                 }
             }
         }
@@ -56,6 +63,10 @@ export class $State<T> {
         }
         return data;
     }
+
+    get value(): T {
+        return this._value instanceof $State ? this._value.value as T : this._value;
+    }
 };
 
-export type $StateArgument<T> = T | $State<T> | undefined;
+export type $StateArgument<T> = $State<T> | undefined | (T extends (infer R)[] ? R : T);

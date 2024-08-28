@@ -3,32 +3,33 @@ import { $Node } from "./node/$Node";
 import { $Text } from "./node/$Text";
 
 export class $NodeManager {
-    $container: $Container;
-    $elementList = new Set<$Node>
+    readonly $container: $Container;
+    readonly childList = new Set<$Node>
     constructor(container: $Container) {
         this.$container = container;
     }
 
-    add(element: $Node | string) {
-        if (typeof element === 'string') {
-            const text = new $Text(element);
-            this.$elementList.add(text);
-            (text as Mutable<$Node>).parent = this.$container;
-        } else {
-            this.$elementList.add(element);
+    add(element: $Node, position = -1) {
+        if (position === -1 || this.childList.size - 1 === position) {
+            this.childList.add(element);
             (element as Mutable<$Node>).parent = this.$container;
+        } else {
+            const children = [...this.childList]
+            children.splice(position, 0, element);
+            this.childList.clear();
+            children.forEach(child => this.childList.add(child));
         }
     }
 
     remove(element: $Node) {
-        if (!this.$elementList.has(element)) return this;
-        this.$elementList.delete(element);
+        if (!this.childList.has(element)) return this;
+        this.childList.delete(element);
         (element as Mutable<$Node>).parent = undefined;
         return this;
     }
 
     removeAll(render = true) {
-        this.$elementList.forEach(ele => this.remove(ele));
+        this.childList.forEach(ele => this.remove(ele));
         if (render) this.render();
     }
 
@@ -36,8 +37,8 @@ export class $NodeManager {
         const array = this.array
         array.splice(array.indexOf(target), 1, replace);
         target.remove();
-        this.$elementList.clear();
-        array.forEach(node => this.$elementList.add(node));
+        this.childList.clear();
+        array.forEach(node => this.childList.add(node));
         return this;
     }
 
@@ -60,7 +61,7 @@ export class $NodeManager {
         }
     }
 
-    get array() {return [...this.$elementList.values()]};
+    get array() {return [...this.childList.values()]};
 
     get dom() {return this.$container.dom}
 }

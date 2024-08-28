@@ -1,21 +1,21 @@
 {
   "name": "elexis",
   "description": "Build Web in Native JavaScript Syntax",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "author": {
     "name": "defaultkavy",
     "email": "defaultkavy@gmail.com",
-    "url": "https://github.com/defaultkavy"
+    "url": "https://git.defaultkavy.com/defaultkavy"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/defaultkavy/elexis.git"
+    "url": "git+https://git.defaultkavy.com/defaultkavy/elexis.git"
   },
   "module": "index.ts",
   "bugs": {
-    "url": "https://github.com/defaultkavy/elexis/issues"
+    "url": "https://git.defaultkavy.com/defaultkavy/elexis/issues"
   },
-  "homepage": "https://github.com/defaultkavy/elexis",
+  "homepage": "https://git.defaultkavy.com/defaultkavy/elexis",
   "keywords": ["web", "front-end", "lib", "fluent", "framework"],
   "license": "ISC",
   "type": "module"

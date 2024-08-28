@@ -26,7 +26,7 @@ declare global {
 Array.prototype.detype = function <T extends undefined | null, O>(this: O[], ...types: T[]) {
     return this.filter(item => {
         if (!types.length) return item !== undefined;
-        else for (const type of types) if (typeof item !== typeof type) return false;  else return true
+        else for (const type of types) if (typeof item !== typeof type) return true;  else return false;
     }) as Exclude<O, T>[];
 }
 export * from "./$index";
@@ -48,3 +48,5 @@ export * from "./lib/node/$Textarea";
 export * from "./lib/node/$Image";
 export * from "./lib/node/$Async";
 export * from "./lib/node/$Document";
+export * from "./lib/node/$Media";
+export * from "./lib/node/$Video";

@@ -19,6 +19,7 @@ import { $Textarea } from "./lib/node/$Textarea";
 import { $Util } from "./lib/$Util";
 import { $HTMLElement } from "./lib/node/$HTMLElement";
 import { $Async } from "./lib/node/$Async";
+import { $Video } from "./lib/node/$Video";
 
 export type $ = typeof $;
 export function $<E extends $Element = $Element>(query: `::${string}`): E[];
@@ -88,6 +89,7 @@ export namespace $ {
         'option': $Option,
         'optgroup': $OptGroup,
         'textarea': $Textarea,
+        'video': $Video,
         'async': $Async,
     }
     export type TagNameElementMapType = typeof TagNameElementMap;
@@ -112,6 +114,7 @@ export namespace $ {
     : H extends HTMLOptionElement ? $Option
     : H extends HTMLOptGroupElement ? $OptGroup
     : H extends HTMLTextAreaElement ? $Textarea
+    : H extends HTMLVideoElement ? $Video
     : $Container<H>;
 
     /**
@@ -142,27 +145,27 @@ export namespace $ {
      * @param handle callback when param `value` is $State object.
      * @returns 
      */
-    export function set<O extends Object, K extends keyof O, V>(
+    export function set<O extends Object, K extends keyof O>(
         object: O, 
         key: K, 
         value: O[K] extends (...args: any) => any 
-            ? (undefined | $StateArgument<Parameters<O[K]>>) 
+            ? (undefined | [$StateArgument<Parameters<O[K]>>]) 
             : (undefined | $StateArgument<O[K]>), 
         handle?: ($state: $State<O[K]>) => any) {
             if (value === undefined) return;
             if (value instanceof $State) {
                 value.use(object, key);
-                if (object[key] instanceof Function) (object[key] as Function)(value)
+                if (object[key] instanceof Function) (object[key] as Function)(...value.value)
                     else object[key] = value.value;
                 if (handle) handle(value);
                 return;
             }
-            if (object[key] instanceof Function) (object[key] as Function)(value);
+            if (object[key] instanceof Function) (object[key] as Function)(...value as any);
             else object[key] = value as any;
     }
     
-    export function state<T>(value: T, options?: $StateOption<T>) {
-        return new $State<T>(value, options)
+    export function state<T>(value: T, options?: $StateOption<T extends $State<infer K> ? K : T>) {
+        return new $State<T>(value, options as $StateOption<T>) as T extends $State<infer K> ? $State<K> : $State<T>;
     }
 
     export async function resize(object: Blob, size: number): Promise<string> {
