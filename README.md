@@ -1,11 +1,11 @@
 <picture style="display: flex; justify-content: center">
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/defaultkavy/elexis/blob/assets/logo_light.png?raw=true">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/defaultkavy/elexis/blob/assets/logo_dark.png?raw=true">
-  <img src="https://github.com/defaultkavy/elexis/blob/assets/logo_dark.png?raw=true" alt="Elexis Logo">
+  <source media="(prefers-color-scheme: dark)" srcset="https://git.defaultkavy.com/defaultkavy/elexis/raw/branch/assets/logo_light.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://git.defaultkavy.com/defaultkavy/elexis/raw/branch/assets/logo_dark.png">
+  <img src="https://git.defaultkavy.com/defaultkavy/elexis/raw/branch/assets/logo_dark.png" alt="Elexis Logo">
 </picture>
 <p style="text-align: center">Build Web in Native JavaScript Syntax</p>
 
-> ElexisJS is still in beta test now, some breaking changes might happen very often.
+> ElexisJS is still in beta test now, some breaking changes might happened very often.
 
 ## What does ElexisJS bring to developer?
 1. Write website with Native JavaScript syntax and full TypeScript development experiance, no more HTML or JSX.
