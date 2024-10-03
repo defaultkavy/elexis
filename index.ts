@@ -1,7 +1,7 @@
 declare global {
     var $: import('./$index').$;
     interface Array<T> {
-        detype<F extends undefined | null, O>(...types: F[]): Array<Exclude<T, F>>
+        detype<F extends any, O>(...types: F[]): Array<Exclude<T, F | undefined | void>>
     }
     type OrMatrix<T> = T | OrMatrix<T>[];
     type OrArray<T> = T | T[];
@@ -23,11 +23,11 @@ declare global {
         $: import('./lib/node/$Node').$Node;
     }
 }
-Array.prototype.detype = function <T extends undefined | null, O>(this: O[], ...types: T[]) {
+Array.prototype.detype = function <T extends any, O>(this: O[], ...types: T[]) {
     return this.filter(item => {
         if (!types.length) return item !== undefined;
         else for (const type of types) if (typeof item !== typeof type) return true;  else return false;
-    }) as Exclude<O, T>[];
+    }) as Exclude<O, T | undefined | void>[];
 }
 export * from "./$index";
 export * from "./lib/node/$Node";
@@ -40,7 +40,6 @@ export * from "./lib/node/$Button";
 export * from "./lib/node/$Form";
 export * from "./lib/$EventManager";
 export * from "./lib/$State";
-export * from "./lib/node/$View";
 export * from "./lib/node/$Select";
 export * from "./lib/node/$Option";
 export * from "./lib/node/$OptGroup";

@@ -65,4 +65,8 @@ export abstract class $Node<N extends Node = Node> {
         if (this instanceof $Element) return true;
         else return false;
     }
+    get element(): $Element | null { 
+        if (this instanceof $Element) return this;
+        else return null;
+    }
 }

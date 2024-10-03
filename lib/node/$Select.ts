@@ -1,7 +1,7 @@
 import { $Container, $ContainerOptions } from "./$Container";
 import { $OptGroup } from "./$OptGroup";
 import { $Option } from "./$Option";
-import { $StateArgument } from "../$State";
+import { $State, $StateArgument } from "../$State";
 import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
 import { $Util } from "../$Util";
 
@@ -31,7 +31,13 @@ export class $Select extends $Container<HTMLSelectElement> {
     
     value(): string;
     value(value?: $StateArgument<string> | undefined): this;
-    value(value?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
+    value(value?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value as $State<string> | string, (value$) => {
+        this.on('input', () => {
+            if (value$.attributes.has(this.dom) === false) return;
+            if (typeof value$.value === 'string') (value$ as $State<string>).set(`${this.value()}`)
+            if (typeof value$.value === 'number') (value$ as unknown as $State<number>).set(Number(this.value()))
+        })
+    }))}
 
     get labels() { return Array.from(this.dom.labels ?? []).map(label => $(label)) }
 }

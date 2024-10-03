@@ -8,7 +8,7 @@ export abstract class $EventMethod<EM> {
     once<K extends keyof EM>(type: K, callback: (...args: EM[K]) => any) { this.events.once(type, callback); return this }
 }
 export class $EventManager<EM> {
-    private eventMap = new Map<string, $Event>();
+    eventMap = new Map<string, $Event>();
     register(...names: string[]) { 
         names.forEach(name => {
             const event = new $Event(name);

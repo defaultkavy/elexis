@@ -1,10 +1,10 @@
-import { $Element, $ElementOptions } from "./$Element";
 import { $State, $StateArgument } from "../$State";
 import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
 import { $Util } from "../$Util";
+import { $HTMLElement, $HTMLElementOptions } from "./$HTMLElement";
 
-export interface $InputOptions extends $ElementOptions {}
-export class $Input<T extends string | number = string> extends $Element<HTMLInputElement> {
+export interface $InputOptions extends $HTMLElementOptions {}
+export class $Input<T extends string | number = string> extends $HTMLElement<HTMLInputElement> {
     constructor(options?: $InputOptions) {
         super('input', options);
     }
@@ -117,7 +117,6 @@ export class $Input<T extends string | number = string> extends $Element<HTMLInp
 
 export interface $Input extends $HTMLElementAPIFilter<$Input, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'validationMessage' | 'validity' | 'willValidate' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget'> {}
 $Util.mixin($Input, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'validationMessage', 'validity', 'willValidate', 'formAction', 'formEnctype', 'formMethod', 'formNoValidate', 'formTarget'))
-
 export class $NumberInput extends $Input<number> {
     constructor(options?: $InputOptions) {
         super(options)
@@ -169,7 +168,7 @@ export class $FileInput extends $Input<string> {
     }
 
     static from($input: $Input) {
-        return $.mixin($Input, this) as $CheckInput;
+        return $.mixin($Input, this) as $FileInput;
     }
     
     multiple(): boolean;
@@ -182,3 +181,4 @@ export class $FileInput extends $Input<string> {
 }
 
 export type $InputType<T extends InputType> = T extends 'number' ? $NumberInput : T extends 'radio' | 'checkbox' ? $CheckInput : T extends 'file' ? $FileInput : $Input<string>;
+$Util.mixin($Input, [$NumberInput, $CheckInput, $FileInput])

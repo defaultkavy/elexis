@@ -1,4 +1,4 @@
-import { $State, $StateArgument, $StateOption } from "./index";
+import { $EventManager, $State, $StateArgument, $StateOption } from "./index";
 import { $Node } from "./lib/node/$Node"
 import { $Document } from "./lib/node/$Document"
 import { $Anchor } from "./lib/node/$Anchor";
@@ -11,7 +11,6 @@ import { $Label } from "./lib/node/$Label";
 import { $Image } from "./lib/node/$Image";
 import { $Canvas } from "./lib/node/$Canvas";
 import { $Dialog } from "./lib/node/$Dialog";
-import { $View } from "./lib/node/$View";
 import { $Select } from "./lib/node/$Select";
 import { $Option } from "./lib/node/$Option";
 import { $OptGroup } from "./lib/node/$OptGroup";
@@ -56,8 +55,9 @@ export function $(resolver: any) {
 }
 export namespace $ {
     export let anchorHandler: null | (($a: $Anchor, e: Event) => void) = null;
-    export let anchorPreventDefault: boolean = false;
     export const TagNameElementMap = {
+        'html': $Container,
+        'head': $Container,
         'document': $Document,
         'body': $Container,
         'a': $Anchor,
@@ -84,7 +84,6 @@ export namespace $ {
         'img': $Image,
         'dialog': $Dialog,
         'canvas': $Canvas,
-        'view': $View,
         'select': $Select,
         'option': $Option,
         'optgroup': $OptGroup,
@@ -192,9 +191,7 @@ export namespace $ {
         })
     }
 
-    export function rem(amount: number = 1) {
-        return parseInt(getComputedStyle(document.documentElement).fontSize) * amount
-    }
+    export function rem(amount: number = 1) { return parseInt(getComputedStyle(document.documentElement).fontSize) * amount }
 
     export function html(html: string) {
         const body = new DOMParser().parseFromString(html, 'text/html').body;
@@ -240,6 +237,10 @@ export namespace $ {
         Object.assign($.TagNameElementMap, {[string]: node});
         return $.TagNameElementMap;
     }
+
+    export function events<N extends string>(...eventname: N[]) { return new $EventManager<{[keys in N]: any[]}>().register(...eventname) }
+
+    export function call<T>(fn: () => T): T { return fn() }
 }
 type BuildNodeFunction = (...args: any[]) => $Node;
 type BuilderSelfFunction<K extends $Node> = (self: K) => void;

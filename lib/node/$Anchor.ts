@@ -7,8 +7,10 @@ export class $Anchor extends $Container<HTMLAnchorElement> {
         super('a', options);
         // Link Handler event
         this.dom.addEventListener('click', e => {
-            if ($.anchorPreventDefault) e.preventDefault();
-            if ($.anchorHandler && !!this.href()) $.anchorHandler(this, e)
+            if ($.anchorHandler && !!this.href()) {
+                e.preventDefault();
+                $.anchorHandler(this, e);
+            }
         })
     }
     /**Set URL of anchor element. */

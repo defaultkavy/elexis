@@ -4,6 +4,7 @@ export interface $ElementOptions {
     id?: string;
     class?: string[];
     dom?: HTMLElement | SVGElement;
+    tagname?: string;
 }
 
 export class $Element<H extends HTMLElement | SVGElement = HTMLElement> extends $Node<H> {
@@ -19,7 +20,7 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement> extends 
     private createDom(tagname: string, options?: $ElementOptions) {
         if (options?.dom) return options.dom;
         if (tagname === 'svg') return document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        return document.createElement(tagname);
+        return document.createElement(options?.tagname ?? tagname);
 
     }
 
@@ -85,8 +86,8 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement> extends 
 
     animate(keyframes: Keyframe[] | PropertyIndexedKeyframes | null, options?: number | KeyframeAnimationOptions, callback?: (animation: Animation) => void) {
         const animation = this.dom.animate(keyframes, options);
-        if (callback) callback(animation);
-        return this;
+        if (callback) animation.onfinish = () => callback(animation);
+        return animation;
     }
 
     getAnimations(options?: GetAnimationsOptions) { return this.dom.getAnimations(options) }

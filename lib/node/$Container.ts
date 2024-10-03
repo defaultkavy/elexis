@@ -22,22 +22,29 @@ export class $Container<H extends HTMLElement = HTMLElement> extends $HTMLElemen
 
     private __position_cursor = 0;
     /**Insert element to this element */
-    insert(children: $ContainerContentBuilder<this>, position = -1): this { return $.fluent(this, arguments, () => this, () => {
-        if (children instanceof Function) children = children(this);
+    insert(children: $ContainerContentBuilder<this>, position = -1): this { return $.fluent(this, arguments, () => this, async () => {
+        if (children instanceof Function) children = await children(this); // resolve function
         children = $.orArrayResolve(children);
+        // Set position cursor depend negative or positive number, position will count from last index when position is negative.
         this.__position_cursor = position < 0 ? this.children.array.length + position : position;
         for (const child of children) {
-            if (child === undefined || child === null) continue;
-            if (child instanceof Array) this.insert(child, this.__position_cursor);
-            else if (typeof child === 'string') this.children.add(new $Text(child), position);
+            if (child === undefined || child === null) continue; // skip
+            if (child instanceof Array) this.insert(child, this.__position_cursor); // insert element group at this position
+            else if (typeof child === 'string') this.children.add(new $Text(child), position); // turn string into $Text element
             else if (child instanceof $State) {
-                const ele = new $Text(child.toString());
-                child.use(ele, 'content');
+                const ele = new $Text(child.toString()); // turn $State object into $Text element
+                child.use(ele, 'content'); // bind $Text elelment and function name to $State
                 this.children.add(ele, position);
-            } else this.children.add(child, position);
-            this.__position_cursor += 1;
+            } 
+            else if (child instanceof Promise) {
+                const $Async = (await import('./$Async')).$Async; // import $Async avoid extends error
+                const ele = new $Async().await(child) // using $Async.await resolve promise element
+                this.children.add(ele, position); // insert $Async element at this position, leave a position for promised element
+            }
+            else this.children.add(child, position); // insert $Node element directly
+            this.__position_cursor += 1; // increase position count
         }
-        this.children.render();
+        this.children.render(); // start to render dom tree
     })}
 
     /**Remove all children elemetn from this element */
@@ -64,5 +71,6 @@ export class $Container<H extends HTMLElement = HTMLElement> extends $HTMLElemen
     scrollLeft(scrollLeft?: $StateArgument<number> | undefined) { return $.fluent(this, arguments, () => this.dom.scrollLeft, () => $.set(this.dom, 'scrollLeft', scrollLeft as any))}
 }
 
-export type $ContainerContentBuilder<P extends $Container> = OrMatrix<$ContainerContentType> | (($node: P) => OrMatrix<$ContainerContentType>)
+export type $ContainerContentBuilder<P extends $Container> = $ContainerContentGroup | (($node: P) => OrPromise<$ContainerContentGroup>)
+export type $ContainerContentGroup = OrMatrix<OrPromise<$ContainerContentType>>
 export type $ContainerContentType = $Node | string | undefined | $State<any> | null
