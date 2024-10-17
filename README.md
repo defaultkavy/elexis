@@ -86,5 +86,6 @@ value$.set(0)
 ```
 
 ## Extensions
-1. [@elexis/router](https://github.com/elexisjs/router): Router for Single Page App.
-2. [@elexis/layout](https://github.com/elexisjs/layout): Build waterfall/justified layout with automatic compute content size and position.
+1. [@elexis/router](https://git.defaultkavy.com/elexis/router): Router for Single Page App.
+2. [@elexis/layout](https://git.defaultkavy.com/elexis/layout): Build waterfall/justified layout with automatic compute content size and position.
+3. [@elexis/view](https://git.defaultkavy.com/elexis/view): Multiple content switch handler.

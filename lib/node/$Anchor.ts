@@ -1,3 +1,4 @@
+import { $StateArgument } from "../$State";
 import { $Container, $ContainerOptions } from "./$Container";
 
 export interface AnchorOptions extends $ContainerOptions {}
@@ -15,8 +16,8 @@ export class $Anchor extends $Container<HTMLAnchorElement> {
     }
     /**Set URL of anchor element. */
     href(): string;
-    href(url: string | undefined): this;
-    href(url?: string | undefined) { return $.fluent(this, arguments, () => this.dom.href, () => {if (url) this.dom.href = url}) }
+    href(url: $StateArgument<string>): this;
+    href(url?: $StateArgument<string>) { return $.fluent(this, arguments, () => this.dom.href, () => $.set(this.dom, 'href', url)) }
     /**Link open with this window, new tab or other */
     target(): $AnchorTarget | undefined;
     target(target: $AnchorTarget | undefined): this;

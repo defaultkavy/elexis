@@ -3,6 +3,10 @@ declare global {
     interface Array<T> {
         detype<F extends any, O>(...types: F[]): Array<Exclude<T, F | undefined | void>>
     }
+    interface Set<T> {
+        get array(): T[]
+        sort(handler: ((a: T, b: T) => number) | undefined): T[];
+    }
     type OrMatrix<T> = T | OrMatrix<T>[];
     type OrArray<T> = T | T[];
     type OrPromise<T> = T | Promise<T>;
@@ -29,17 +33,27 @@ Array.prototype.detype = function <T extends any, O>(this: O[], ...types: T[]) {
         else for (const type of types) if (typeof item !== typeof type) return true;  else return false;
     }) as Exclude<O, T | undefined | void>[];
 }
+Object.defineProperties(Set.prototype, {
+    array: { get: function <T>(this: Set<T>) { return Array.from(this)} }
+})
+Set.prototype.sort = function <T>(this: Set<T>, handler: ((a: T, b: T) => number) | undefined) { return this.array.sort(handler)}
 export * from "./$index";
+export * from "./lib/$NodeManager";
+export * from "./lib/$EventManager";
+export * from "./lib/$EventTarget";
+export * from "./lib/$KeyboardManager";
+export * from "./lib/$FocusManager";
+export * from "./lib/$PointerManager";
+export * from "./lib/$Window";
+export * from "./lib/$State";
 export * from "./lib/node/$Node";
 export * from "./lib/node/$Anchor";
 export * from "./lib/node/$Element";
-export * from "./lib/$NodeManager";
+export * from "./lib/node/$HTMLElement";
 export * from "./lib/node/$Text";
 export * from "./lib/node/$Container";
 export * from "./lib/node/$Button";
 export * from "./lib/node/$Form";
-export * from "./lib/$EventManager";
-export * from "./lib/$State";
 export * from "./lib/node/$Select";
 export * from "./lib/node/$Option";
 export * from "./lib/node/$OptGroup";

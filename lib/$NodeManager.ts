@@ -1,6 +1,5 @@
 import { $Container } from "./node/$Container";
 import { $Node } from "./node/$Node";
-import { $Text } from "./node/$Text";
 
 export class $NodeManager {
     readonly $container: $Container;
@@ -12,13 +11,13 @@ export class $NodeManager {
     add(element: $Node, position = -1) {
         if (position === -1 || this.childList.size - 1 === position) {
             this.childList.add(element);
-            (element as Mutable<$Node>).parent = this.$container;
         } else {
             const children = [...this.childList]
             children.splice(position, 0, element);
             this.childList.clear();
             children.forEach(child => this.childList.add(child));
         }
+        (element as Mutable<$Node>).parent = this.$container;
     }
 
     remove(element: $Node) {
@@ -39,6 +38,7 @@ export class $NodeManager {
         target.remove();
         this.childList.clear();
         array.forEach(node => this.childList.add(node));
+        (replace as Mutable<$Node>).parent = this.$container;
         return this;
     }
 
@@ -49,16 +49,20 @@ export class $NodeManager {
         while (nodeList.length || domList.length) { // while nodeList or domList has item
             const [node, dom] = [nodeList.at(0), domList.at(0)];
             if (!dom) { if (node && !appendedNodeList.includes(node)) node.remove(); nodeList.shift()} 
-            else if (!node) { if (!dom.$.__hidden) this.dom.append(dom); domList.shift();}
+            else if (!node) { if (!dom.$.hide()) this.dom.append(dom); domList.shift();}
             else if (dom !== node) { 
-                if (!dom.$.__hidden) { this.dom.insertBefore(dom, node); appendedNodeList.push(dom) }
+                if (!dom.$.hide()) { this.dom.insertBefore(dom, node); appendedNodeList.push(dom) }
                 domList.shift();
             }
             else {
-                if (dom.$.__hidden) this.dom.removeChild(dom);
+                if (dom.$.hide()) this.dom.removeChild(dom);
                 domList.shift(); nodeList.shift();
             }
         }
+    }
+
+    indexOf(target: $Node) {
+        return this.array.indexOf(target);
     }
 
     get array() {return [...this.childList.values()]};

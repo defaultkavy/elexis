@@ -17,6 +17,16 @@ export class $State<T> {
         this.linkStates.forEach($state => $state.update());
     }
 
+    static toJSON(object: Object): Object {
+        const data = {};
+        for (let [key, value] of Object.entries(object)) {
+            if (value instanceof $State) value = value.toJSON();
+            else if (value instanceof Object) $State.toJSON(value);
+            Object.assign(data, {[key]: value})
+        }
+        return data;
+    }
+
     protected update() {
         // update element content for eatch attributes
         for (const [node, attrList] of this.attributes.entries()) {
@@ -36,36 +46,30 @@ export class $State<T> {
         }
     }
 
-    toString(): string {
-        if (this.options.format) return this.options.format(this.value);
-        if (this.value instanceof Object) return JSON.stringify(this.toJSON());
-        return `${this.value}`
-    }
-
     use<O extends Object, K extends keyof O>(object: O, attrName: K) {
         const attrList = this.attributes.get(object)
         if (attrList) attrList.add(attrName);
         else this.attributes.set(object, new Set<string | number | symbol>().add(attrName))
     }
 
-    toJSON(): Object {
-        if (this.value instanceof $State) return this.value.toJSON();
-        if (this.value instanceof Object) return $State.toJSON(this.value);
-        else return this.toString();
-    }
-
-    static toJSON(object: Object): Object {
-        const data = {};
-        for (let [key, value] of Object.entries(object)) {
-            if (value instanceof $State) value = value.toJSON();
-            else if (value instanceof Object) $State.toJSON(value);
-            Object.assign(data, {[key]: value})
-        }
-        return data;
+    convert(fn: (value: T) => string) {
+        return new $State<T>(this as any, {format: fn});
     }
 
     get value(): T {
         return this._value instanceof $State ? this._value.value as T : this._value;
+    }
+
+    toString(): string {
+        if (this.options.format) return this.options.format(this.value);
+        if (this.value instanceof Object) return JSON.stringify(this.toJSON());
+        return `${this.value}`
+    }
+
+    toJSON(): Object {
+        if (this.value instanceof $State) return this.value.toJSON();
+        if (this.value instanceof Object) return $State.toJSON(this.value);
+        else return this.toString();
     }
 };
 

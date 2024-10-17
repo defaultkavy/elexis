@@ -1,4 +1,4 @@
-import { $EventManager, $State, $StateArgument, $StateOption } from "./index";
+import { $EventManager, $EventMap, $EventTarget, $FocusManager, $PointerManager, $State, $StateArgument, $StateOption } from "./index";
 import { $Node } from "./lib/node/$Node"
 import { $Document } from "./lib/node/$Document"
 import { $Anchor } from "./lib/node/$Anchor";
@@ -19,6 +19,8 @@ import { $Util } from "./lib/$Util";
 import { $HTMLElement } from "./lib/node/$HTMLElement";
 import { $Async } from "./lib/node/$Async";
 import { $Video } from "./lib/node/$Video";
+import { $Window } from "./lib/$Window";
+import { $KeyboardManager } from "./lib/$KeyboardManager";
 
 export type $ = typeof $;
 export function $<E extends $Element = $Element>(query: `::${string}`): E[];
@@ -26,6 +28,7 @@ export function $<E extends $Element = $Element>(query: `:${string}`): E | null;
 export function $(element: null): null;
 export function $<K extends keyof $.TagNameTypeMap>(resolver: K): $.TagNameTypeMap[K];
 export function $<K extends string>(resolver: K): $Container;
+export function $(window: Window): $Window;
 export function $<H extends HTMLElement>(htmlElement: H): $.$HTMLElementMap<H>;
 export function $<H extends Element>(element: H): $Element;
 export function $<N extends $Node>(node: N): N;
@@ -51,6 +54,7 @@ export function $(resolver: any) {
         if (resolver.$) return resolver.$;
         else return $Util.from(resolver);
     }
+    if (resolver instanceof Window) { return $Window.$ }
     throw `$: NOT SUPPORT TARGET ELEMENT TYPE ('${resolver}')`
 }
 export namespace $ {
@@ -238,7 +242,10 @@ export namespace $ {
         return $.TagNameElementMap;
     }
 
-    export function events<N extends string>(...eventname: N[]) { return new $EventManager<{[keys in N]: any[]}>().register(...eventname) }
+    export function events<EM extends $EventMap>() { return new $EventManager<EM> }
+    export function pointers($node: $Node) { return new $PointerManager($node) }
+    export function keys($target: $EventTarget) { return new $KeyboardManager($target) }
+    export function focus() { return new $FocusManager() }
 
     export function call<T>(fn: () => T): T { return fn() }
 }

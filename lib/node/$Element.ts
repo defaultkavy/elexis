@@ -1,4 +1,4 @@
-import { $Node } from "./$Node";
+import { $Node, $NodeEventMap } from "./$Node";
 
 export interface $ElementOptions {
     id?: string;
@@ -7,7 +7,7 @@ export interface $ElementOptions {
     tagname?: string;
 }
 
-export class $Element<H extends HTMLElement | SVGElement = HTMLElement> extends $Node<H> {
+export class $Element<H extends HTMLElement | SVGElement = HTMLElement, $EM extends $ElementEventMap = $ElementEventMap, EM extends HTMLElementEventMap = HTMLElementEventMap> extends $Node<H, $EM, EM> {
     readonly dom: H;
     private static_classes = new Set<string>();
     constructor(tagname: string, options?: $ElementOptions) {
@@ -81,7 +81,7 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement> extends 
     tabIndex(tabIndex: number): this;
     tabIndex(tabIndex?: number) { return $.fluent(this, arguments, () => this.dom.tabIndex, () => $.set(this.dom, 'tabIndex', tabIndex as any))}
 
-    focus() { this.dom.focus(); return this; }
+    focus(options?: FocusOptions) { this.dom.focus(options); return this; }
     blur() { this.dom.blur(); return this; }
 
     animate(keyframes: Keyframe[] | PropertyIndexedKeyframes | null, options?: number | KeyframeAnimationOptions, callback?: (animation: Animation) => void) {
@@ -112,3 +112,5 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement> extends 
 }
 
 export type $DOMRect = Omit<DOMRect, 'toJSON'>;
+
+export interface $ElementEventMap extends $NodeEventMap {}

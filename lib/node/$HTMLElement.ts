@@ -1,7 +1,7 @@
-import { $Element, $ElementOptions } from "./$Element";
+import { $Element, $ElementEventMap, $ElementOptions } from "./$Element";
 
 export interface $HTMLElementOptions extends $ElementOptions {}
-export class $HTMLElement<H extends HTMLElement = HTMLElement> extends $Element<H> {
+export class $HTMLElement<H extends HTMLElement = HTMLElement, $EM extends $HTMLElementEventMap = $HTMLElementEventMap> extends $Element<H, $EM> {
     constructor(tagname: string, options?: $HTMLElementOptions) {
         super(tagname, options)
     }
@@ -63,3 +63,5 @@ export class $HTMLElement<H extends HTMLElement = HTMLElement> extends $Element<
     get offsetTop() { return this.dom.offsetTop }
     get offsetWidth() { return this.dom.offsetWidth }
 }
+
+export interface $HTMLElementEventMap extends $ElementEventMap {}

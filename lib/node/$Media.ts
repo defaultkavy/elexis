@@ -1,8 +1,9 @@
-import { $State, $StateArgument } from "../$State";
-import { $Element, $ElementOptions } from "./$Element";
+import { $StateArgument } from "../$State";
+import { $ElementOptions } from "./$Element";
+import { $HTMLElement } from "./$HTMLElement";
 
 export interface $MediaOptions extends $ElementOptions {}
-export class $Media<H extends HTMLMediaElement> extends $Element<H> {
+export class $Media<H extends HTMLMediaElement> extends $HTMLElement<H> {
     constructor(tagname: string, options?: $MediaOptions) {
         super(tagname, options);
     }

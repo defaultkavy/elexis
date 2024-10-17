@@ -1,12 +1,12 @@
-import { $Element, $ElementOptions } from "./$Element";
+import { $Element } from "./$Element";
 import { $NodeManager } from "../$NodeManager";
 import { $Node } from "./$Node";
 import { $State, $StateArgument } from "../$State";
 import { $Text } from "./$Text";
-import { $HTMLElement, $HTMLElementOptions } from "./$HTMLElement";
+import { $HTMLElement, $HTMLElementEventMap, $HTMLElementOptions } from "./$HTMLElement";
 
 export interface $ContainerOptions extends $HTMLElementOptions {}
-export class $Container<H extends HTMLElement = HTMLElement> extends $HTMLElement<H> {
+export class $Container<H extends HTMLElement = HTMLElement, EM extends $ContainerEventMap = $ContainerEventMap> extends $HTMLElement<H, EM> {
     readonly children: $NodeManager = new $NodeManager(this);
     constructor(tagname: string, options?: $ContainerOptions) {
         super(tagname, options)
@@ -23,7 +23,11 @@ export class $Container<H extends HTMLElement = HTMLElement> extends $HTMLElemen
     private __position_cursor = 0;
     /**Insert element to this element */
     insert(children: $ContainerContentBuilder<this>, position = -1): this { return $.fluent(this, arguments, () => this, async () => {
-        if (children instanceof Function) children = await children(this); // resolve function
+        if (children instanceof Function) { // resolve function and promise
+            let cache = children(this);
+            if (cache instanceof Promise) children = await cache;
+            else children = cache;
+        } else if (children instanceof Promise) { children = await children }
         children = $.orArrayResolve(children);
         // Set position cursor depend negative or positive number, position will count from last index when position is negative.
         this.__position_cursor = position < 0 ? this.children.array.length + position : position;
@@ -53,11 +57,12 @@ export class $Container<H extends HTMLElement = HTMLElement> extends $HTMLElemen
         return this;
     }
 
-    //**Query selector one of child element */
-    $<E extends $Element>(query: string): E | null { return $(this.dom.querySelector(query)) as E | null }
-
-    //**Query selector of child elements */
-    $all<E extends $Element>(query: string): E[] { return Array.from(this.dom.querySelectorAll(query)).map($dom => $($dom) as E) }
+    $<E extends $Element = $Element>(query: `::${string}`): E[];
+    $<E extends $Element = $Element>(query: `:${string}`): E | null;
+    $(query: string) { 
+        if (query.startsWith('::')) return Array.from(document.querySelectorAll(query.replace(/^::/, ''))).map(dom => $(dom));
+        else if (query.startsWith(':')) return $(document.querySelector(query.replace(/^:/, '')));
+    }
 
     get scrollHeight() { return this.dom.scrollHeight }
     get scrollWidth() { return this.dom.scrollWidth }
@@ -74,3 +79,5 @@ export class $Container<H extends HTMLElement = HTMLElement> extends $HTMLElemen
 export type $ContainerContentBuilder<P extends $Container> = $ContainerContentGroup | (($node: P) => OrPromise<$ContainerContentGroup>)
 export type $ContainerContentGroup = OrMatrix<OrPromise<$ContainerContentType>>
 export type $ContainerContentType = $Node | string | undefined | $State<any> | null
+
+export interface $ContainerEventMap extends $HTMLElementEventMap {}

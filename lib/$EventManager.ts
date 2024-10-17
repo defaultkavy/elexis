@@ -1,65 +1,32 @@
-export abstract class $EventMethod<EM> {
-    abstract events: $EventManager<EM>;
-    //@ts-expect-error
-    on<K extends keyof EM>(type: K, callback: (...args: EM[K]) => any) { this.events.on(type, callback); return this }
-    //@ts-expect-error
-    off<K extends keyof EM>(type: K, callback: (...args: EM[K]) => any) { this.events.off(type, callback); return this }
-    //@ts-expect-error
-    once<K extends keyof EM>(type: K, callback: (...args: EM[K]) => any) { this.events.once(type, callback); return this }
-}
-export class $EventManager<EM> {
-    eventMap = new Map<string, $Event>();
-    register(...names: string[]) { 
-        names.forEach(name => {
-            const event = new $Event(name);
-            this.eventMap.set(event.name, event);
-        })
-        return this;
-    }
-    delete(name: string) { this.eventMap.delete(name); return this }
+export class $EventManager<EM extends $EventMap> {
+    private eventMap = new Map<string, Set<Function>>();
     //@ts-expect-error
     fire<K extends keyof EM>(type: K, ...args: EM[K]) {
-        const event = this.get(type)
-        //@ts-expect-error
-        if (event instanceof $Event) event.fire(...args);
+        this.eventMap.get(type as string)?.forEach(fn => fn(...args as []));
         return this
     }
     //@ts-expect-error
     on<K extends keyof EM>(type: K, callback: (...args: EM[K]) => any) { 
-        this.get(type).add(callback);
+        const set = this.eventMap.get(type as string) ?? this.eventMap.set(type as string, new Set()).get(type as string);
+        set?.add(callback);
         return this
     }
     //@ts-expect-error
     off<K extends keyof EM>(type: K, callback: (...args: EM[K]) => any) {
-        this.get(type).delete(callback);
+        this.eventMap.get(type as string)?.delete(callback);
         return this
     }
     //@ts-expect-error
     once<K extends keyof EM>(type: K, callback: (...args: EM[K]) => any) {
-        //@ts-expect-error
-        const onceFn = (...args: EM[K]) => {
-            this.get(type).delete(onceFn);
+        const onceFn = (...args: []) => {
+            this.eventMap.get(type as string)?.delete(onceFn);
             //@ts-expect-error
             callback(...args);
         }
-        this.get(type).add(onceFn);
+        const set = this.eventMap.get(type as string) ?? this.eventMap.set(type as string, new Set()).get(type as string)
+        set?.add(onceFn);
         return this;
     }
+}
 
-    get<K extends keyof EM>(type: K) {
-        //@ts-expect-error
-        const event = this.eventMap.get(type);
-        if (!event) throw new Error('EVENT NOT EXIST')
-        return event;
-    }
-}
-export class $Event {
-    name: string;
-    private callbackList = new Set<Function>()
-    constructor(name: string) {
-        this.name = name;
-    }
-    fire(...args: any[]) { this.callbackList.forEach(callback => callback(...args)) }
-    add(callback: Function) { this.callbackList.add(callback) }
-    delete(callback: Function) { this.callbackList.delete(callback) }
-}
+export interface $EventMap {}

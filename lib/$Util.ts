@@ -42,14 +42,17 @@ export namespace $Util {
     export function from(element: Node): $Node {
         if (element.$) return element.$;
         if (element.nodeName.toLowerCase() === 'body') return new $Container('body', {dom: element as HTMLBodyElement});
+        if (element.nodeName.toLowerCase() === 'head') return new $Container('head', {dom: element as HTMLHeadElement});
         if (element.nodeName.toLowerCase() === '#document') return $Document.from(element as Document);
         else if (element instanceof HTMLElement) {
             const instance = $.TagNameElementMap[element.tagName.toLowerCase() as keyof typeof $.TagNameElementMap];
-            const $node = instance === $Container 
-                //@ts-expect-error
-                ? new instance(element.tagName, {dom: element})
-                //@ts-expect-error
-                : new instance({dom: element} as any);
+            const $node = !instance 
+                ? new $Container(element.tagName, {dom: element}) 
+                : instance === $Container 
+                    //@ts-expect-error
+                    ? new instance(element.tagName, {dom: element})
+                    //@ts-expect-error
+                    : new instance({dom: element} as any);
             if ($node instanceof $Container) for (const childnode of Array.from($node.dom.childNodes)) {
                 $node.children.add($(childnode as any));
             }

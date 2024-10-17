@@ -1,41 +1,20 @@
-import { $, $Element, $State, $Text } from "../../index";
-import { $Container } from "./$Container";
+import { $EventTarget } from "../$EventTarget";
+import { $, $Element, $EventManager, $State, $HTMLElement, $Container } from "../../index";
 
-export abstract class $Node<N extends Node = Node> {
+export abstract class $Node<N extends Node = Node, $EM extends $NodeEventMap = $NodeEventMap, EM extends GlobalEventHandlersEventMap = GlobalEventHandlersEventMap> extends $EventTarget<$EM, EM> {
     abstract readonly dom: N;
-    readonly __hidden: boolean = false;
-    private domEvents: {[key: string]: Map<Function, Function>} = {};
+    protected __$property__ = {
+        hidden: false,
+        coordinate: undefined as $NodeCoordinate | undefined
+    }
     readonly parent?: $Container;
-
-    on<K extends keyof HTMLElementEventMap>(type: K, callback: (event: HTMLElementEventMap[K], $node: this) => any, options?: AddEventListenerOptions | boolean) { 
-        if (!this.domEvents[type]) this.domEvents[type] = new Map()
-        const middleCallback = (e: Event) => callback(e as HTMLElementEventMap[K], this);
-        this.domEvents[type].set(callback, middleCallback)
-        this.dom.addEventListener(type, middleCallback, options)
-        return this;
-    }
-
-    off<K extends keyof HTMLElementEventMap>(type: K, callback: (event: HTMLElementEventMap[K], $node: this) => any, options?: AddEventListenerOptions | boolean) { 
-        const middleCallback = this.domEvents[type]?.get(callback);
-        if (middleCallback) this.dom.removeEventListener(type, middleCallback as EventListener, options)
-        return this;
-    }
-
-    once<K extends keyof HTMLElementEventMap>(type: K, callback: (event: HTMLElementEventMap[K], $node: this) => any, options?: AddEventListenerOptions | boolean) { 
-        const onceFn = (event: Event) => {
-            this.dom.removeEventListener(type, onceFn, options)
-            callback(event as HTMLElementEventMap[K], this);
-        };
-        this.dom.addEventListener(type, onceFn, options)
-        return this;
-    }
 
     hide(): boolean; 
     hide(hide?: boolean | $State<boolean>, render?: boolean): this; 
-    hide(hide?: boolean | $State<boolean>, render = true) { return $.fluent(this, arguments, () => this.__hidden, () => {
+    hide(hide?: boolean | $State<boolean>, render = true) { return $.fluent(this, arguments, () => this.__$property__.hidden, () => {
         if (hide === undefined) return;
-        if (hide instanceof $State) { (this as Mutable<$Node>).__hidden = hide.value; hide.use(this, 'hide')}
-        else (this as Mutable<$Node>).__hidden = hide;
+        if (hide instanceof $State) { this.__$property__.hidden = hide.value; hide.use(this, 'hide')}
+        else this.__$property__.hidden = hide;
         if (render) this.parent?.children.render();
         return this;
     })}
@@ -59,8 +38,13 @@ export abstract class $Node<N extends Node = Node> {
         else return this.dom.contains(target)
     }
 
-    self(callback: ($node: this) => void) { callback(this); return this; }
+    coordinate(): $NodeCoordinate | undefined;
+    coordinate(coordinate: $NodeCoordinate): this;
+    coordinate(coordinate?: $NodeCoordinate) { return $.fluent(this, arguments, () => this.__$property__.coordinate, () => $.set(this.__$property__, 'coordinate', coordinate))}
+
+    self(callback: OrArray<($node: this) => void>) { $.orArrayResolve(callback).forEach(fn => fn(this)); return this; }
     inDOM() { return document.contains(this.dom); }
+    
     isElement(): this is $Element {
         if (this instanceof $Element) return true;
         else return false;
@@ -69,4 +53,23 @@ export abstract class $Node<N extends Node = Node> {
         if (this instanceof $Element) return this;
         else return null;
     }
+    get htmlElement(): $HTMLElement | null {
+        if (this instanceof $HTMLElement) return this;
+        else return null;
+    }
 }
+
+export interface $NodeCoordinate {
+    x: number;
+    y: number;
+    height: number;
+    width: number;
+}
+
+export interface $NodeEventMap {
+
+}
+
+type $HTMLElementEventMap<$N> = {
+    [keys in keyof HTMLElementEventMap]: [event: HTMLElementEventMap[keys], $this: $N];
+};
