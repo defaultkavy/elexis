@@ -31,6 +31,10 @@ export class $PointerManager extends $EventManager<$PointerManagerEventMap> {
         if (!pointer) return;
         this.map.set(pointer.id, pointer);
         pointer.update(this.toData(e));
+        if (!pointer.direction) {
+            if (pointer.move_x > 5 || pointer.move_x < -5) pointer.direction = $PointerDirection.Horizontal
+            else if (pointer.move_y > 5 || pointer.move_y < -5) pointer.direction = $PointerDirection.Vertical
+        }
         this.fire('move', pointer, e);
     }
 
@@ -57,10 +61,10 @@ export class $PointerManager extends $EventManager<$PointerManagerEventMap> {
 }
 
 export interface $PointerManagerEventMap extends $EventMap {
-    up: [$Pointer, MouseEvent];
-    down: [$Pointer, MouseEvent];
-    move: [$Pointer, MouseEvent];
-    cancel: [$Pointer, MouseEvent];
+    up: [$Pointer, PointerEvent];
+    down: [$Pointer, PointerEvent];
+    move: [$Pointer, PointerEvent];
+    cancel: [$Pointer, PointerEvent];
 }
 
 export interface $Pointer extends $PointerData {}
@@ -68,6 +72,7 @@ export class $Pointer {
     initial_x: number;
     initial_y: number;
     $target: $Node;
+    direction: $PointerDirection | null = null;
     protected manager: $PointerManager;
     constructor(manager: $PointerManager, data: $PointerData, target: $Node) {
         Object.assign(this, data);
@@ -103,3 +108,4 @@ export interface $PointerData {
 }
 
 export type PointerType = 'mouse' | 'pen' | 'touch'
+export enum $PointerDirection { Horizontal, Vertical }

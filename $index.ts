@@ -1,4 +1,4 @@
-import { $EventManager, $EventMap, $EventTarget, $FocusManager, $PointerManager, $State, $StateArgument, $StateOption } from "./index";
+import { $EventManager, $EventMap, $EventTarget, $FocusManager, $Media, $PointerManager, $State, $StateArgument, $StateOption } from "./index";
 import { $Node } from "./lib/node/$Node"
 import { $Document } from "./lib/node/$Document"
 import { $Anchor } from "./lib/node/$Anchor";
@@ -133,13 +133,6 @@ export namespace $ {
         action();
         return instance;
     }
-    
-    export function orArrayResolve<T>(multable: OrArray<T>) {
-        if (multable instanceof Array) return multable;
-        else return [multable];
-    }
-    
-    export function mixin(target: any, constructors: OrArray<any>) { return $Util.mixin(target, constructors) }
     /**
      * A helper for undefined able value and $State.set() which apply value to target.
      * @param object Target object.
@@ -167,8 +160,10 @@ export namespace $ {
             else object[key] = value as any;
     }
     
+    export function state<T>(value: T, options?: $StateOption<T>): $State<T>;
+    export function state<T extends $State<any>, K extends T extends $State<infer A> ? A : never>(value: T, options?: $StateOption<K>): $State<K>;
     export function state<T>(value: T, options?: $StateOption<T extends $State<infer K> ? K : T>) {
-        return new $State<T>(value, options as $StateOption<T>) as T extends $State<infer K> ? $State<K> : $State<T>;
+        return new $State<T>(value, options as $StateOption<T>);
     }
 
     export async function resize(object: Blob, size: number): Promise<string> {
@@ -195,60 +190,24 @@ export namespace $ {
         })
     }
 
-    export function rem(amount: number = 1) { return parseInt(getComputedStyle(document.documentElement).fontSize) * amount }
-
     export function html(html: string) {
         const body = new DOMParser().parseFromString(html, 'text/html').body;
         return Array.from(body.children).map(child => $(child))
-    }
-
-    /**Build multiple element in once. */
-    export function builder<F extends BuildNodeFunction, R extends ReturnType<F>>(bulder: F, params: [...Parameters<F>][], callback?: BuilderSelfFunction<R>): R[]
-    export function builder<F extends BuildNodeFunction, R extends ReturnType<F>>(bulder: [F, ...Parameters<F>], size: number, callback?: BuilderSelfFunction<R>): R[]
-    export function builder<F extends BuildNodeFunction, R extends ReturnType<F>>(bulder: [F, ...Parameters<F>], options: ($Node | string | BuilderSelfFunction<R>)[]): R[]
-    export function builder<K extends $.SelfTypeTagName>(tagname: K, size: number, callback?: BuilderSelfFunction<$.TagNameTypeMap[K]>): $.TagNameTypeMap[K][]
-    export function builder<K extends $.SelfTypeTagName>(tagname: K, callback: BuilderSelfFunction<$.TagNameTypeMap[K]>[]): $.TagNameTypeMap[K][]
-    export function builder<K extends $.ContainerTypeTagName>(tagname: K, size: number, callback?: BuilderSelfFunction<$.TagNameTypeMap[K]>): $.TagNameTypeMap[K][]
-    export function builder<K extends $.ContainerTypeTagName>(tagname: K, options: ($Node | string | BuilderSelfFunction<$.TagNameTypeMap[K]>)[]): $.TagNameTypeMap[K][]
-    export function builder(tagname: any, resolver: any, callback?: BuilderSelfFunction<any>) {
-        if (typeof resolver === 'number') {
-            return Array(resolver).fill('').map(v => {
-                const ele = isTuppleBuilder(tagname) ? tagname[0](...tagname.slice(1) as []) : $(tagname);
-                if (callback) callback(ele);
-                return ele
-            });
-        }
-        else {
-            const eleArray = [];
-            for (const item of resolver) {
-                const ele = tagname instanceof Function ? tagname(...item) // tagname is function, item is params
-                : isTuppleBuilder(tagname) ? tagname[0](...tagname.slice(1) as []) 
-                : $(tagname);
-                if (item instanceof Function) { item(ele) }
-                else if (item instanceof $Node || typeof item === 'string') { ele.content(item) }
-                eleArray.push(ele);
-            }
-            return eleArray;
-        }
-    
-        function isTuppleBuilder(target: any): target is [BuildNodeFunction, ...any] {
-            if (target instanceof Array && target[0] instanceof Function) return true;
-            else return false; 
-        }
     }
 
     export function registerTagName(string: string, node: {new(...args: undefined[]): $Node}) {
         Object.assign($.TagNameElementMap, {[string]: node});
         return $.TagNameElementMap;
     }
-
+    
+    export function orArrayResolve<T>(multable: OrArray<T>) { if (multable instanceof Array) return multable; else return [multable]; }
+    export function mixin(target: any, constructors: OrArray<any>) { return $Util.mixin(target, constructors) }
+    export function rem(amount: number = 1) { return parseInt(getComputedStyle(document.documentElement).fontSize) * amount }
+    export function call<T>(fn: () => T): T { return fn() }
     export function events<EM extends $EventMap>() { return new $EventManager<EM> }
     export function pointers($node: $Node) { return new $PointerManager($node) }
     export function keys($target: $EventTarget) { return new $KeyboardManager($target) }
     export function focus() { return new $FocusManager() }
-
-    export function call<T>(fn: () => T): T { return fn() }
 }
-type BuildNodeFunction = (...args: any[]) => $Node;
-type BuilderSelfFunction<K extends $Node> = (self: K) => void;
+
 globalThis.$ = $;

@@ -3,10 +3,10 @@ import { $, $Element, $EventManager, $State, $HTMLElement, $Container } from "..
 
 export abstract class $Node<N extends Node = Node, $EM extends $NodeEventMap = $NodeEventMap, EM extends GlobalEventHandlersEventMap = GlobalEventHandlersEventMap> extends $EventTarget<$EM, EM> {
     abstract readonly dom: N;
-    protected __$property__ = {
+    protected __$property__: any = {
         hidden: false,
         coordinate: undefined as $NodeCoordinate | undefined
-    }
+    };
     readonly parent?: $Container;
 
     hide(): boolean; 

@@ -45,6 +45,7 @@ export class $KeyboardManager {
     keydown(keys: OrArray<string>, callback: $KeyboardEventHandler) { this.assigns(keys, 'keydown', callback); return this; }
     keyup(keys: OrArray<string>, callback: $KeyboardEventHandler) { this.assigns(keys, 'keyup', callback); return this; }
     keypress(keys: OrArray<string>, callback: $KeyboardEventHandler) { this.assigns(keys, 'keypress', callback); return this; }
+    self(callback: ($self: this) => void) { callback(this); return this }
 }
 
 export type $KeyboardEventType = 'keydown' | 'keyup' | 'keypress';

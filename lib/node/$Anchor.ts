@@ -1,10 +1,9 @@
 import { $StateArgument } from "../$State";
 import { $Container, $ContainerOptions } from "./$Container";
 
-export interface AnchorOptions extends $ContainerOptions {}
-
+export interface $AnchorOptions extends $ContainerOptions {}
 export class $Anchor extends $Container<HTMLAnchorElement> {
-    constructor(options?: AnchorOptions) {
+    constructor(options?: $AnchorOptions) {
         super('a', options);
         // Link Handler event
         this.dom.addEventListener('click', e => {

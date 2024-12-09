@@ -60,8 +60,8 @@ export class $Container<H extends HTMLElement = HTMLElement, EM extends $Contain
     $<E extends $Element = $Element>(query: `::${string}`): E[];
     $<E extends $Element = $Element>(query: `:${string}`): E | null;
     $(query: string) { 
-        if (query.startsWith('::')) return Array.from(document.querySelectorAll(query.replace(/^::/, ''))).map(dom => $(dom));
-        else if (query.startsWith(':')) return $(document.querySelector(query.replace(/^:/, '')));
+        if (query.startsWith('::')) return Array.from(this.dom.querySelectorAll(query.replace(/^::/, ''))).map(dom => $(dom));
+        else if (query.startsWith(':')) return $(this.dom.querySelector(query.replace(/^:/, '')));
     }
 
     get scrollHeight() { return this.dom.scrollHeight }

@@ -1,13 +1,17 @@
-import { $Element } from "..";
+import { $Element, $EventManager, $EventMap } from "..";
 
-export class $FocusManager {
+export class $FocusManager extends $EventManager<$FocusLayerEventMap> {
     layerMap = new Map<number, $FocusLayer>();
     currentLayer?: $FocusLayer;
     historyList: $FocusLayer[] = [];
-    constructor() {}
+    constructor() {
+        super();
+    }
     
     layer(id: number) {
-        const layer = this.layerMap.get(id) ?? new $FocusLayer(id);
+        const layer = this.layerMap.get(id) ?? new $FocusLayer(id)
+            .on('blur', (ev) => this.fire('blur', ev ))
+            .on('focus', (ev) => this.fire('focus', ev ))
         this.layerMap.set(layer.id, layer);
         return layer;
     }
@@ -28,7 +32,12 @@ export class $FocusManager {
         if (!this.currentLayer) return this;
         const $focused = this.currentLayer.currentFocus;
         const eleList = this.currentLayer.elementSet.array;
-        if (!$focused) { this.currentLayer.focus(this.currentLayer.beforeBlur ?? eleList.at(0)); return this; }
+        if (!$focused) { 
+            const $target = this.currentLayer.beforeBlur ?? eleList.at(0);
+            if (!$target) return this;
+            this.currentLayer.focus($target);
+            return this;
+        }
         const eleIndex = eleList.indexOf($focused)
         switch (navigation) {
             case $FocusNavigation.Next:
@@ -36,7 +45,9 @@ export class $FocusManager {
                 let targetIndex = navigation === 0 ? eleIndex + 1 : eleIndex - 1;
                 if (targetIndex === eleList.length && this.currentLayer.loop()) targetIndex = 0;
                 else if (targetIndex === -1 && !this.currentLayer.loop()) targetIndex = 0;
-                this.currentLayer.focus(eleList.at(targetIndex));
+                const $target = eleList.at(targetIndex);
+                if (!$target) break;
+                this.currentLayer.focus($target);
                 break;
             }
             case $FocusNavigation.Down:
@@ -79,6 +90,7 @@ export class $FocusManager {
                     return true;
                 })
                 const $target = eleInfoList.sort((a, b) => a.distance - b.distance).at(0)?.$ele;
+                if (!$target) break;
                 this.currentLayer.focus($target);
             }
         }
@@ -87,18 +99,24 @@ export class $FocusManager {
 }
 
 export enum $FocusNavigation { Next, Prev, Up, Down, Right, Left }
-
-export class $FocusLayer {
+export interface $FocusLayerEventMap extends $EventMap {
+    focus: [{$prevFocus?: $Element, $focused: $Element, layer: $FocusLayer}],
+    blur: [{$prevFocus: $Element, layer: $FocusLayer}]
+}
+export class $FocusLayer extends $EventManager<$FocusLayerEventMap> {
     id: number;
     elementSet = new Set<$Element>();
     entrySet = new Set<$Element>();
     beforeBlur?: $Element;
     currentFocus?: $Element;
+    private focusHandler = (e: Event, $element: $Element) => this.focus($element, true);
+    private blurHandler = (e: Event, $element: $Element) => this.blur($element);
     private __$property__ = {
         loop: true,
         scrollThreshold: 0
     }
     constructor(id: number) {
+        super();
         this.id = id
         this.add = this.add.bind(this);
         this.entry = this.entry.bind(this);
@@ -106,14 +124,19 @@ export class $FocusLayer {
 
     add($elements: OrArray<$Element>) {
         $.orArrayResolve($elements).forEach($element => {
+            if (this.elementSet.has($element)) return;
             this.elementSet.add($element);
-            $element.tabIndex(0);
+            $element.tabIndex(0)
+            // .on('focus', this.focusHandler);
         });
         return this;
     }
 
     remove($element: $Element) {
+        if (this.currentFocus === $element) this.blur();
+        if (this.beforeBlur === $element) this.beforeBlur = undefined;
         this.elementSet.delete($element);
+        // $element.off('focus', this.focusHandler);
         return this;
     }
 
@@ -122,7 +145,7 @@ export class $FocusLayer {
         return this;
     }
 
-    focus($element: $Element | undefined) {
+    focus($element: $Element | undefined, focused: boolean = false) {
         if (!$element) return this;
         $element.hide(false);
         const {scrollTop, scrollLeft} = document.documentElement;
@@ -138,6 +161,7 @@ export class $FocusLayer {
             }
         })
         const {scrollThreshold} = this.__$property__;
+        const $focused = this.currentFocus;
         this.blur();
         this.currentFocus = $element;
         if (scrollTop > position.top - scrollThreshold // scroll after item threshold
@@ -146,22 +170,25 @@ export class $FocusLayer {
         if (scrollTop + innerHeight < position.top + scrollThreshold // scroll before item
             || scrollTop + innerHeight < position.bottom + scrollThreshold
         ) document.documentElement.scrollTo({left: position.left - scrollThreshold, top: (position.bottom - innerHeight) + scrollThreshold});
-        $element.attribute('focus', '')
-        $element.focus({preventScroll: true});
+        $element.attribute('focus', '');
+        this.fire('focus', {$prevFocus: $focused, $focused: $element, layer: this});
+        if (!focused) $element.trigger('focus');
         return this;
     }
 
-    blur() {
+    blur($element?: $Element) {
+        if ($element && $element !== this.currentFocus) return this;
         if (!this.currentFocus) return this;
         this.beforeBlur = this.currentFocus;
         this.currentFocus.attribute('focus', null);
-        this.currentFocus?.blur();
         this.currentFocus = undefined;
+        this.fire('blur', {$prevFocus: this.beforeBlur, layer: this});
+        this.beforeBlur.trigger('blur');
         return this;
     }
 
     removeAll() {
-        this.elementSet.clear();
+        this.elementSet.forEach($ele => this.remove($ele));
         return this;
     }
 

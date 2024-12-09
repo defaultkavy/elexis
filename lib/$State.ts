@@ -1,12 +1,16 @@
+import { $EventManager, $EventMap } from "./$EventManager";
+
 export interface $StateOption<T> {
     format: (value: T) => string;
 }
-export class $State<T> {
+export class $State<T> extends $EventManager<$StateEventMap<T>> {
     protected _value!: T | $State<T>;
+    protected _convert?: (value: any) => T;
     readonly attributes = new Map<Object, Set<string | number | symbol>>();
     readonly linkStates = new Set<$State<T>>;
     options: Partial<$StateOption<T>> = {}
     constructor(value: T, options?: $StateOption<T>) {
+        super();
         this.set(value);
         if (options) this.options = options;
     }
@@ -44,6 +48,7 @@ export class $State<T> {
                 }
             }
         }
+        this.fire('update', {state$: this})
     }
 
     use<O extends Object, K extends keyof O>(object: O, attrName: K) {
@@ -52,16 +57,18 @@ export class $State<T> {
         else this.attributes.set(object, new Set<string | number | symbol>().add(attrName))
     }
 
-    convert(fn: (value: T) => string) {
-        return new $State<T>(this as any, {format: fn});
+    convert<K>(fn: (value: T) => K) {
+        const convert$ = new $State<K>(this as any);
+        convert$._convert = fn;
+        return convert$;
     }
 
     get value(): T {
-        return this._value instanceof $State ? this._value.value as T : this._value;
+        return this._value instanceof $State ? this._convert ? this._convert(this._value.value) : this._value.value : this._value;
     }
 
     toString(): string {
-        if (this.options.format) return this.options.format(this.value);
+        if (this.options.format) return `${this.options.format(this.value)}`;
         if (this.value instanceof Object) return JSON.stringify(this.toJSON());
         return `${this.value}`
     }
@@ -73,4 +80,7 @@ export class $State<T> {
     }
 };
 
-export type $StateArgument<T> = $State<T> | undefined | (T extends (infer R)[] ? R : T);
+export type $StateArgument<T> = $State<T> | $State<undefined | T> | undefined | (T extends (infer R)[] ? R : T);
+export interface $StateEventMap<T> extends $EventMap {
+    update: [{state$: $State<T>}]
+}
