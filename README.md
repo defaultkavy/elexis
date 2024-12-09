@@ -1,7 +1,7 @@
 <picture style="display: flex; justify-content: center">
-  <source media="(prefers-color-scheme: dark)" srcset="https://git.defaultkavy.com/defaultkavy/elexis/raw/branch/assets/logo_light.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://git.defaultkavy.com/defaultkavy/elexis/raw/branch/assets/logo_dark.png">
-  <img src="https://git.defaultkavy.com/defaultkavy/elexis/raw/branch/assets/logo_dark.png" alt="Elexis Logo">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/defaultkavy-dev/elexis/refs/heads/assets/logo_light.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/defaultkavy-dev/elexis/refs/heads/assets/logo_dark.png">
+  <img src="https://raw.githubusercontent.com/defaultkavy-dev/elexis/refs/heads/assets/logo_dark.png" alt="Elexis Logo">
 </picture>
 <p style="text-align: center">Build Web in Native JavaScript Syntax</p>
 
