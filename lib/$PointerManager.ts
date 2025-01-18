@@ -54,8 +54,6 @@ export class $PointerManager extends $EventManager<$PointerManagerEventMap> {
             height: e.height,
             x: e.x,
             y: e.y,
-            movement_x: e.movementX,
-            movement_y: e.movementY
         }
     }
 }
@@ -71,6 +69,8 @@ export interface $Pointer extends $PointerData {}
 export class $Pointer {
     initial_x: number;
     initial_y: number;
+    movement_x: number = 0;
+    movement_y: number = 0;
     $target: $Node;
     direction: $PointerDirection | null = null;
     protected manager: $PointerManager;
@@ -86,7 +86,12 @@ export class $Pointer {
     get move_y() { return this.y - this.initial_y }
 
     update(data: $PointerData) {
+        const prev_move_x = this.move_x;
+        const prev_move_y = this.move_y;
         Object.assign(this, data);
+        this.movement_x = this.move_x - prev_move_x;
+        this.movement_y = this.move_y - prev_move_y;
+        console.debug(this.movement_x, data.x, this.move_x)
         return this;
     }
 
@@ -103,8 +108,6 @@ export interface $PointerData {
     height: number;
     x: number;
     y: number;
-    movement_x: number;
-    movement_y: number;
 }
 
 export type PointerType = 'mouse' | 'pen' | 'touch'
