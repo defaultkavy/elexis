@@ -91,7 +91,6 @@ export class $Pointer {
         Object.assign(this, data);
         this.movement_x = this.move_x - prev_move_x;
         this.movement_y = this.move_y - prev_move_y;
-        console.debug(this.movement_x, data.x, this.move_x)
         return this;
     }
 
