@@ -1,5 +1,8 @@
 import { $EventTarget } from "../$EventTarget";
-import { $, $Element, $EventManager, $State, $HTMLElement, $Container } from "../../index";
+import { $State } from "../$State";
+import type { $Element } from "./$Element";
+import type { $HTMLElement } from "./$HTMLElement";
+import type { $Container } from "./$Container";
 
 export abstract class $Node<N extends Node = Node, $EM extends $NodeEventMap = $NodeEventMap, EM extends GlobalEventHandlersEventMap = GlobalEventHandlersEventMap> extends $EventTarget<$EM, EM> {
     abstract readonly dom: N;
@@ -45,16 +48,12 @@ export abstract class $Node<N extends Node = Node, $EM extends $NodeEventMap = $
     self(callback: OrArray<($node: this) => void>) { $.orArrayResolve(callback).forEach(fn => fn(this)); return this; }
     inDOM() { return document.contains(this.dom); }
     
-    isElement(): this is $Element {
-        if (this instanceof $Element) return true;
-        else return false;
-    }
     get element(): $Element | null { 
-        if (this instanceof $Element) return this;
+        if (this.dom instanceof Element) return this as unknown as $Element;
         else return null;
     }
     get htmlElement(): $HTMLElement | null {
-        if (this instanceof $HTMLElement) return this;
+        if (this.dom instanceof HTMLElement) return this as unknown as $HTMLElement;
         else return null;
     }
 }
