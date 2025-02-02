@@ -1,4 +1,4 @@
-import { $EventManager, $EventMap, $EventTarget, $FocusManager, $Media, $PointerManager, $State, $StateArgument, $StateOption } from "./index";
+import { $EventManager, $EventMap, $EventTarget, $FocusManager, $Media, $ObjectState, $PointerManager, $State, $StateArgument, $StateOption } from "./index";
 import { $Node } from "./lib/node/$Node"
 import { $Document } from "./lib/node/$Document"
 import { $Anchor } from "./lib/node/$Anchor";
@@ -15,12 +15,13 @@ import { $Select } from "./lib/node/$Select";
 import { $Option } from "./lib/node/$Option";
 import { $OptGroup } from "./lib/node/$OptGroup";
 import { $Textarea } from "./lib/node/$Textarea";
-import { $Util } from "./lib/$Util";
+import { $Util } from "./lib/structure/$Util";
 import { $HTMLElement } from "./lib/node/$HTMLElement";
 import { $Async } from "./lib/node/$Async";
 import { $Video } from "./lib/node/$Video";
-import { $Window } from "./lib/$Window";
-import { $KeyboardManager } from "./lib/$KeyboardManager";
+import { $Window } from "./lib/structure/$Window";
+import { $KeyboardManager } from "./lib/structure/$KeyboardManager";
+import { convertFrom } from "./lib/method/convertFrom";
 
 export type $ = typeof $;
 export function $<E extends $Element = $Element>(query: `::${string}`): E[];
@@ -52,7 +53,7 @@ export function $(resolver: any) {
     }
     if (resolver instanceof Node) {
         if (resolver.$) return resolver.$;
-        else return $Util.from(resolver);
+        else return convertFrom(resolver);
     }
     if (resolver instanceof Window) { return $Window.$ }
     throw `$: NOT SUPPORT TARGET ELEMENT TYPE ('${resolver}')`
@@ -152,7 +153,7 @@ export namespace $ {
             if (value instanceof $State) {
                 value.use(object, key);
                 if (object[key] instanceof Function) (object[key] as Function)(...value.value)
-                    else object[key] = value.value;
+                else if (value.value !== undefined) object[key] = value.value;
                 if (handle) handle(value);
                 return;
             }
@@ -160,10 +161,12 @@ export namespace $ {
             else object[key] = value as any;
     }
     
-    export function state<T>(value: T, options?: $StateOption<T>): $State<T>;
     export function state<T extends $State<any>, K extends T extends $State<infer A> ? A : never>(value: T, options?: $StateOption<K>): $State<K>;
+    export function state<T extends boolean>(value: T, options?: $StateOption<boolean>): $State<boolean>;
+    export function state<T extends Object>(value: T, options?: $StateOption<T>): $ObjectState<T>;
+    export function state<T>(value: T, options?: $StateOption<T>): $State<T>;
     export function state<T>(value: T, options?: $StateOption<T extends $State<infer K> ? K : T>) {
-        return new $State<T>(value, options as $StateOption<T>);
+        return $State.create<T>(value, options as $StateOption<T>)
     }
 
     export async function resize(object: Blob, size: number): Promise<string> {
@@ -208,6 +211,7 @@ export namespace $ {
     export function pointers($node: $Node) { return new $PointerManager($node) }
     export function keys($target: $EventTarget) { return new $KeyboardManager($target) }
     export function focus() { return new $FocusManager() }
+    export function classlist(...name: (string | undefined)[]) { return $Util.classlist(name) }
 }
 
 globalThis.$ = $;

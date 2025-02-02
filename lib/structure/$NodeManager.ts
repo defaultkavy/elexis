@@ -1,5 +1,5 @@
-import { $Container } from "./node/$Container";
-import { $Node } from "./node/$Node";
+import { $Container } from "../node/$Container";
+import { $Node } from "../node/$Node";
 
 export class $NodeManager {
     readonly $container: $Container;

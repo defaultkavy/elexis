@@ -1,6 +1,6 @@
-import { $State, $StateArgument } from "../$State";
-import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
-import { $Util } from "../$Util";
+import { $State, $StateArgument } from "../structure/$State";
+import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
+import { $Util } from "../structure/$Util";
 import { $HTMLElement, $HTMLElementOptions } from "./$HTMLElement";
 
 export interface $InputOptions extends $HTMLElementOptions {}
@@ -17,8 +17,8 @@ export class $Input<T extends string | number = string> extends $HTMLElement<HTM
     }, () => $.set(this.dom, 'value', value as $State<string> | string, (value$) => {
         this.on('input', () => {
             if (value$.attributes.has(this.dom) === false) return;
-            if (typeof value$.value === 'string') (value$ as $State<string>).set(`${this.value()}`)
-            if (typeof value$.value === 'number') (value$ as unknown as $State<number>).set(Number(this.value()))
+            if (typeof value$.value === 'string') (value$ as $State<string>).set(`${this.value()}`, {disableUpdate: true})
+            if (typeof value$.value === 'number') (value$ as unknown as $State<number>).set(Number(this.value()), {disableUpdate: true})
         })
     }))}
     
@@ -153,8 +153,8 @@ export class $CheckInput extends $Input<string> {
     }
 
     checked(): boolean;
-    checked(boolean: boolean): this;
-    checked(boolean?: boolean) { return $.fluent(this, arguments, () => this.dom.checked, () => $.set(this.dom, 'checked', boolean))}
+    checked(boolean: $StateArgument<boolean>): this;
+    checked(boolean?: $StateArgument<boolean>) { return $.fluent(this, arguments, () => this.dom.checked, () => $.set(this.dom, 'checked', boolean))}
     
     defaultChecked(): boolean;
     defaultChecked(defaultChecked: boolean): this;

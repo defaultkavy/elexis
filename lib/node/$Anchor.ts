@@ -1,4 +1,4 @@
-import { $StateArgument } from "../$State";
+import { $StateArgument } from "../structure/$State";
 import { $Container, $ContainerOptions } from "./$Container";
 
 export interface $AnchorOptions extends $ContainerOptions {}

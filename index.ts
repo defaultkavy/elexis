@@ -38,14 +38,14 @@ Object.defineProperties(Set.prototype, {
 })
 Set.prototype.sort = function <T>(this: Set<T>, handler: ((a: T, b: T) => number) | undefined) { return this.array.sort(handler)}
 export * from "./$index";
-export * from "./lib/$NodeManager";
-export * from "./lib/$EventManager";
-export * from "./lib/$EventTarget";
-export * from "./lib/$KeyboardManager";
-export * from "./lib/$FocusManager";
-export * from "./lib/$PointerManager";
-export * from "./lib/$Window";
-export * from "./lib/$State";
+export * from "./lib/structure/$NodeManager";
+export * from "./lib/structure/$EventManager";
+export * from "./lib/structure/$EventTarget";
+export * from "./lib/structure/$KeyboardManager";
+export * from "./lib/structure/$FocusManager";
+export * from "./lib/structure/$PointerManager";
+export * from "./lib/structure/$Window";
+export * from "./lib/structure/$State";
 export * from "./lib/node/$Node";
 export * from "./lib/node/$Anchor";
 export * from "./lib/node/$Element";

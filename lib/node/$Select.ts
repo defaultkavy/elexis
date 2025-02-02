@@ -1,9 +1,9 @@
 import { $Container, $ContainerOptions } from "./$Container";
 import { $OptGroup } from "./$OptGroup";
 import { $Option } from "./$Option";
-import { $State, $StateArgument } from "../$State";
-import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
-import { $Util } from "../$Util";
+import { $State, $StateArgument } from "../structure/$State";
+import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
+import { $Util } from "../structure/$Util";
 
 export interface $SelectOptions extends $ContainerOptions {}
 export class $Select extends $Container<HTMLSelectElement> {

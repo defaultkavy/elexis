@@ -1,4 +1,4 @@
-import { $StateArgument } from "../$State";
+import { $StateArgument } from "../structure/$State";
 import { $ElementOptions } from "./$Element";
 import { $HTMLElement } from "./$HTMLElement";
 

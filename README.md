@@ -41,7 +41,7 @@ Let's try this code in your entry file:
 
 ```ts
 $(document.body).content([
-    $('h1').class('title').content('Hello, world!')
+    $('h1').class('title large-text').content('Hello, world!')
 ])
 ```
 
@@ -53,7 +53,7 @@ Run the code, we will get this body structure in DOM:
 
 ```html
 <body>
-    <h1 class="title">Hello, world!</h1>
+    <h1 class="title large-text">Hello, world!</h1>
 </body>
 ```
 
@@ -89,3 +89,4 @@ value$.set(0)
 1. [@elexis.js/router](https://github.com/elexis-js/router): Router for Single Page App.
 2. [@elexis.js/layout](https://github.com/elexis-js/layout): Build waterfall/justified layout with automatic compute content size and position.
 3. [@elexis.js/view](https://github.com/elexis-js/view): Multiple content switch handler.
+4. [@elexis.js/style](https://github.com/elexis-js/style): Write styles in JavaScript.

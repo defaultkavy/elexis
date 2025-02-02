@@ -1,7 +1,7 @@
 import { $Container, $ContainerOptions } from "./$Container";
-import { $State, $StateArgument } from "../$State";
-import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
-import { $Util } from "../$Util";
+import { $State, $StateArgument } from "../structure/$State";
+import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
+import { $Util } from "../structure/$Util";
 
 export interface $OptionOptions extends $ContainerOptions {}
 export class $Option extends $Container<HTMLOptionElement> {

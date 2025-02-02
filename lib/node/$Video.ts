@@ -1,4 +1,4 @@
-import { $StateArgument } from "../$State";
+import { $StateArgument } from "../structure/$State";
 import { $Media, $MediaOptions } from "./$Media";
 
 export interface $VideoOptions extends $MediaOptions {}

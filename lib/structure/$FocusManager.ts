@@ -1,4 +1,4 @@
-import { $Element, $EventManager, $EventMap } from "..";
+import { $Element, $EventManager, $EventMap } from "../..";
 
 export class $FocusManager extends $EventManager<$FocusLayerEventMap> {
     layerMap = new Map<number, $FocusLayer>();

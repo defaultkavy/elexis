@@ -1,5 +1,5 @@
 import { $StateArgument } from "./$State";
-import { $Form } from "./node/$Form";
+import { $Form } from "../node/$Form";
 export abstract class $HTMLElementAPIs<This = any> {
 
     static create(...args: (keyof $HTMLElementAPIs)[]) {

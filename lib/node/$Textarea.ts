@@ -1,7 +1,7 @@
 import { $Container, $ContainerOptions } from "./$Container";
-import { $StateArgument } from "../$State";
-import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
-import { $Util } from "../$Util";
+import { $StateArgument } from "../structure/$State";
+import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
+import { $Util } from "../structure/$Util";
 
 export interface $TextareaOptions extends $ContainerOptions {}
 export class $Textarea extends $Container<HTMLTextAreaElement> {

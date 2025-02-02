@@ -1,6 +1,6 @@
-import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
-import { $StateArgument } from "../$State";
-import { $Util } from "../$Util";
+import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
+import { $StateArgument } from "../structure/$State";
+import { $Util } from "../structure/$Util";
 import { $Container, $ContainerOptions } from "./$Container";
 export interface $LabelOptions extends $ContainerOptions {}
 export class $Label extends $Container<HTMLLabelElement> {

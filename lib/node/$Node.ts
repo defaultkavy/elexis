@@ -1,5 +1,5 @@
-import { $EventTarget } from "../$EventTarget";
-import { $State } from "../$State";
+import { $EventTarget } from "../structure/$EventTarget";
+import { $State } from "../structure/$State";
 import type { $Element } from "./$Element";
 import type { $HTMLElement } from "./$HTMLElement";
 import type { $Container } from "./$Container";

@@ -1,7 +1,7 @@
 import { $Element } from "./$Element";
-import { $NodeManager } from "../$NodeManager";
+import { $NodeManager } from "../structure/$NodeManager";
 import { $Node } from "./$Node";
-import { $State, $StateArgument } from "../$State";
+import { $State, $StateArgument } from "../structure/$State";
 import { $Text } from "./$Text";
 import { $HTMLElement, $HTMLElementEventMap, $HTMLElementOptions } from "./$HTMLElement";
 

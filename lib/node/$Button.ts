@@ -1,6 +1,6 @@
 import { $Container, $ContainerOptions } from "./$Container";
-import { $Util } from "../$Util";
-import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../$ElementTemplate";
+import { $Util } from "../structure/$Util";
+import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
 export interface $ButtonOptions extends $ContainerOptions {}
 export class $Button extends $Container<HTMLButtonElement> {
     constructor(options?: $ButtonOptions) {

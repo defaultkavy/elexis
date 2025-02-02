@@ -9,16 +9,32 @@ export class $State<T> extends $EventManager<$StateEventMap<T>> {
     readonly attributes = new Map<Object, Set<string | number | symbol>>();
     readonly linkStates = new Set<$State<T>>;
     options: Partial<$StateOption<T>> = {}
-    constructor(value: T, options?: $StateOption<T>) {
+    private constructor(value: T, options?: $StateOption<T>) {
         super();
         this.set(value);
         if (options) this.options = options;
     }
-    set(value: T | $State<T>) {
+
+    static create<T>(value: T, options?: $StateOption<T>): $State<T>;
+    static create<T extends $State<any>, K extends T extends $State<infer A> ? A : never>(value: T, options?: $StateOption<K>): $State<K>;
+    static create<T extends Object>(value: T, options?: $StateOption<T>): $ObjectState<T>;
+    static create<T>(value: T, options?: $StateOption<T extends $State<infer K> ? K : T>) {
+        return new $State<T>(value, options as $StateOption<T>)
+    }
+
+    set(value: T | $State<T>, config?: {disableUpdate?: boolean, disableUpdateLink?: boolean}) {
         this._value = value;
         if (value instanceof $State) value.linkStates.add(this as any);
-        this.update();
-        this.linkStates.forEach($state => $state.update());
+        else if (value instanceof Object) {
+            const this_map = new Map(Object.entries(this))
+            for (const [k, v] of Object.entries(value)) {
+                const assigned_state =  this_map.get(`${k}$`);
+                if (assigned_state instanceof $State) assigned_state.set(v);
+                else Object.assign(this, {[`${k}$`]: $.state(v)});
+            }
+        }
+        if (!config?.disableUpdate) this.update();
+        if (!config?.disableUpdateLink) this.linkStates.forEach($state => $state.update());
     }
 
     static toJSON(object: Object): Object {
@@ -78,9 +94,20 @@ export class $State<T> extends $EventManager<$StateEventMap<T>> {
         if (this.value instanceof Object) return $State.toJSON(this.value);
         else return this.toString();
     }
+
+    isType(): T extends null | undefined ? null : $ObjectState<T> {
+        //@ts-expect-error
+        if (this._value === null || this._value === undefined) return null;
+        //@ts-expect-error
+        return this;
+    }
 };
 
 export type $StateArgument<T> = $State<T> | $State<undefined | T> | undefined | (T extends (infer R)[] ? R : T);
 export interface $StateEventMap<T> extends $EventMap {
     update: [{state$: $State<T>}]
 }
+
+export type $ObjectState<T> = T extends string | number | undefined | null ? $State<T> : T extends boolean ? $State<boolean> :$State<T> & { [key in ObjectKeyExcludeFunctionValue<T> & string as `${key}$`]: $ObjectState<T[key]> }
+
+type ObjectKeyExcludeFunctionValue<T> = {[K in keyof T]-?: T[K] extends Function ? never : K}[keyof T]
