@@ -34,7 +34,7 @@ Array.prototype.detype = function <T extends any, O>(this: O[], ...types: T[]) {
     }) as Exclude<O, T | undefined | void>[];
 }
 Object.defineProperties(Set.prototype, {
-    array: { get: function <T>(this: Set<T>) { return Array.from(this)} }
+    array: { configurable: true, get: function <T>(this: Set<T>) { return Array.from(this)} }
 })
 Set.prototype.sort = function <T>(this: Set<T>, handler: ((a: T, b: T) => number) | undefined) { return this.array.sort(handler)}
 export * from "./$index";
