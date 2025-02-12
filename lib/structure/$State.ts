@@ -3,12 +3,12 @@ import { $EventManager, $EventMap } from "./$EventManager";
 export interface $StateOption<T> {
     format: (value: T) => string;
 }
-export class $State<T> extends $EventManager<$StateEventMap<T>> {
+export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
     protected _value!: T | $State<T>;
     protected _convert?: (value: any) => T;
     readonly attributes = new Map<Object, Set<string | number | symbol>>();
     readonly linkStates = new Set<$State<T>>;
-    options: Partial<$StateOption<T>> = {}
+    options: Partial<$StateOption<T>> = {};
     private constructor(value: T, options?: $StateOption<T>) {
         super();
         this.set(value);
@@ -30,9 +30,13 @@ export class $State<T> extends $EventManager<$StateEventMap<T>> {
             for (const [k, v] of Object.entries(value)) {
                 const assigned_state =  this_map.get(`${k}$`);
                 if (assigned_state instanceof $State) assigned_state.set(v);
-                else Object.assign(this, {[`${k}$`]: $.state(v)});
+                else Object.assign(this, {[`${k}$`]: $.state(v).on('change', ({state$}) => {
+                    Object.assign(this._value as Object, {[k]: state$._value})
+                })});
             }
         }
+        
+        this.fire('change', {state$: this})
         if (!config?.disableUpdate) this.update();
         if (!config?.disableUpdateLink) this.linkStates.forEach($state => $state.update());
     }
@@ -105,7 +109,8 @@ export class $State<T> extends $EventManager<$StateEventMap<T>> {
 
 export type $StateArgument<T> = $State<T> | $State<undefined | T> | undefined | (T extends (infer R)[] ? R : T);
 export interface $StateEventMap<T> extends $EventMap {
-    update: [{state$: $State<T>}]
+    update: [{state$: $State<T>}],
+    change: [{state$: $State<T>}]
 }
 
 export type $ObjectState<T> = T extends string | number | undefined | null ? $State<T> : T extends boolean ? $State<boolean> :$State<T> & { [key in ObjectKeyExcludeFunctionValue<T> & string as `${key}$`]: $ObjectState<T[key]> }

@@ -1,4 +1,4 @@
-import { $EventManager, $EventMap, $EventTarget, $FocusManager, $Media, $ObjectState, $PointerManager, $State, $StateArgument, $StateOption } from "./index";
+import { $EventManager, $EventMap, $EventTarget, $FocusManager, $ObjectState, $PointerManager, $State, $StateArgument, $StateOption } from "./index";
 import { $Node } from "./lib/node/$Node"
 import { $Document } from "./lib/node/$Document"
 import { $Anchor } from "./lib/node/$Anchor";
@@ -161,8 +161,10 @@ export namespace $ {
             else object[key] = value as any;
     }
     
-    export function state<T extends $State<any>, K extends T extends $State<infer A> ? A : never>(value: T, options?: $StateOption<K>): $State<K>;
+    export function state<T extends number>(value: T, options?: $StateOption<T>): $State<number>;
+    export function state<T extends string>(value: T, options?: $StateOption<T>): $State<string>;
     export function state<T extends boolean>(value: T, options?: $StateOption<boolean>): $State<boolean>;
+    export function state<T extends $State<any>, K extends T extends $State<infer A> ? A : never>(value: T, options?: $StateOption<K>): $State<K>;
     export function state<T extends Object>(value: T, options?: $StateOption<T>): $ObjectState<T>;
     export function state<T>(value: T, options?: $StateOption<T>): $State<T>;
     export function state<T>(value: T, options?: $StateOption<T extends $State<infer K> ? K : T>) {
@@ -212,6 +214,7 @@ export namespace $ {
     export function keys($target: $EventTarget) { return new $KeyboardManager($target) }
     export function focus() { return new $FocusManager() }
     export function classlist(...name: (string | undefined)[]) { return $Util.classlist(name) }
+    export function pass(...args: any) { return true }
 }
 
 globalThis.$ = $;

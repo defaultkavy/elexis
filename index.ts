@@ -1,5 +1,7 @@
+import type { $ } from "./$index";
+
 declare global {
-    var $: import('./$index').$;
+    var $: $
     interface Array<T> {
         detype<F extends any, O>(...types: F[]): Array<Exclude<T, F | undefined | void>>
     }

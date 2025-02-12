@@ -1,5 +1,5 @@
 import { $Container, $ContainerOptions } from "./$Container";
-import { $StateArgument } from "../structure/$State";
+import { $State, $StateArgument } from "../structure/$State";
 import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
 import { $Util } from "../structure/$Util";
 
@@ -18,9 +18,14 @@ export class $Textarea extends $Container<HTMLTextAreaElement> {
     wrap(wrap?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.wrap, () => $.set(this.dom, 'wrap', wrap))}
     
     value(): string;
-    value(value?: $StateArgument<string> | undefined): this;
-    value(value?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
-    
+    value(value: $StateArgument<string>): this;
+    value(value?: $StateArgument<string>) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value as $State<string> | string, (value$) => {
+        this.on('input', () => {
+            if (value$.attributes.has(this.dom) === false) return;
+            (value$ as $State<string>).set(`${this.value()}`)
+        })
+    }))}
+
     defaultValue(): string;
     defaultValue(defaultValue: string): this;
     defaultValue(defaultValue?: string) { return $.fluent(this, arguments, () => this.dom.defaultValue, () => $.set(this.dom, 'defaultValue', defaultValue))}
