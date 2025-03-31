@@ -1,10 +1,10 @@
 import { $State, $StateArgument } from "../structure/$State";
 import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
 import { $Util } from "../structure/$Util";
-import { $HTMLElement, $HTMLElementOptions } from "./$HTMLElement";
+import { $HTMLElement, $HTMLElementEventMap, $HTMLElementOptions } from "./$HTMLElement";
 
 export interface $InputOptions extends $HTMLElementOptions {}
-export class $Input<T extends string | number = string> extends $HTMLElement<HTMLInputElement> {
+export class $Input<T extends string | number = string, I = $Input<T, never>> extends $HTMLElement<HTMLInputElement, $InputEventMap<I>> {
     constructor(options?: $InputOptions) {
         super('input', options);
     }
@@ -117,7 +117,12 @@ export class $Input<T extends string | number = string> extends $HTMLElement<HTM
 
 export interface $Input extends $HTMLElementAPIFilter<$Input, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'validationMessage' | 'validity' | 'willValidate' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget'> {}
 $Util.mixin($Input, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'validationMessage', 'validity', 'willValidate', 'formAction', 'formEnctype', 'formMethod', 'formNoValidate', 'formTarget'))
-export class $NumberInput extends $Input<number> {
+
+export interface $InputEventMap<T> extends $HTMLElementEventMap {
+    input: [InputEvent, T]
+}
+
+export class $NumberInput extends $Input<number, $NumberInput> {
     constructor(options?: $InputOptions) {
         super(options)
         this.type('number')
@@ -142,7 +147,7 @@ export class $NumberInput extends $Input<number> {
     step(step?: number) { return $.fluent(this, arguments, () => Number(this.dom.step), () => $.set(this.dom, 'step', step?.toString()))}
 }
 
-export class $CheckInput extends $Input<string> {
+export class $CheckInput extends $Input<string, $CheckInput> {
     constructor(options?: $InputOptions) {
         super(options)
         this.type('radio')
@@ -161,7 +166,7 @@ export class $CheckInput extends $Input<string> {
     defaultChecked(defaultChecked?: boolean) { return $.fluent(this, arguments, () => this.dom.defaultChecked, () => $.set(this.dom, 'defaultChecked', defaultChecked))}
 }
 
-export class $FileInput extends $Input<string> {
+export class $FileInput extends $Input<string, $FileInput> {
     constructor(options?: $InputOptions) {
         super(options)
         this.type('file')

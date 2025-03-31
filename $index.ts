@@ -1,4 +1,4 @@
-import { $EventManager, $EventMap, $EventTarget, $FocusManager, $ObjectState, $PointerManager, $State, $StateArgument, $StateOption } from "./index";
+import { $EventManager, $EventMap, $EventTarget, $FocusManager, $StateObject, $PointerManager, $State, $StateArgument, $StateOption } from "./index";
 import { $Node } from "./lib/node/$Node"
 import { $Document } from "./lib/node/$Document"
 import { $Anchor } from "./lib/node/$Anchor";
@@ -165,7 +165,7 @@ export namespace $ {
     export function state<T extends string>(value: T, options?: $StateOption<T>): $State<string>;
     export function state<T extends boolean>(value: T, options?: $StateOption<boolean>): $State<boolean>;
     export function state<T extends $State<any>, K extends T extends $State<infer A> ? A : never>(value: T, options?: $StateOption<K>): $State<K>;
-    export function state<T extends Object>(value: T, options?: $StateOption<T>): $ObjectState<T>;
+    export function state<T extends Object>(value: T, options?: $StateOption<T>): $StateObject<T>;
     export function state<T>(value: T, options?: $StateOption<T>): $State<T>;
     export function state<T>(value: T, options?: $StateOption<T extends $State<infer K> ? K : T>) {
         return $State.create<T>(value, options as $StateOption<T>)

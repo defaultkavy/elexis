@@ -50,10 +50,10 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement, $EM exte
     addStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name = $Util.classlist(name); name.detype().forEach(n => this.static_classes.add(n)); this.addClass(...name)})}
     removeStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name = $Util.classlist(name); name.detype().forEach(n => this.static_classes.delete(n)); this.removeClass(...name)})}
 
-    /**Modify css of element. */
-    css(): CSSStyleDeclaration
-    css(style: Partial<CSSStyleDeclaration>): this;
-    css(style?: Partial<CSSStyleDeclaration>) { return $.fluent(this, arguments, () => this.dom.style, () => {Object.assign(this.dom.style, style)})}
+    /**Modify style of element. */
+    style(): CSSStyleDeclaration
+    style(style: Partial<CSSStyleDeclaration>): this;
+    style(style?: Partial<CSSStyleDeclaration>) { return $.fluent(this, arguments, () => this.dom.style, () => {Object.assign(this.dom.style, style)})}
     
     /**
      * Get or set attribute from this element.

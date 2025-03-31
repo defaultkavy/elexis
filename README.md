@@ -33,7 +33,7 @@ $('a');
 ## Fluent method
 Create and modify element in one line.
 ```ts
-$('h1').class('title').css({color: 'red'})
+$('h1').class('title').style({color: 'red'})
 ```
 
 ## Build your first "Hello, world!" ElexisJS project
@@ -89,4 +89,4 @@ value$.set(0)
 1. [@elexis.js/router](https://github.com/elexis-js/router): Router for Single Page App.
 2. [@elexis.js/layout](https://github.com/elexis-js/layout): Build waterfall/justified layout with automatic compute content size and position.
 3. [@elexis.js/view](https://github.com/elexis-js/view): Multiple content switch handler.
-4. [@elexis.js/style](https://github.com/elexis-js/style): Write styles in JavaScript.
+4. [@elexis.js/style](https://github.com/elexis-js/css): Write CSS in JavaScript.

@@ -66,7 +66,6 @@ export interface $NodeCoordinate {
 }
 
 export interface $NodeEventMap {
-
 }
 
 type $HTMLElementEventMap<$N> = {

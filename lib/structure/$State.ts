@@ -17,7 +17,7 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
 
     static create<T>(value: T, options?: $StateOption<T>): $State<T>;
     static create<T extends $State<any>, K extends T extends $State<infer A> ? A : never>(value: T, options?: $StateOption<K>): $State<K>;
-    static create<T extends Object>(value: T, options?: $StateOption<T>): $ObjectState<T>;
+    static create<T extends Object>(value: T, options?: $StateOption<T>): $StateObject<T>;
     static create<T>(value: T, options?: $StateOption<T extends $State<infer K> ? K : T>) {
         return new $State<T>(value, options as $StateOption<T>)
     }
@@ -99,7 +99,7 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
         else return this.toString();
     }
 
-    isType(): T extends null | undefined ? null : $ObjectState<T> {
+    isType(): T extends null | undefined ? null : $StateObject<T> {
         //@ts-expect-error
         if (this._value === null || this._value === undefined) return null;
         //@ts-expect-error
@@ -113,6 +113,6 @@ export interface $StateEventMap<T> extends $EventMap {
     change: [{state$: $State<T>}]
 }
 
-export type $ObjectState<T> = T extends string | number | undefined | null ? $State<T> : T extends boolean ? $State<boolean> :$State<T> & { [key in ObjectKeyExcludeFunctionValue<T> & string as `${key}$`]: $ObjectState<T[key]> }
+export type $StateObject<T> = T extends string | number | undefined | null ? $State<T> : T extends boolean ? $State<boolean> :$State<T> & { [key in ObjectKeyExcludeFunctionValue<T> & string as `${key}$`]: $StateObject<T[key]> }
 
 type ObjectKeyExcludeFunctionValue<T> = {[K in keyof T]-?: T[K] extends Function ? never : K}[keyof T]
