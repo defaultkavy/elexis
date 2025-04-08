@@ -24,7 +24,7 @@
 3. Use web packaging tools like [Vite](https://vitejs.dev/) to compile your project.
 
 ## How to Create Element
-Using the simple $ function to create any element with node name.
+Just use the `$` function to create any element with node name.
 ```ts
 $('a');
 ```
@@ -60,7 +60,6 @@ Run the code, we will get this body structure in DOM:
 So far, we just simply do a hello world project that you can type less in HTML way, and these is not the point of ElexisJS. Let's figure out what ElexisJS will boost development speed in the following examples.
 
 ## Using `$State` to sync view and data changes
-
 This line will create a `$State` value, usually we will put `$` sign behind variable name to mean this is a `$State` variable.
 
 ```ts
@@ -83,6 +82,23 @@ You will see the `<input>` element is fill with number `42`, and also `<p>` elem
 Using `set` method to set value of `$State`, all displayed content of `value$` will be synced.
 ```ts
 value$.set(0)
+```
+
+## Build Your Custom Element
+You can easily create your own element with writing `class` that extends from `$Node`:
+```ts
+class $CustomDiv extends $Container {
+    constructor(name: string) {
+        super('custom-div');
+        this.class('custom-block').content(name);
+    }
+}
+```
+And this is how to append it in dom tree:
+```ts
+$(document.body).content([
+    $($CustomDiv, 'This is custom div element!').style({fontSize: '2rem'})
+])
 ```
 
 ## Extensions

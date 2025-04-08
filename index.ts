@@ -1,6 +1,10 @@
-import type { $ } from "./$index";
+import type { $ } from "./lib/$index";
 
 declare global {
+    /**
+     * {@link $} is basic API interface to calling function, All major tools can be found in `$` properties.
+     * This is also a feature-rich function to help you create and select elements.
+     */
     var $: $
     interface Array<T> {
         detype<F extends any, O>(...types: F[]): Array<Exclude<T, F | undefined | void>>
@@ -39,7 +43,7 @@ Object.defineProperties(Set.prototype, {
     array: { configurable: true, get: function <T>(this: Set<T>) { return Array.from(this)} }
 })
 Set.prototype.sort = function <T>(this: Set<T>, handler: ((a: T, b: T) => number) | undefined) { return this.array.sort(handler)}
-export * from "./$index";
+export * from "./lib/$index";
 export * from "./lib/structure/$NodeManager";
 export * from "./lib/structure/$EventManager";
 export * from "./lib/structure/$EventTarget";

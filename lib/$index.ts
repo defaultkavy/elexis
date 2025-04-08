@@ -1,45 +1,136 @@
-import { $EventManager, $EventMap, $EventTarget, $FocusManager, $StateObject, $PointerManager, $State, $StateArgument, $StateOption } from "./index";
-import { $Node } from "./lib/node/$Node"
-import { $Document } from "./lib/node/$Document"
-import { $Anchor } from "./lib/node/$Anchor";
-import { $Button } from "./lib/node/$Button";
-import { $Form } from "./lib/node/$Form";
-import { $Input } from "./lib/node/$Input";
-import { $Container } from "./lib/node/$Container";
-import { $Element } from "./lib/node/$Element";
-import { $Label } from "./lib/node/$Label";
-import { $Image } from "./lib/node/$Image";
-import { $Canvas } from "./lib/node/$Canvas";
-import { $Dialog } from "./lib/node/$Dialog";
-import { $Select } from "./lib/node/$Select";
-import { $Option } from "./lib/node/$Option";
-import { $OptGroup } from "./lib/node/$OptGroup";
-import { $Textarea } from "./lib/node/$Textarea";
-import { $Util } from "./lib/structure/$Util";
-import { $HTMLElement } from "./lib/node/$HTMLElement";
-import { $Async } from "./lib/node/$Async";
-import { $Video } from "./lib/node/$Video";
-import { $Window } from "./lib/structure/$Window";
-import { $KeyboardManager } from "./lib/structure/$KeyboardManager";
-import { convertFrom } from "./lib/method/convertFrom";
+import { $EventManager, $EventMap, $EventTarget, $FocusManager, $StateObject, $PointerManager, $State, $StateArgument, $StateOption } from "../index";
+import { $Node } from "./node/$Node"
+import { $Document } from "./node/$Document"
+import { $Anchor } from "./node/$Anchor";
+import { $Button } from "./node/$Button";
+import { $Form } from "./node/$Form";
+import { $Input } from "./node/$Input";
+import { $Container } from "./node/$Container";
+import { $Element } from "./node/$Element";
+import { $Label } from "./node/$Label";
+import { $Image } from "./node/$Image";
+import { $Canvas } from "./node/$Canvas";
+import { $Dialog } from "./node/$Dialog";
+import { $Select } from "./node/$Select";
+import { $Option } from "./node/$Option";
+import { $OptGroup } from "./node/$OptGroup";
+import { $Textarea } from "./node/$Textarea";
+import { $Util } from "./structure/$Util";
+import { $HTMLElement } from "./node/$HTMLElement";
+import { $Async } from "./node/$Async";
+import { $Video } from "./node/$Video";
+import { $Window } from "./structure/$Window";
+import { $KeyboardManager } from "./structure/$KeyboardManager";
+import { convertFrom } from "./method/convertFrom";
 
 export type $ = typeof $;
+/**
+ * Multiple element selector query.
+ * @param query - `::<selector>`
+ * @example
+ * $(':button.red'); // return single $Element
+ * $('::button'); // return array of $Element
+ */
 export function $<E extends $Element = $Element>(query: `::${string}`): E[];
+/**
+ * Single element selector query.
+ * @param query - `:<selector>`
+ * @example
+ * $(':button.red'); // return single $Element
+ * $('::button'); // return array of $Element
+ */
 export function $<E extends $Element = $Element>(query: `:${string}`): E | null;
+/**
+ * Return `null`.
+ * @param element - null 
+ */
 export function $(element: null): null;
-export function $<K extends keyof $.TagNameTypeMap>(resolver: K): $.TagNameTypeMap[K];
-export function $<K extends string>(resolver: K): $Container;
+/**
+ * Create $Element with html tag name like 'a', 'div', 'h1'.
+ * @param tagname - key of {@link $.TagNameElementMap}
+ * @example $('div');
+ */
+export function $<K extends keyof $.TagNameTypeMap>(tagname: K): $.TagNameTypeMap[K];
+/**
+ * Create $Container with custom tag name.
+ * @param tagname - tag name
+ * @example $('custom-div');
+ */
+export function $<K extends string>(tagname: K): $Container;
+/**
+ * Return {@link $Window} object.
+ * @param window - {@link Window} Object.
+ * @example $(window);
+ */
 export function $(window: Window): $Window;
+/**
+ * Return {@link $HTMLElement} Object.
+ * @param htmlElement - {@link HTMLElement} Object.
+ * @example ${document.body}
+ */
 export function $<H extends HTMLElement>(htmlElement: H): $.$HTMLElementMap<H>;
+/**
+ * Return {@link $Element} Object.
+ * @param element - {@link Element} Object.
+ */
 export function $<H extends Element>(element: H): $Element;
+/**
+ * Return {@link $Node} Object
+ * @param node - {@link Node} Object.
+ */
 export function $<N extends $Node>(node: N): N;
 export function $<H extends EventTarget>(element: H): $Element;
-export function $(element: null | HTMLElement | EventTarget): $Element | null;
+/**
+ * Using {@link $Node} builder function as parameter.
+ * @param builder - function of {@link $Node} builder.
+ * @param args - builder function arguments.
+ * @example
+ * // define custom header element builder function
+ * function $CustomHeader(title: string, intro: string) {
+ *      return $('custom-div').class('header').content([
+ *          $('h1').class('title').content(title),
+ *          $('p').class('intro').content(intro)
+ *      ])
+ * }
+ * // build and append into dom tree
+ * $(document.body).content([
+ *      $($CustomHeader, 'Hello, World!', 'This is intro.')
+ * ])
+ */
+export function $<F extends (...args: any[]) => $Node, P extends Parameters<F>>(builder: F, ...args: P): ReturnType<F>; 
+/**
+ * Using constructor as parameter that extends {@link $Node} Object.
+ * @param constructor - constructor of {@link $Node} extended class.
+ * @param args - constructor arguments.
+ * @example
+ * // define custom header element class
+ * class $CustomHeader extends $Container {
+ *      constructor(title: string, intro: string) {
+ *          super('custom-div');
+ *          this.class('header').content([
+ *              $('h1').class('title').content(title),
+ *              $('p').class('intro').content(intro)
+ *          ])
+ *      }
+ * }
+ * // build and append into dom tree
+ * $(document.body).content([
+ *      $($CustomHeader, 'Hello, World!', 'This is intro.')
+ * ])
+ */
+export function $<C extends ConstructorType<$Node>, P extends ConstructorParameters<C>>(constructor: C, ...args: P): InstanceType<C>;
+export function $(element: null | HTMLElement | Element | Node | EventTarget): $EventTarget | $Node | $HTMLElement | $Element | null;
+/**
+ * Return `undefined`.
+ * @param element - `undefined`
+ */
 export function $(element: undefined): undefined;
-export function $(resolver: any) {
+export function $(resolver: any, ...args: any[]) {
     if (typeof resolver === 'undefined') return resolver;
     if (resolver === null) return resolver;
+    // is $Node
     if (resolver instanceof $Node) return resolver;
+    // is tagname or selector query
     if (typeof resolver === 'string') {
         if (resolver.startsWith('::')) return Array.from(document.querySelectorAll(resolver.replace(/^::/, ''))).map(dom => $(dom));
         else if (resolver.startsWith(':')) return $(document.querySelector(resolver.replace(/^:/, '')));
@@ -51,13 +142,27 @@ export function $(resolver: any) {
             return new instance();
         } else return new $Container(resolver);
     }
+    // is Node
     if (resolver instanceof Node) {
         if (resolver.$) return resolver.$;
         else return convertFrom(resolver);
     }
-    if (resolver instanceof Window) { return $Window.$ }
-    throw `$: NOT SUPPORT TARGET ELEMENT TYPE ('${resolver}')`
+    // is Window
+    if (resolver instanceof Window) return $Window.$;
+    // is builder of element
+    // if (resolver instanceof Function) { return resolver(...args) }
+    // is constructor of element
+    if (typeof resolver === 'function') {
+        if (resolver.prototype && resolver.prototype.constructor) return new resolver.prototype.constructor(...args)
+        else return resolver(...args)
+    }
+    throw `$(): Target not supported. ('${resolver}')`
 }
+
+/**
+ * `$` is basic API interface to calling function, All major tools can be found in `$` properties.
+ * This is also a feature-rich function to help you create and select elements.
+ */
 export namespace $ {
     export let anchorHandler: null | (($a: $Anchor, e: Event) => void) = null;
     export const TagNameElementMap = {
