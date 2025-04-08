@@ -1,6 +1,9 @@
 import { $EventTarget } from "./$EventTarget";
 import { $Util } from "./$Util";
 
+/**
+ * Keyboard event helper, manage event handler function of assigned keys.
+ */
 export class $KeyboardManager {
     keyMap = new Map<string, $KeyboardEventMap>();
     protected conditional?: ((event: KeyboardEvent) => boolean | undefined);
@@ -10,12 +13,26 @@ export class $KeyboardManager {
         $element.on('keypress', e => { if (this.conditional && !this.conditional(e)) return; this.keyMap.get(e.key)?.keypress.forEach(fn => fn(e)) })
     }
 
-    if(callback: (event: KeyboardEvent) => boolean | undefined) {
+    /**
+     * ### Event Handlers Conditional Function
+     * Every time key event triggered, parameter function `callback` will execute and check the result. 
+     * If function return `true` value, then all the assigned event handler function will be executed.
+     * If `false`, no assigned event handler function will execute.
+     * This function is more efficiently when there are multiple event handler have the same conditional.
+     * @param callback - The conditional callback function.
+     */
+    if(callback: (event: KeyboardEvent) => boolean | undefined): $KeyboardManager {
         this.conditional = callback;
         return this;
     }
 
-    assigns(keys: OrArray<string>, on: OrArray<$KeyboardEventType>, callback: $KeyboardEventHandler) {
+    /**
+     * Assign event handler function with keys.
+     * @param keys - Single or array of key string
+     * @param on - event type of keyboard. see: {@link $KeyboardEventType}
+     * @param callback - event handler function
+     */
+    assigns(keys: OrArray<string>, on: OrArray<$KeyboardEventType>, callback: $KeyboardEventHandler): $KeyboardManager {
         keys = $Util.orArrayResolve(keys);
         on = $Util.orArrayResolve(on);
         for (const key of keys) {
@@ -28,7 +45,13 @@ export class $KeyboardManager {
         return this;
     }
 
-    unassign(keys: OrArray<string>, on?: OrArray<$KeyboardEventType>, callback?: (event: KeyboardEvent) => void) {
+    /**
+     * Remove event handler function from keys.
+     * @param keys - Single or array of key string
+     * @param on - event type of keyboard. see: {@link $KeyboardEventType}
+     * @param callback - event handler function
+     */
+    unassign(keys: OrArray<string>, on?: OrArray<$KeyboardEventType>, callback?: (event: KeyboardEvent) => void): $KeyboardManager {
         keys = $Util.orArrayResolve(keys);
         on = on ? $Util.orArrayResolve(on) : ['keydown', 'keypress', 'keyup'];
         for (const key of keys) {
@@ -42,10 +65,25 @@ export class $KeyboardManager {
         return this;
     }
 
-    keydown(keys: OrArray<string>, callback: $KeyboardEventHandler) { this.assigns(keys, 'keydown', callback); return this; }
-    keyup(keys: OrArray<string>, callback: $KeyboardEventHandler) { this.assigns(keys, 'keyup', callback); return this; }
-    keypress(keys: OrArray<string>, callback: $KeyboardEventHandler) { this.assigns(keys, 'keypress', callback); return this; }
-    self(callback: ($self: this) => void) { callback(this); return this }
+    /**
+     * Shortform of {@link $KeyboardManager.assigns()} method. Trigger event on `keydown`.
+     * @param keys - Single or array of key string
+     * @param callback - event handler function
+     */
+    keydown(keys: OrArray<string>, callback: $KeyboardEventHandler): $KeyboardManager { this.assigns(keys, 'keydown', callback); return this; }
+    /**
+     * Shortform of {@link $KeyboardManager.assigns()} method. Trigger event on `keyup`.
+     * @param keys - Single or array of key string
+     * @param callback - event handler function
+     */
+    keyup(keys: OrArray<string>, callback: $KeyboardEventHandler): $KeyboardManager { this.assigns(keys, 'keyup', callback); return this; }
+    /**
+     * Shortform of {@link $KeyboardManager.assigns()} method. Trigger event on `keypress`.
+     * @param keys - Single or array of key string
+     * @param callback - event handler function
+     */
+    keypress(keys: OrArray<string>, callback: $KeyboardEventHandler): $KeyboardManager { this.assigns(keys, 'keypress', callback); return this; }
+    self(callback: ($self: this) => void): $KeyboardManager { callback(this); return this }
 }
 
 export type $KeyboardEventType = 'keydown' | 'keyup' | 'keypress';
