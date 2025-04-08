@@ -89,4 +89,4 @@ value$.set(0)
 1. [@elexis.js/router](https://github.com/elexis-js/router): Router for Single Page App.
 2. [@elexis.js/layout](https://github.com/elexis-js/layout): Build waterfall/justified layout with automatic compute content size and position.
 3. [@elexis.js/view](https://github.com/elexis-js/view): Multiple content switch handler.
-4. [@elexis.js/style](https://github.com/elexis-js/css): Write CSS in JavaScript.
+4. [@elexis.js/css](https://github.com/elexis-js/css): Write CSS in JavaScript.
