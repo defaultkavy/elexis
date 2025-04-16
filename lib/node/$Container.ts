@@ -29,23 +29,41 @@ export class $Container<H extends HTMLElement = HTMLElement, EM extends $Contain
             else children = cache;
         } else if (children instanceof Promise) { children = await children }
         children = $.orArrayResolve(children);
+        const array = this.children.array;
+        
         // Set position cursor depend negative or positive number, position will count from last index when position is negative.
-        this.__position_cursor = position < 0 ? this.children.array.length + position : position;
+        this.__position_cursor = 
+            position < 0 
+                ? array.at(position) 
+                    ? array.length + position + 1
+                    : 0
+                : array.at(position)
+                    ? position
+                    : array.length;
         for (const child of children) {
             if (child === undefined || child === null) continue; // skip
-            if (child instanceof Array) this.insert(child, this.__position_cursor); // insert element group at this position
-            else if (typeof child === 'string') this.children.add(new $Text(child), position); // turn string into $Text element
-            else if (child instanceof $State) {
-                const ele = new $Text(child.toString()); // turn $State object into $Text element
+            if (child instanceof Array) {
+                this.insert(child, this.__position_cursor); // insert element group at this position
+                continue; // skip increase __position_cursor
+            } else if (typeof child === 'string') {
+                for (const resolve of $State.resolver(child)){
+                    if (typeof resolve === 'string') {
+                        this.children.add(new $Text(resolve), this.__position_cursor); // turn string into $Text element
+                        this.__position_cursor++; // increase position count
+                    } else this.insert(resolve, this.__position_cursor);
+                }
+                continue;
+            } else if (child instanceof $State) {
+                const ele = new $Text(child.value); // turn $State object into $Text element
                 child.use(ele, 'content'); // bind $Text elelment and function name to $State
-                this.children.add(ele, position);
+                this.children.add(ele, this.__position_cursor);
             } 
             else if (child instanceof Promise) {
                 const $Async = (await import('./$Async')).$Async; // import $Async avoid extends error
                 const ele = new $Async().await(child) // using $Async.await resolve promise element
-                this.children.add(ele, position); // insert $Async element at this position, leave a position for promised element
+                this.children.add(ele, this.__position_cursor); // insert $Async element at this position, leave a position for promised element
             }
-            else this.children.add(child, position); // insert $Node element directly
+            else this.children.add(child, this.__position_cursor); // insert $Node element directly
             this.__position_cursor += 1; // increase position count
         }
         this.children.render(); // start to render dom tree

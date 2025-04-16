@@ -9,7 +9,7 @@ export class $NodeManager {
     }
 
     add(element: $Node, position = -1) {
-        if (position === -1 || this.childList.size - 1 === position) {
+        if (this.childList.size === 0 || position === -1) {
             this.childList.add(element);
         } else {
             const children = [...this.childList]

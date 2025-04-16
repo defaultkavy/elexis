@@ -1,3 +1,4 @@
+import type { $StateArgument } from "../structure/$State";
 import { $Util } from "../structure/$Util";
 import { $Node, $NodeEventMap } from "./$Node";
 export interface $ElementOptions {
@@ -32,8 +33,8 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement, $EM exte
 
     /**Replace id of element. @example Element.id('customId');*/
     id(): string;
-    id(name: string | undefined): this;
-    id(name?: string | undefined): this | string {return $.fluent(this, arguments, () => this.dom.id, () => $.set(this.dom, 'id', name as any))}
+    id(name: $StateArgument<string | undefined>): this;
+    id(name?: $StateArgument<string | undefined>): this | string {return $.fluent(this, arguments, () => this.dom.id, () => $.set(this.dom, 'id', name as any))}
 
     /**Replace list of class name to element. @example Element.class('name1 name2 name3', 'name4') */
     class(): DOMTokenList;
@@ -55,6 +56,10 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement, $EM exte
     style(style: Partial<CSSStyleDeclaration>): this;
     style(style?: Partial<CSSStyleDeclaration>) { return $.fluent(this, arguments, () => this.dom.style, () => {Object.assign(this.dom.style, style)})}
     
+    innerHTML(): string;
+    innerHTML(html: $StateArgument<string | undefined>): this;
+    innerHTML(html?: $StateArgument<string | undefined>) { return $.fluent(this, arguments, () => this.dom.innerHTML, () => $.set(this.dom, 'innerHTML', html as any)) }
+
     /**
      * Get or set attribute from this element.
      * @param qualifiedName Attribute name
@@ -84,10 +89,15 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement, $EM exte
     focus(options?: FocusOptions) { this.dom.focus(options); return this; }
     blur() { this.dom.blur(); return this; }
 
-    animate(keyframes: Keyframe[] | PropertyIndexedKeyframes | null, options?: number | KeyframeAnimationOptions, callback?: (animation: Animation) => void) {
+    animate(keyframes: $ElementAnimationKeyframe[] | $ElementAnimationPropertyIndexedKeyframes | null, options?: number | $ElementAnimationOptions<this>, callback?: (animation: Animation) => void) {
         const animation = this.dom.animate(keyframes, options);
-        if (callback) animation.onfinish = () => callback(animation);
-        return animation;
+        if (typeof options !== 'number') {
+            if (options?.onfinish !== undefined) animation.onfinish = (ev) => options.onfinish!(this, animation, ev);
+            if (options?.oncancel !== undefined) animation.oncancel = (ev) => options.oncancel!(this, animation, ev);
+            if (options?.onremove !== undefined) animation.onremove = (ev) => options.onremove!(this, animation, ev);
+        }
+        if (callback) callback(animation);
+        return this;
     }
 
     getAnimations(options?: GetAnimationsOptions) { return this.dom.getAnimations(options) }
@@ -113,3 +123,14 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement, $EM exte
 
 export type $DOMRect = Omit<DOMRect, 'toJSON'>;
 export interface $ElementEventMap extends $NodeEventMap {}
+export type $ElementAnimationPropertyIndexedKeyframes = PropertyIndexedKeyframes & {
+    [property in keyof CSSStyleDeclaration]?: string | string[] | number | null | (number | null)[] | undefined;
+};
+export type $ElementAnimationKeyframe = Keyframe & {
+    [property in keyof CSSStyleDeclaration]?: string | number | null | undefined;
+};
+export interface $ElementAnimationOptions<E extends $Element<any, any, any>> extends KeyframeAnimationOptions {
+    onfinish?: ($ele: E, animation: Animation, ev: AnimationPlaybackEvent) => void;
+    oncancel?: ($ele: E, animation: Animation, ev: AnimationPlaybackEvent) => void;
+    onremove?: ($ele: E, animation: Animation, ev: AnimationPlaybackEvent) => void;
+}

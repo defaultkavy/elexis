@@ -1,16 +1,21 @@
 import { $EventManager, $EventMap } from "./$EventManager";
+import { $Util } from "./$Util";
 
 export interface $StateOption<T> {
     format: (value: T) => string;
 }
 export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
+    static cache = new Map<string, $State>();
     protected _value!: T | $State<T>;
     protected _convert?: (value: any) => T;
     readonly attributes = new Map<Object, Set<string | number | symbol>>();
     readonly linkStates = new Set<$State<T>>;
-    options: Partial<$StateOption<T>> = {};
+    readonly id: string;
+    readonly options: Partial<$StateOption<T>> = {};
     private constructor(value: T, options?: $StateOption<T>) {
         super();
+        this.id = $Util.uuidv7().str;
+        $State.cache.set(this.id, this);
         this.set(value);
         if (options) this.options = options;
     }
@@ -87,11 +92,10 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
         return this._value instanceof $State ? this._convert ? this._convert(this._value.value) : this._value.value : this._value;
     }
 
-    toString(): string {
-        if (this.options.format) return `${this.options.format(this.value)}`;
-        if (this.value instanceof Object) return JSON.stringify(this.toJSON());
-        return `${this.value}`
-    }
+    /**
+     * Return $State ID
+     */
+    toString(): string { return `$@$${this.id}$@$`; }
 
     toJSON(): Object {
         if (this.value instanceof $State) return this.value.toJSON();
@@ -104,6 +108,21 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
         if (this._value === null || this._value === undefined) return null;
         //@ts-expect-error
         return this;
+    }
+
+    static resolver(txt: string) {
+        const result = [];
+        let cursor = 0;
+        for (const match of txt.matchAll(/\$@\$(.+?)\$@\$/g)) {
+            const stateId = match.at(1);
+            if (!stateId) continue;
+            const state$ = this.cache.get(stateId);
+            if (!state$) continue;
+            result.push(txt.slice(cursor, match.index), state$)
+            cursor = match.index + match[0].length;
+        }
+        result.push(txt.slice(cursor));
+        return result.filter(content => content !== '');
     }
 };
 
