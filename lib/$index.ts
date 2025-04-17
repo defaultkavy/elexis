@@ -261,6 +261,17 @@ export namespace $ {
                 else if (value.value !== undefined) object[key] = value.value;
                 if (handle) handle(value);
                 return;
+            } else if (typeof value === 'string') {
+                const template = $State.resolver(value);
+                const stateList = template.filter(item => item instanceof $State);
+                if (!stateList.length) return object[key] = value as any;
+                $State.templateMap.set(object, { template, attribute: key });
+                stateList.forEach(state$ => { state$.on('update', () => setTemplate()) })
+                setTemplate();
+                function setTemplate() {
+                    if (object[key] instanceof Function) object[key](template.map(item => item instanceof $State ? item.value : item).join(''))
+                    else object[key] = template.map(item => item instanceof $State ? item.value : item).join('') as any
+                }
             }
             if (object[key] instanceof Function) (object[key] as Function)(...value as any);
             else object[key] = value as any;

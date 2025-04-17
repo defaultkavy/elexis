@@ -9,7 +9,7 @@ export class $Async<N extends $Node = $Node> extends $Container {
         super('async', options)
     }
 
-    await<T extends $Node>($node: Promise<T | $ContainerContentType> | (($self: this) => Promise<T | $ContainerContentType>)) {
+    load<T extends $Node>($node: Promise<T | $ContainerContentType> | (($self: this) => Promise<T | $ContainerContentType>)) {
         if ($node instanceof Function) $node(this).then($node => this._loaded($node));
         else $node.then($node => this._loaded($node));
         return this as $Async<T>
@@ -17,7 +17,7 @@ export class $Async<N extends $Node = $Node> extends $Container {
 
     protected _loaded($node: $ContainerContentType) {
         this.#loaded = true;
-        if (typeof $node === 'string') this.replace(new $Text($node));
+        if (typeof $node === 'string' || typeof $node === 'number' || typeof $node === 'boolean') this.replace(new $Text(`${$node}`));
         else if ($node instanceof $State) {
             const ele = new $Text($node.toString());
             $node.use(ele, 'content');

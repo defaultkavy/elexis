@@ -6,10 +6,11 @@ export interface $StateOption<T> {
 }
 export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
     static cache = new Map<string, $State>();
+    static templateMap = new Map<Object, { template: (string | $State)[], attribute: string | number | symbol }>();
     protected _value!: T | $State<T>;
     protected _convert?: (value: any) => T;
     readonly attributes = new Map<Object, Set<string | number | symbol>>();
-    readonly linkStates = new Set<$State<T>>;
+    readonly linkStates = new Set<$State<T>>();
     readonly id: string;
     readonly options: Partial<$StateOption<T>> = {};
     private constructor(value: T, options?: $StateOption<T>) {
@@ -27,7 +28,8 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
         return new $State<T>(value, options as $StateOption<T>)
     }
 
-    set(value: T | $State<T>, config?: {disableUpdate?: boolean, disableUpdateLink?: boolean}) {
+    set(value: T | $State<T> | ((state$: this) => T | $State<T>), config?: {disableUpdate?: boolean, disableUpdateLink?: boolean}): this {
+        if (value instanceof Function) return this.set(value(this));
         this._value = value;
         if (value instanceof $State) value.linkStates.add(this as any);
         else if (value instanceof Object) {
@@ -35,15 +37,16 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
             for (const [k, v] of Object.entries(value)) {
                 const assigned_state =  this_map.get(`${k}$`);
                 if (assigned_state instanceof $State) assigned_state.set(v);
-                else Object.assign(this, {[`${k}$`]: $.state(v).on('change', ({state$}) => {
+                else Object.assign(this, {[`${k}$`]: $.state(v).on('change', state$ => {
                     Object.assign(this._value as Object, {[k]: state$._value})
                 })});
             }
         }
         
-        this.fire('change', {state$: this})
+        this.fire('change', this)
         if (!config?.disableUpdate) this.update();
         if (!config?.disableUpdateLink) this.linkStates.forEach($state => $state.update());
+        return this;
     }
 
     static toJSON(object: Object): Object {
@@ -73,7 +76,7 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
                 }
             }
         }
-        this.fire('update', {state$: this})
+        this.fire('update', this)
     }
 
     use<O extends Object, K extends keyof O>(object: O, attrName: K) {
@@ -128,8 +131,8 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
 
 export type $StateArgument<T> = $State<T> | $State<undefined | T> | undefined | (T extends (infer R)[] ? R : T);
 export interface $StateEventMap<T> extends $EventMap {
-    update: [{state$: $State<T>}],
-    change: [{state$: $State<T>}]
+    update: [state$: $State<T>],
+    change: [state$: $State<T>]
 }
 
 export type $StateObject<T> = T extends string | number | undefined | null ? $State<T> : T extends boolean ? $State<boolean> :$State<T> & { [key in ObjectKeyExcludeFunctionValue<T> & string as `${key}$`]: $StateObject<T[key]> }

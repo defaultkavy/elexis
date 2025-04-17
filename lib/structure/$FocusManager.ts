@@ -11,8 +11,8 @@ export class $FocusManager extends $EventManager<$FocusLayerEventMap> {
     
     layer(id: number) {
         const layer = this.layerMap.get(id) ?? new $FocusLayer(id)
-            .on('blur', (ev) => this.fire('blur', ev ))
-            .on('focus', (ev) => this.fire('focus', ev ))
+            .on('blur', (ev) => { this.fire('blur', ev); this.currentLayer = undefined; })
+            .on('focus', (ev) => { this.fire('focus', ev); this.currentLayer = layer; })
         this.layerMap.set(layer.id, layer);
         return layer;
     }

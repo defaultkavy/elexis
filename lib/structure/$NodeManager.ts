@@ -61,6 +61,18 @@ export class $NodeManager {
         }
     }
 
+    has($node: $Node): boolean {
+        return this.iterate((child) => child === $node)
+    }
+
+    iterate(callback: ($node: $Node) => boolean): boolean {
+        for (const child of this.$container.children.childList) {
+            if (callback(child)) return true;
+            if (child instanceof $Container && child.children.iterate(callback)) return true;
+        }
+        return false;
+    }
+
     indexOf(target: $Node) {
         return this.array.indexOf(target);
     }

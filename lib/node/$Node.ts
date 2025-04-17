@@ -47,6 +47,10 @@ export abstract class $Node<N extends Node = Node, $EM extends $NodeEventMap = $
 
     self(callback: OrArray<($node: this) => void>) { $.orArrayResolve(callback).forEach(fn => fn(this)); return this; }
     inDOM() { return document.contains(this.dom); }
+    await<T>(promise: Promise<T>, callback: ($node: this, result: T) => void): this {
+        promise.then(result => callback(this, result));
+        return this;
+    }
     
     get element(): $Element | null { 
         if (this.dom instanceof Element) return this as unknown as $Element;

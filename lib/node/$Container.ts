@@ -57,13 +57,13 @@ export class $Container<H extends HTMLElement = HTMLElement, EM extends $Contain
                 const ele = new $Text(child.value); // turn $State object into $Text element
                 child.use(ele, 'content'); // bind $Text elelment and function name to $State
                 this.children.add(ele, this.__position_cursor);
-            } 
-            else if (child instanceof Promise) {
+            } else if (child instanceof Promise) {
                 const $Async = (await import('./$Async')).$Async; // import $Async avoid extends error
-                const ele = new $Async().await(child) // using $Async.await resolve promise element
+                const ele = new $Async().load(child) // using $Async.await resolve promise element
                 this.children.add(ele, this.__position_cursor); // insert $Async element at this position, leave a position for promised element
-            }
-            else this.children.add(child, this.__position_cursor); // insert $Node element directly
+            } else if (typeof child === 'boolean' || typeof child === 'number') {
+                this.children.add(new $Text(`${child}`), this.__position_cursor);  
+            } else this.children.add(child, this.__position_cursor); // insert $Node element directly
             this.__position_cursor += 1; // increase position count
         }
         this.children.render(); // start to render dom tree
@@ -96,6 +96,6 @@ export class $Container<H extends HTMLElement = HTMLElement, EM extends $Contain
 
 export type $ContainerContentBuilder<P extends $Container> = $ContainerContentGroup | (($node: P) => OrPromise<$ContainerContentGroup>)
 export type $ContainerContentGroup = OrMatrix<OrPromise<$ContainerContentType>>
-export type $ContainerContentType = $Node | string | undefined | $State<any> | null
+export type $ContainerContentType = $Node | string | number | boolean | undefined | $State<any> | null
 
 export interface $ContainerEventMap extends $HTMLElementEventMap {}

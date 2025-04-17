@@ -73,7 +73,7 @@ const value$ = $.state(42);
 
 $(document.body).content([
     $('input').type('number').value(value$),
-    $('p').content(['User input value: ', value$])
+    $('p').content([`User input value: ${value$}`])
 ])
 ```
 
