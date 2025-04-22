@@ -129,7 +129,7 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
     }
 };
 
-export type $StateArgument<T> = $State<T> | $State<undefined | T> | undefined | (T extends (infer R)[] ? R : T);
+export type $StateArgument<T> = $State<T> | $State<undefined | T> | undefined | T;
 export interface $StateEventMap<T> extends $EventMap {
     update: [state$: $State<T>],
     change: [state$: $State<T>]

@@ -92,9 +92,9 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement, $EM exte
     animate(keyframes: $ElementAnimationKeyframe[] | $ElementAnimationPropertyIndexedKeyframes | null, options?: number | $ElementAnimationOptions<this>, callback?: (animation: Animation) => void) {
         const animation = this.dom.animate(keyframes, options);
         if (typeof options !== 'number') {
-            if (options?.onfinish !== undefined) animation.onfinish = (ev) => options.onfinish!(this, animation, ev);
-            if (options?.oncancel !== undefined) animation.oncancel = (ev) => options.oncancel!(this, animation, ev);
-            if (options?.onremove !== undefined) animation.onremove = (ev) => options.onremove!(this, animation, ev);
+            if (options?.onfinish) animation.onfinish = (ev) => options.onfinish!(this, animation, ev);
+            if (options?.oncancel) animation.oncancel = (ev) => options.oncancel!(this, animation, ev);
+            if (options?.onremove) animation.onremove = (ev) => options.onremove!(this, animation, ev);
         }
         if (callback) callback(animation);
         return this;

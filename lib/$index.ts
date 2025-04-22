@@ -355,7 +355,16 @@ export namespace $ {
        5. counter: 30-bit counter that ensures the increasing order of IDs generated within a milisecond.
        6. rand: 32-bit random number.
     */
-   export function uuidv7(options: { workerId?: number } = { workerId: 0 }) { return $Util.uuidv7(options) }
+    export function uuidv7(options: { workerId?: number } = { workerId: 0 }) { return $Util.uuidv7(options) }
+    export function trycatch<D>(callback: () => D): Result<D, Error> {
+        try {
+            const data = callback();
+            return [data, null];
+        } catch (err) {
+            return [null, new Error(err as string)];
+        }
+    }
+    export function type<T>(): T { return undefined as T }
 }
 
 globalThis.$ = $;
