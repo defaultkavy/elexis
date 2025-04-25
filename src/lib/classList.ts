@@ -1,0 +1,1 @@
+export function _classList(name: (string | undefined)[]) { return name.map(class_name => class_name?.split(' ').filter(n => n.length)).flat().detype(undefined); }

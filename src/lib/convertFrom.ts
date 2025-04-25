@@ -4,7 +4,7 @@ import { $Node } from "../node/$Node";
 import { $SVGElement } from "../node/$SVGElement";
 import { $Text } from "../node/$Text";
 
-export function convertFrom(element: Node): $Node {
+export function _convertFrom(element: Node): $Node {
     if (element.$) return element.$;
     if (element.nodeName.toLowerCase() === 'body') return new $Container('body', {dom: element as HTMLBodyElement});
     if (element.nodeName.toLowerCase() === 'head') return new $Container('head', {dom: element as HTMLHeadElement});

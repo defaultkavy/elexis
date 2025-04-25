@@ -15,13 +15,15 @@ import { $Select } from "./node/$Select";
 import { $Option } from "./node/$Option";
 import { $OptGroup } from "./node/$OptGroup";
 import { $Textarea } from "./node/$Textarea";
-import { $Util } from "./structure/$Util";
 import { $HTMLElement } from "./node/$HTMLElement";
 import { $Async } from "./node/$Async";
 import { $Video } from "./node/$Video";
 import { $Window } from "./structure/$Window";
 import { $KeyboardManager } from "./structure/$KeyboardManager";
-import { convertFrom } from "./method/convertFrom";
+import { _convertFrom } from "./lib/convertFrom";
+import { _classList } from "./lib/classList";
+import { _mixin } from "./lib/mixin";
+import { _uuidv7 } from "./lib/uuidv7";
 
 export type $ = typeof $;
 /**
@@ -145,7 +147,7 @@ export function $(resolver: any, ...args: any[]) {
     // is Node
     if (resolver instanceof Node) {
         if (resolver.$) return resolver.$;
-        else return convertFrom(resolver);
+        else return _convertFrom(resolver);
     }
     // is Window
     if (resolver instanceof Window) return $Window.$;
@@ -322,14 +324,14 @@ export namespace $ {
     }
     
     export function orArrayResolve<T>(multable: OrArray<T>) { if (multable instanceof Array) return multable; else return [multable]; }
-    export function mixin(target: any, constructors: OrArray<any>) { return $Util.mixin(target, constructors) }
+    export function mixin(target: any, constructors: OrArray<any>) { return _mixin(target, constructors) }
     export function rem(amount: number = 1) { return parseInt(getComputedStyle(document.documentElement).fontSize) * amount }
     export function call<T>(fn: () => T): T { return fn() }
     export function events<EM extends $EventMap>() { return new $EventManager<EM> }
     export function pointers($node: $Node) { return new $PointerManager($node) }
     export function keys($target: $EventTarget) { return new $KeyboardManager($target) }
     export function focus() { return new $FocusManager() }
-    export function classlist(...name: (string | undefined)[]) { return $Util.classlist(name) }
+    export function classList(...name: (string | undefined)[]) { return _classList(name) }
     export function pass(...args: any) { return true }/**
     * UUIDv7 features a time-ordered value field derived from the widely implemented and well-known Unix Epoch timestamp source,
     * the number of milliseconds since midnight 1 Jan 1970 UTC, leap seconds excluded. 
@@ -355,7 +357,7 @@ export namespace $ {
        5. counter: 30-bit counter that ensures the increasing order of IDs generated within a milisecond.
        6. rand: 32-bit random number.
     */
-    export function uuidv7(options: { workerId?: number } = { workerId: 0 }) { return $Util.uuidv7(options) }
+    export function uuidv7(options: { workerId?: number } = { workerId: 0 }) { return _uuidv7(options) }
     export function trycatch<D>(callback: () => D): Result<D, Error> {
         try {
             const data = callback();

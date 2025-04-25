@@ -1,4 +1,4 @@
-import type { $ } from "./lib/$index";
+import type { $ } from "./src/$index";
 
 declare global {
     /**
@@ -33,7 +33,7 @@ declare global {
     type ImageLoading = "eager" | "lazy";
     type ConstructorType<T> = { new (...args: any[]): T }
     interface Node {
-        $: import('./lib/node/$Node').$Node;
+        $: import('./src/node/$Node').$Node;
     }
 }
 Array.prototype.detype = function <T extends any, O>(this: O[], ...types: T[]) {
@@ -46,29 +46,29 @@ Object.defineProperties(Set.prototype, {
     array: { configurable: true, get: function <T>(this: Set<T>) { return Array.from(this)} }
 })
 Set.prototype.sort = function <T>(this: Set<T>, handler: ((a: T, b: T) => number) | undefined) { return this.array.sort(handler)}
-export * from "./lib/$index";
-export * from "./lib/structure/$NodeManager";
-export * from "./lib/structure/$EventManager";
-export * from "./lib/structure/$EventTarget";
-export * from "./lib/structure/$KeyboardManager";
-export * from "./lib/structure/$FocusManager";
-export * from "./lib/structure/$PointerManager";
-export * from "./lib/structure/$Window";
-export * from "./lib/structure/$State";
-export * from "./lib/node/$Node";
-export * from "./lib/node/$Anchor";
-export * from "./lib/node/$Element";
-export * from "./lib/node/$HTMLElement";
-export * from "./lib/node/$Text";
-export * from "./lib/node/$Container";
-export * from "./lib/node/$Button";
-export * from "./lib/node/$Form";
-export * from "./lib/node/$Select";
-export * from "./lib/node/$Option";
-export * from "./lib/node/$OptGroup";
-export * from "./lib/node/$Textarea";
-export * from "./lib/node/$Image";
-export * from "./lib/node/$Async";
-export * from "./lib/node/$Document";
-export * from "./lib/node/$Media";
-export * from "./lib/node/$Video";
+export * from "./src/$index";
+export * from "./src/structure/$NodeManager";
+export * from "./src/structure/$EventManager";
+export * from "./src/structure/$EventTarget";
+export * from "./src/structure/$KeyboardManager";
+export * from "./src/structure/$FocusManager";
+export * from "./src/structure/$PointerManager";
+export * from "./src/structure/$Window";
+export * from "./src/structure/$State";
+export * from "./src/node/$Node";
+export * from "./src/node/$Anchor";
+export * from "./src/node/$Element";
+export * from "./src/node/$HTMLElement";
+export * from "./src/node/$Text";
+export * from "./src/node/$Container";
+export * from "./src/node/$Button";
+export * from "./src/node/$Form";
+export * from "./src/node/$Select";
+export * from "./src/node/$Option";
+export * from "./src/node/$OptGroup";
+export * from "./src/node/$Textarea";
+export * from "./src/node/$Image";
+export * from "./src/node/$Async";
+export * from "./src/node/$Document";
+export * from "./src/node/$Media";
+export * from "./src/node/$Video";

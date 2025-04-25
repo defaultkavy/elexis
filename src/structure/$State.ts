@@ -1,5 +1,5 @@
+import { _uuidv7 } from "../lib/uuidv7";
 import { $EventManager, type $EventMap } from "./$EventManager";
-import { $Util } from "./$Util";
 
 export interface $StateOption<T> {
     format: (value: T) => string;
@@ -15,7 +15,7 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
     readonly options: Partial<$StateOption<T>> = {};
     private constructor(value: T, options?: $StateOption<T>) {
         super();
-        this.id = $Util.uuidv7().str;
+        this.id = _uuidv7().str;
         $State.cache.set(this.id, this);
         this.set(value);
         if (options) this.options = options;

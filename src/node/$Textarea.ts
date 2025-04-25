@@ -1,7 +1,7 @@
 import { $Container, type $ContainerOptions } from "./$Container";
 import { $State, type $StateArgument } from "../structure/$State";
 import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
-import { $Util } from "../structure/$Util";
+import { _mixin } from "../lib/mixin";
 
 export interface $TextareaOptions extends $ContainerOptions {}
 export class $Textarea extends $Container<HTMLTextAreaElement> {
@@ -77,4 +77,4 @@ export class $Textarea extends $Container<HTMLTextAreaElement> {
 }
 
 export interface $Textarea extends $HTMLElementAPIFilter<$Textarea, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'disabled' | 'minLength' | 'maxLength' | 'validationMessage' | 'validity' | 'willValidate'> {}
-$Util.mixin($Textarea, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'disabled', 'minLength', 'maxLength', 'validationMessage', 'validity', 'willValidate'))
+_mixin($Textarea, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'disabled', 'minLength', 'maxLength', 'validationMessage', 'validity', 'willValidate'))

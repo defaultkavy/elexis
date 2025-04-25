@@ -1,7 +1,7 @@
 import { $State, type $StateArgument } from "../structure/$State";
 import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
-import { $Util } from "../structure/$Util";
 import { $HTMLElement, type $HTMLElementEventMap, type $HTMLElementOptions } from "./$HTMLElement";
+import { _mixin } from "../lib/mixin";
 
 export interface $InputOptions extends $HTMLElementOptions {}
 export class $Input<T extends string | number = string, I = $Input<T, never>> extends $HTMLElement<HTMLInputElement, $InputEventMap<I>> {
@@ -116,7 +116,7 @@ export class $Input<T extends string | number = string, I = $Input<T, never>> ex
 }
 
 export interface $Input extends $HTMLElementAPIFilter<$Input, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'validationMessage' | 'validity' | 'willValidate' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget'> {}
-$Util.mixin($Input, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'validationMessage', 'validity', 'willValidate', 'formAction', 'formEnctype', 'formMethod', 'formNoValidate', 'formTarget'))
+_mixin($Input, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'validationMessage', 'validity', 'willValidate', 'formAction', 'formEnctype', 'formMethod', 'formNoValidate', 'formTarget'))
 
 export interface $InputEventMap<T> extends $HTMLElementEventMap {
     input: [InputEvent, T]
@@ -186,4 +186,4 @@ export class $FileInput extends $Input<string, $FileInput> {
 }
 
 export type $InputType<T extends InputType> = T extends 'number' ? $NumberInput : T extends 'radio' | 'checkbox' ? $CheckInput : T extends 'file' ? $FileInput : $Input<string>;
-$Util.mixin($Input, [$NumberInput, $CheckInput, $FileInput])
+_mixin($Input, [$NumberInput, $CheckInput, $FileInput])

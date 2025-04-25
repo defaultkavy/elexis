@@ -1,5 +1,5 @@
+import { _orArrayResolve } from "../lib/orArrayResolve";
 import { $EventTarget } from "./$EventTarget";
-import { $Util } from "./$Util";
 
 /**
  * Keyboard event helper, manage event handler function of assigned keys.
@@ -33,8 +33,8 @@ export class $KeyboardManager {
      * @param callback - event handler function
      */
     assigns(keys: OrArray<string>, on: OrArray<$KeyboardEventType>, callback: $KeyboardEventHandler): $KeyboardManager {
-        keys = $Util.orArrayResolve(keys);
-        on = $Util.orArrayResolve(on);
+        keys = _orArrayResolve(keys);
+        on = _orArrayResolve(on);
         for (const key of keys) {
             const eventData: $KeyboardEventMap = this.keyMap.get(key) ?? {keydown: new Set(), keypress: new Set(), keyup: new Set()};
             for (const event of on) {
@@ -52,8 +52,8 @@ export class $KeyboardManager {
      * @param callback - event handler function
      */
     unassign(keys: OrArray<string>, on?: OrArray<$KeyboardEventType>, callback?: (event: KeyboardEvent) => void): $KeyboardManager {
-        keys = $Util.orArrayResolve(keys);
-        on = on ? $Util.orArrayResolve(on) : ['keydown', 'keypress', 'keyup'];
+        keys = _orArrayResolve(keys);
+        on = on ? _orArrayResolve(on) : ['keydown', 'keypress', 'keyup'];
         for (const key of keys) {
             const eventData: $KeyboardEventMap = this.keyMap.get(key) ?? {keydown: new Set(), keypress: new Set(), keyup: new Set()};
             for (const event of on) {

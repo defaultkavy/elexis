@@ -3,7 +3,7 @@ import { $OptGroup } from "./$OptGroup";
 import { $Option } from "./$Option";
 import { $State, type $StateArgument } from "../structure/$State";
 import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
-import { $Util } from "../structure/$Util";
+import { _mixin } from "../lib/mixin";
 
 export interface $SelectOptions extends $ContainerOptions {}
 export class $Select extends $Container<HTMLSelectElement> {
@@ -43,6 +43,6 @@ export class $Select extends $Container<HTMLSelectElement> {
 }
 
 export interface $Select extends $HTMLElementAPIFilter<$Select, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'disabled' | 'validationMessage' | 'validity' | 'willValidate'> {}
-$Util.mixin($Select, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'disabled', 'validationMessage', 'validity', 'willValidate'))
+_mixin($Select, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'disabled', 'validationMessage', 'validity', 'willValidate'))
 
 export type $SelectContentType = $Option | $OptGroup | undefined;

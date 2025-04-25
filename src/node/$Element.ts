@@ -1,5 +1,5 @@
+import { _classList } from "../lib/classList";
 import type { $StateArgument } from "../structure/$State";
-import { $Util } from "../structure/$Util";
 import { $Node, type $NodeEventMap } from "./$Node";
 export interface $ElementOptions {
     id?: string;
@@ -39,17 +39,17 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement, $EM exte
     /**Replace list of class name to element. @example Element.class('name1 name2 name3', 'name4') */
     class(): DOMTokenList;
     class(...name: (string | undefined)[]): this;
-    class(...name: (string | undefined)[]): this | DOMTokenList {return $.fluent(this, arguments, () => this.dom.classList, () => {this.dom.classList.forEach(n => this.static_classes.has(n) ?? this.dom.classList.remove(n)); this.dom.classList.add(...$Util.classlist(name))})}
+    class(...name: (string | undefined)[]): this | DOMTokenList {return $.fluent(this, arguments, () => this.dom.classList, () => {this.dom.classList.forEach(n => this.static_classes.has(n) ?? this.dom.classList.remove(n)); this.dom.classList.add(..._classList(name))})}
     /**Add class name to dom. */
-    addClass(...name: (string | undefined)[]): this {return $.fluent(this, arguments, () => this, () => {this.dom.classList.add(...$Util.classlist(name))})}
+    addClass(...name: (string | undefined)[]): this {return $.fluent(this, arguments, () => this, () => {this.dom.classList.add(..._classList(name))})}
     /**Remove class name from dom */
-    removeClass(...name: (string | undefined)[]): this {return $.fluent(this, arguments, () => this, () => {this.dom.classList.remove(...$Util.classlist(name))})}
+    removeClass(...name: (string | undefined)[]): this {return $.fluent(this, arguments, () => this, () => {this.dom.classList.remove(..._classList(name))})}
 
     staticClass(): Set<string>;
     staticClass(...name: (string | undefined)[]): this;
-    staticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this.static_classes, () => {name = $Util.classlist(name); this.removeClass(...this.static_classes); this.static_classes.clear(); this.addStaticClass(...name);})}
-    addStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name = $Util.classlist(name); name.detype().forEach(n => this.static_classes.add(n)); this.addClass(...name)})}
-    removeStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name = $Util.classlist(name); name.detype().forEach(n => this.static_classes.delete(n)); this.removeClass(...name)})}
+    staticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this.static_classes, () => {name = _classList(name); this.removeClass(...this.static_classes); this.static_classes.clear(); this.addStaticClass(...name);})}
+    addStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name = _classList(name); name.detype().forEach(n => this.static_classes.add(n)); this.addClass(...name)})}
+    removeStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name = _classList(name); name.detype().forEach(n => this.static_classes.delete(n)); this.removeClass(...name)})}
 
     /**Modify style of element. */
     style(): CSSStyleDeclaration

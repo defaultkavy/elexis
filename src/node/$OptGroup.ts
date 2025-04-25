@@ -1,7 +1,7 @@
 import { $Container, type $ContainerOptions } from "./$Container";
 import type { $StateArgument } from "../structure/$State";
 import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
-import { $Util } from "../structure/$Util";
+import { _mixin } from "../lib/mixin";
 
 export interface $OptGroupOptions extends $ContainerOptions {}
 export class $OptGroup extends $Container<HTMLOptGroupElement> {
@@ -15,4 +15,4 @@ export class $OptGroup extends $Container<HTMLOptGroupElement> {
 }
 
 export interface $OptGroup extends $HTMLElementAPIFilter<$OptGroup, 'disabled' | 'label'> {}
-$Util.mixin($OptGroup, $HTMLElementAPIs.create('disabled', 'label'))
+_mixin($OptGroup, $HTMLElementAPIs.create('disabled', 'label'))
