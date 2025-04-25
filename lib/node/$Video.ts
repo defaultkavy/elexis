@@ -1,5 +1,5 @@
-import { $StateArgument } from "../structure/$State";
-import { $Media, $MediaOptions } from "./$Media";
+import { type $StateArgument } from "../structure/$State";
+import { $Media, type $MediaOptions } from "./$Media";
 
 export interface $VideoOptions extends $MediaOptions {}
 export class $Video extends $Media<HTMLVideoElement> {

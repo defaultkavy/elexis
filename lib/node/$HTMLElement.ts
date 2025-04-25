@@ -1,4 +1,4 @@
-import { $Element, $ElementEventMap, $ElementOptions } from "./$Element";
+import { $Element, type $ElementEventMap, type $ElementOptions } from "./$Element";
 
 export interface $HTMLElementOptions extends $ElementOptions {}
 export class $HTMLElement<H extends HTMLElement = HTMLElement, $EM extends $HTMLElementEventMap = $HTMLElementEventMap> extends $Element<H, $EM> {

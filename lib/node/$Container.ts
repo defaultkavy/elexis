@@ -1,9 +1,9 @@
 import { $Element } from "./$Element";
 import { $NodeManager } from "../structure/$NodeManager";
 import { $Node } from "./$Node";
-import { $State, $StateArgument } from "../structure/$State";
+import { $State, type $StateArgument } from "../structure/$State";
 import { $Text } from "./$Text";
-import { $HTMLElement, $HTMLElementEventMap, $HTMLElementOptions } from "./$HTMLElement";
+import { $HTMLElement, type $HTMLElementEventMap, type $HTMLElementOptions } from "./$HTMLElement";
 
 export interface $ContainerOptions extends $HTMLElementOptions {}
 export class $Container<H extends HTMLElement = HTMLElement, EM extends $ContainerEventMap = $ContainerEventMap> extends $HTMLElement<H, EM> {

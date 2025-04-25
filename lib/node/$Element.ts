@@ -1,6 +1,6 @@
 import type { $StateArgument } from "../structure/$State";
 import { $Util } from "../structure/$Util";
-import { $Node, $NodeEventMap } from "./$Node";
+import { $Node, type $NodeEventMap } from "./$Node";
 export interface $ElementOptions {
     id?: string;
     class?: string[];

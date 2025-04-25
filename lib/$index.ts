@@ -1,4 +1,4 @@
-import { $EventManager, $EventMap, $EventTarget, $FocusManager, $StateObject, $PointerManager, $State, $StateArgument, $StateOption } from "../index";
+import { $EventManager, type $EventMap, $EventTarget, $FocusManager, type $StateObject, $PointerManager, $State, type $StateArgument, type $StateOption } from "../index";
 import { $Node } from "./node/$Node"
 import { $Document } from "./node/$Document"
 import { $Anchor } from "./node/$Anchor";
@@ -135,10 +135,10 @@ export function $(resolver: any, ...args: any[]) {
         if (resolver.startsWith('::')) return Array.from(document.querySelectorAll(resolver.replace(/^::/, ''))).map(dom => $(dom));
         else if (resolver.startsWith(':')) return $(document.querySelector(resolver.replace(/^:/, '')));
         else if (resolver in $.TagNameElementMap) {
-            const instance = $.TagNameElementMap[resolver as keyof $.TagNameElementMap]
+            //@ts-expect-error
+            const instance = $.TagNameElementMap[resolver as any]
             if (instance === $HTMLElement) return new $HTMLElement(resolver);
             if (instance === $Container) return new $Container(resolver);
-            //@ts-expect-error
             return new instance();
         } else return new $Container(resolver);
     }

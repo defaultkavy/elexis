@@ -1,4 +1,4 @@
-import { $EventManager, $EventMap } from "./$EventManager";
+import { $EventManager, type $EventMap } from "./$EventManager";
 import { $Util } from "./$Util";
 
 export interface $StateOption<T> {

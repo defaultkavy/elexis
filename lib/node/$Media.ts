@@ -1,5 +1,5 @@
-import { $StateArgument } from "../structure/$State";
-import { $ElementOptions } from "./$Element";
+import type { $StateArgument } from "../structure/$State";
+import { type $ElementOptions } from "./$Element";
 import { $HTMLElement } from "./$HTMLElement";
 
 export interface $MediaOptions extends $ElementOptions {}

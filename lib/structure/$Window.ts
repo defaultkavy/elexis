@@ -1,4 +1,4 @@
-import { $EventManager, $EventMap } from "./$EventManager";
+import type { $EventMap } from "./$EventManager";
 import { $EventTarget } from "./$EventTarget";
 
 export class $Window<EM extends $WindowEventMap = $WindowEventMap> extends $EventTarget<EM, WindowEventMap> {

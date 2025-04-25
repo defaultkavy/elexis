@@ -1,4 +1,4 @@
-import { $Element, $DOMRect } from "./$Element";
+import { $Element, type $DOMRect } from "./$Element";
 import { $Node } from "./$Node";
 export class $Document extends $Node {
     dom: Node;

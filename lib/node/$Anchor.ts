@@ -1,5 +1,5 @@
-import { $StateArgument } from "../structure/$State";
-import { $Container, $ContainerOptions } from "./$Container";
+import type { $StateArgument } from "../structure/$State";
+import { $Container, type $ContainerOptions } from "./$Container";
 
 export interface $AnchorOptions extends $ContainerOptions {}
 export class $Anchor extends $Container<HTMLAnchorElement> {

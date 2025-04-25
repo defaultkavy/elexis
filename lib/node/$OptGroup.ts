@@ -1,6 +1,6 @@
-import { $Container, $ContainerOptions } from "./$Container";
-import { $StateArgument } from "../structure/$State";
-import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
+import { $Container, type $ContainerOptions } from "./$Container";
+import type { $StateArgument } from "../structure/$State";
+import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
 import { $Util } from "../structure/$Util";
 
 export interface $OptGroupOptions extends $ContainerOptions {}

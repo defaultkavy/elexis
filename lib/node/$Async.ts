@@ -1,5 +1,5 @@
 import { $State } from "../structure/$State";
-import { $Container, $ContainerContentType, $ContainerOptions } from "./$Container";
+import { $Container, type $ContainerContentType, type $ContainerOptions } from "./$Container";
 import { $Node } from "./$Node";
 import { $Text } from "./$Text";
 export interface $AsyncNodeOptions extends $ContainerOptions {}

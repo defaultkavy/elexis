@@ -1,7 +1,7 @@
-import { $State, $StateArgument } from "../structure/$State";
-import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
+import { $State, type $StateArgument } from "../structure/$State";
+import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
 import { $Util } from "../structure/$Util";
-import { $HTMLElement, $HTMLElementEventMap, $HTMLElementOptions } from "./$HTMLElement";
+import { $HTMLElement, type $HTMLElementEventMap, type $HTMLElementOptions } from "./$HTMLElement";
 
 export interface $InputOptions extends $HTMLElementOptions {}
 export class $Input<T extends string | number = string, I = $Input<T, never>> extends $HTMLElement<HTMLInputElement, $InputEventMap<I>> {

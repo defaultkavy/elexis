@@ -1,4 +1,4 @@
-import { $EventManager, $EventMap } from "./$EventManager";
+import { $EventManager, type $EventMap } from "./$EventManager";
 
 export abstract class $EventTarget<$EM extends $EventMap = $EventMap, EM extends GlobalEventHandlersEventMap = GlobalEventHandlersEventMap> {
     private domEvents: Partial<{[key in keyof EM]: Map<Function, Function>}> = {};

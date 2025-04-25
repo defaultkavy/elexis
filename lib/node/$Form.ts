@@ -1,6 +1,6 @@
-import { $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
+import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
 import { $Util } from "../structure/$Util";
-import { $Container, $ContainerOptions } from "./$Container";
+import { $Container, type $ContainerOptions } from "./$Container";
 export interface $FormOptions extends $ContainerOptions {}
 export class $Form extends $Container<HTMLFormElement> {
     constructor(options?: $FormOptions) {

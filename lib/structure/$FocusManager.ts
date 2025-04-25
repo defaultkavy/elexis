@@ -1,5 +1,5 @@
 import { $Element } from "../node/$Element";
-import { $EventManager, $EventMap } from "./$EventManager";
+import { $EventManager, type $EventMap } from "./$EventManager";
 
 export class $FocusManager extends $EventManager<$FocusLayerEventMap> {
     layerMap = new Map<number, $FocusLayer>();
@@ -112,7 +112,7 @@ export class $FocusLayer extends $EventManager<$FocusLayerEventMap> {
     currentFocus?: $Element;
     private focusHandler = (e: Event, $element: $Element) => this.focus($element, true);
     private blurHandler = (e: Event, $element: $Element) => this.blur($element);
-    private __$property__ = {
+    private options = {
         loop: true,
         scrollThreshold: 0
     }
@@ -149,30 +149,12 @@ export class $FocusLayer extends $EventManager<$FocusLayerEventMap> {
     focus($element: $Element | undefined, focused: boolean = false) {
         if (!$element) return this;
         $element.hide(false);
-        const {scrollTop, scrollLeft} = document.documentElement;
-        const position = $.call(() => {
-            const rect = $element.domRect()
-            return {
-                left: rect.left + scrollLeft,
-                top: rect.top + scrollTop,
-                right: rect.right + scrollLeft,
-                bottom: rect.bottom + scrollTop,
-                height: rect.height,
-                width: rect.width
-            }
-        })
-        const {scrollThreshold} = this.__$property__;
         const $focused = this.currentFocus;
         this.blur();
         this.currentFocus = $element;
-        if (scrollTop > position.top - scrollThreshold // scroll after item threshold
-            || scrollTop > position.bottom + scrollThreshold
-        ) document.documentElement.scrollTo({left: position.left - scrollThreshold, top: position.top - scrollThreshold});
-        if (scrollTop + innerHeight < position.top + scrollThreshold // scroll before item
-            || scrollTop + innerHeight < position.bottom + scrollThreshold
-        ) document.documentElement.scrollTo({left: position.left - scrollThreshold, top: (position.bottom - innerHeight) + scrollThreshold});
         $element.attribute('focus', '');
         this.fire('focus', {$prevFocus: $focused, $focused: $element, layer: this});
+        this.scrollTo($element, this.options.scrollThreshold);
         if (!focused) $element.trigger('focus');
         return this;
     }
@@ -195,9 +177,30 @@ export class $FocusLayer extends $EventManager<$FocusLayerEventMap> {
 
     loop(): boolean;
     loop(boolean: boolean): this;
-    loop(boolean?: boolean) { return $.fluent(this, arguments, () => this.__$property__.loop, () => $.set(this.__$property__, 'loop', boolean)) }
+    loop(boolean?: boolean) { return $.fluent(this, arguments, () => this.options.loop, () => $.set(this.options, 'loop', boolean)) }
 
     scrollThreshold(): number;
     scrollThreshold(number: number): this;
-    scrollThreshold(number?: number) { return $.fluent(this, arguments, () => this.__$property__.scrollThreshold, () => $.set(this.__$property__, 'scrollThreshold', number)) }
+    scrollThreshold(number?: number) { return $.fluent(this, arguments, () => this.options.scrollThreshold, () => $.set(this.options, 'scrollThreshold', number)) }
+
+    scrollTo($element: $Element, threshod: number = 0) {
+        const {scrollTop, scrollLeft} = document.documentElement;
+        const position = $.call(() => {
+            const rect = $element.domRect()
+            return {
+                left: rect.left + scrollLeft,
+                top: rect.top + scrollTop,
+                right: rect.right + scrollLeft,
+                bottom: rect.bottom + scrollTop,
+                height: rect.height,
+                width: rect.width
+            }
+        })
+        if (scrollTop > position.top - threshod // scroll after item threshold
+            || scrollTop > position.bottom + threshod
+        ) document.documentElement.scrollTo({left: position.left - threshod, top: position.top - threshod});
+        if (scrollTop + innerHeight < position.top + threshod // scroll before item
+            || scrollTop + innerHeight < position.bottom + threshod
+        ) document.documentElement.scrollTo({left: position.left - threshod, top: (position.bottom - innerHeight) + threshod});
+    }
 }

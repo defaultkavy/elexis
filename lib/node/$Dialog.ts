@@ -1,4 +1,4 @@
-import { $Container, $ContainerOptions } from "./$Container";
+import { $Container, type $ContainerOptions } from "./$Container";
 export interface $DialogOptions extends $ContainerOptions {}
 export class $Dialog extends $Container<HTMLDialogElement> {
     constructor(options?: $DialogOptions) {

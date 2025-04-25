@@ -1,4 +1,4 @@
-import { $Container, $ContainerOptions } from "./$Container";
+import { $Container, type $ContainerOptions } from "./$Container";
 export interface $CanvasOptions extends $ContainerOptions {}
 export class $Canvas extends $Container<HTMLCanvasElement> {
     constructor(options?: $CanvasOptions) {

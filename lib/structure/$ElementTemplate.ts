@@ -1,4 +1,4 @@
-import { $StateArgument } from "./$State";
+import type { $StateArgument } from "./$State";
 import { $Form } from "../node/$Form";
 export abstract class $HTMLElementAPIs<This = any> {
 
