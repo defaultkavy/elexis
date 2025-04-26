@@ -1,5 +1,5 @@
 let uuidv7_counter = Math.trunc(Math.random() * Math.pow(2, 30)), uuidv7_ts_ms = '0';
-export function _uuidv7(options: { workerId?: number } = { workerId: 0 }) {
+export function uuidv7(options: { workerId?: number } = { workerId: 0 }) {
     const unix_ts_ms = `${Date.now().toString(2)}`.padStart(48, '0') // 48 bits
     const ver = `0111`; // 4 bits
     uuidv7_ts_ms = unix_ts_ms;
@@ -19,3 +19,5 @@ export function _uuidv7(options: { workerId?: number } = { workerId: 0 }) {
 }
 
 function binaryToHex(bit: string) { return parseInt(bit, 2).toString(16).padStart(bit.length / 4, '0') }
+
+export type UUIDV7 = ReturnType<typeof uuidv7>

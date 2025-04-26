@@ -1,4 +1,4 @@
-import { _mixin } from "../lib/mixin";
+import { mixin } from "../lib/mixin";
 import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
 import { $Container, type $ContainerOptions } from "./$Container";
 export interface $FormOptions extends $ContainerOptions {}
@@ -40,4 +40,4 @@ export class $Form extends $Container<HTMLFormElement> {
 }
 
 export interface $Form extends $HTMLElementAPIFilter<$Form, 'checkValidity' | 'reportValidity' | 'autocomplete'> {}
-_mixin($Form, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete'))
+mixin($Form, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete'))

@@ -1,7 +1,7 @@
 import { $Container, type $ContainerOptions } from "./$Container";
 import { $State, type $StateArgument } from "../structure/$State";
 import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
-import { _mixin } from "../lib/mixin";
+import { mixin } from "../lib/mixin";
 
 export interface $TextareaOptions extends $ContainerOptions {}
 export class $Textarea extends $Container<HTMLTextAreaElement> {
@@ -22,7 +22,7 @@ export class $Textarea extends $Container<HTMLTextAreaElement> {
     value(value?: $StateArgument<string>) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value as $State<string> | string, (value$) => {
         this.on('input', () => {
             if (value$.attributes.has(this.dom) === false) return;
-            (value$ as $State<string>).set(`${this.value()}`)
+            (value$ as $State<string>).value(`${this.value()}`)
         })
     }))}
 
@@ -77,4 +77,4 @@ export class $Textarea extends $Container<HTMLTextAreaElement> {
 }
 
 export interface $Textarea extends $HTMLElementAPIFilter<$Textarea, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'disabled' | 'minLength' | 'maxLength' | 'validationMessage' | 'validity' | 'willValidate'> {}
-_mixin($Textarea, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'disabled', 'minLength', 'maxLength', 'validationMessage', 'validity', 'willValidate'))
+mixin($Textarea, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'disabled', 'minLength', 'maxLength', 'validationMessage', 'validity', 'willValidate'))

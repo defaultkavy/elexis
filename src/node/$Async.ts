@@ -1,9 +1,10 @@
 import { $State } from "../structure/$State";
-import { $Container, type $ContainerContentType, type $ContainerOptions } from "./$Container";
+import { type $ContainerContentType, type $ContainerOptions } from "./$Container";
+import { $Element } from "./$Element";
 import { $Node } from "./$Node";
 import { $Text } from "./$Text";
 export interface $AsyncNodeOptions extends $ContainerOptions {}
-export class $Async<N extends $Node = $Node> extends $Container {
+export class $Async<N extends $Node = $Node> extends $Element {
     #loaded: boolean = false;
     constructor(options?: $AsyncNodeOptions) {
         super('async', options)

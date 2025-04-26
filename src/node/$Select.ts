@@ -1,9 +1,9 @@
 import { $Container, type $ContainerOptions } from "./$Container";
-import { $OptGroup } from "./$OptGroup";
+import { $OptionGroup } from "./$OptGroup";
 import { $Option } from "./$Option";
 import { $State, type $StateArgument } from "../structure/$State";
 import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
-import { _mixin } from "../lib/mixin";
+import { mixin } from "../lib/mixin";
 
 export interface $SelectOptions extends $ContainerOptions {}
 export class $Select extends $Container<HTMLSelectElement> {
@@ -34,8 +34,8 @@ export class $Select extends $Container<HTMLSelectElement> {
     value(value?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value as $State<string> | string, (value$) => {
         this.on('input', () => {
             if (value$.attributes.has(this.dom) === false) return;
-            if (typeof value$.value === 'string') (value$ as $State<string>).set(`${this.value()}`)
-            if (typeof value$.value === 'number') (value$ as unknown as $State<number>).set(Number(this.value()))
+            if (typeof value$.value === 'string') (value$ as $State<string>).value(`${this.value()}`)
+            if (typeof value$.value === 'number') (value$ as unknown as $State<number>).value(Number(this.value()))
         })
     }))}
 
@@ -43,6 +43,6 @@ export class $Select extends $Container<HTMLSelectElement> {
 }
 
 export interface $Select extends $HTMLElementAPIFilter<$Select, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'disabled' | 'validationMessage' | 'validity' | 'willValidate'> {}
-_mixin($Select, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'disabled', 'validationMessage', 'validity', 'willValidate'))
+mixin($Select, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'disabled', 'validationMessage', 'validity', 'willValidate'))
 
-export type $SelectContentType = $Option | $OptGroup | undefined;
+export type $SelectContentType = $Option | $OptionGroup | undefined;

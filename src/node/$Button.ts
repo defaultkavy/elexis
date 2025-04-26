@@ -1,6 +1,6 @@
 import { $Container, type $ContainerOptions } from "./$Container";
 import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
-import { _mixin } from "../lib/mixin";
+import { mixin } from "../lib/mixin";
 export interface $ButtonOptions extends $ContainerOptions {}
 export class $Button extends $Container<HTMLButtonElement> {
     constructor(options?: $ButtonOptions) {
@@ -13,4 +13,4 @@ export class $Button extends $Container<HTMLButtonElement> {
 }
 
 export interface $Button extends $HTMLElementAPIFilter<$Button, 'disabled' | 'checkValidity' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget' | 'reportValidity'> {}
-_mixin($Button, $HTMLElementAPIs.create('disabled', 'checkValidity', 'formAction', 'formEnctype', 'formMethod', 'formNoValidate', 'formTarget', 'reportValidity'))
+mixin($Button, $HTMLElementAPIs.create('disabled', 'checkValidity', 'formAction', 'formEnctype', 'formMethod', 'formNoValidate', 'formTarget', 'reportValidity'))

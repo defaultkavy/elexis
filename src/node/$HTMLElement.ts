@@ -5,6 +5,18 @@ export class $HTMLElement<H extends HTMLElement = HTMLElement, $EM extends $HTML
     constructor(tagname: string, options?: $HTMLElementOptions) {
         super(tagname, options)
     }
+    
+    /**Modify style of element. */
+    style(): CSSStyleDeclaration
+    style(style: Partial<CSSStyleDeclaration>): this;
+    style(style?: Partial<CSSStyleDeclaration>) { return $.fluent(this, arguments, () => this.dom.style, () => {Object.assign(this.dom.style, style)})}
+    
+    tabIndex(): number;
+    tabIndex(tabIndex: number): this;
+    tabIndex(tabIndex?: number) { return $.fluent(this, arguments, () => this.dom.tabIndex, () => $.set(this.dom, 'tabIndex', tabIndex as any))}
+
+    focus(options?: FocusOptions) { this.dom.focus(options); return this; }
+    blur() { this.dom.blur(); return this; }
 
     autocapitalize(): Autocapitalize;
     autocapitalize(autocapitalize?: Autocapitalize): this;
@@ -62,6 +74,7 @@ export class $HTMLElement<H extends HTMLElement = HTMLElement, $EM extends $HTML
     get offsetParent() { return $(this.dom.offsetParent) }
     get offsetTop() { return this.dom.offsetTop }
     get offsetWidth() { return this.dom.offsetWidth }
+    get dataset() { return this.dom.dataset }
 }
 
 export interface $HTMLElementEventMap extends $ElementEventMap {}

@@ -1,4 +1,4 @@
-import { _uuidv7 } from "../lib/uuidv7";
+import { uuidv7 } from "../lib/uuidv7";
 import { $EventManager, type $EventMap } from "./$EventManager";
 
 export interface $StateOption<T> {
@@ -15,9 +15,9 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
     readonly options: Partial<$StateOption<T>> = {};
     private constructor(value: T, options?: $StateOption<T>) {
         super();
-        this.id = _uuidv7().str;
+        this.id = uuidv7().str;
         $State.cache.set(this.id, this);
-        this.set(value);
+        this.value(value);
         if (options) this.options = options;
     }
 
@@ -28,15 +28,19 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
         return new $State<T>(value, options as $StateOption<T>)
     }
 
-    set(value: T | $State<T> | ((state$: this) => T | $State<T>), config?: {disableUpdate?: boolean, disableUpdateLink?: boolean}): this {
-        if (value instanceof Function) return this.set(value(this));
-        this._value = value;
-        if (value instanceof $State) value.linkStates.add(this as any);
-        else if (value instanceof Object) {
+    value(): T;
+    value(value: T | $State<T> | ((state$: this) => T | $State<T>), config?: {disableUpdate?: boolean, disableUpdateLink?: boolean}): this
+    value(resolver?: T | $State<T> | ((state$: this) => T | $State<T>), config?: {disableUpdate?: boolean, disableUpdateLink?: boolean}): this | T {
+        if (!arguments.length) return this._value instanceof $State ? this._convert ? this._convert(this._value.value()) : this._value.value() : this._value;
+        if (resolver === undefined) return this;
+        if (resolver instanceof Function) return this.value(resolver(this));
+        this._value = resolver;
+        if (resolver instanceof $State) resolver.linkStates.add(this as any);
+        else if (resolver instanceof Object) {
             const this_map = new Map(Object.entries(this))
-            for (const [k, v] of Object.entries(value)) {
+            for (const [k, v] of Object.entries(resolver)) {
                 const assigned_state =  this_map.get(`${k}$`);
-                if (assigned_state instanceof $State) assigned_state.set(v);
+                if (assigned_state instanceof $State) assigned_state.value(v);
                 else Object.assign(this, {[`${k}$`]: $.state(v).on('change', state$ => {
                     Object.assign(this._value as Object, {[k]: state$._value})
                 })});
@@ -66,13 +70,13 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
                 //@ts-expect-error
                 if (node[attr] instanceof Function) {
                     //@ts-expect-error
-                    if (this.options.format) node[attr](this.options.format(this.value))
+                    if (this.options.format) node[attr](this.options.format(this.value()))
                     //@ts-expect-error
-                    else node[attr](this.value)
+                    else node[attr](this.value())
                 }
                 else if (attr in node) {
                     //@ts-expect-error
-                    node[attr] = this.value
+                    node[attr] = this.value()
                 }
             }
         }
@@ -91,18 +95,15 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
         return convert$;
     }
 
-    get value(): T {
-        return this._value instanceof $State ? this._convert ? this._convert(this._value.value) : this._value.value : this._value;
-    }
-
     /**
      * Return $State ID
      */
     toString(): string { return `$@$${this.id}$@$`; }
 
     toJSON(): Object {
-        if (this.value instanceof $State) return this.value.toJSON();
-        if (this.value instanceof Object) return $State.toJSON(this.value);
+        const value = this.value();
+        if (value instanceof $State) return value.toJSON();
+        if (value instanceof Object) return $State.toJSON(value);
         else return this.toString();
     }
 

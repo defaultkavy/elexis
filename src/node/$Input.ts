@@ -1,7 +1,7 @@
 import { $State, type $StateArgument } from "../structure/$State";
 import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
 import { $HTMLElement, type $HTMLElementEventMap, type $HTMLElementOptions } from "./$HTMLElement";
-import { _mixin } from "../lib/mixin";
+import { mixin } from "../lib/mixin";
 
 export interface $InputOptions extends $HTMLElementOptions {}
 export class $Input<T extends string | number = string, I = $Input<T, never>> extends $HTMLElement<HTMLInputElement, $InputEventMap<I>> {
@@ -17,8 +17,8 @@ export class $Input<T extends string | number = string, I = $Input<T, never>> ex
     }, () => $.set(this.dom, 'value', value as $State<string> | string, (value$) => {
         this.on('input', () => {
             if (value$.attributes.has(this.dom) === false) return;
-            if (typeof value$.value === 'string') (value$ as $State<string>).set(`${this.value()}`, {disableUpdate: true})
-            if (typeof value$.value === 'number') (value$ as unknown as $State<number>).set(Number(this.value()), {disableUpdate: true})
+            if (typeof value$.value === 'string') (value$ as $State<string>).value(`${this.value()}`, {disableUpdate: true})
+            if (typeof value$.value === 'number') (value$ as unknown as $State<number>).value(Number(this.value()), {disableUpdate: true})
         })
     }))}
     
@@ -116,7 +116,7 @@ export class $Input<T extends string | number = string, I = $Input<T, never>> ex
 }
 
 export interface $Input extends $HTMLElementAPIFilter<$Input, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'validationMessage' | 'validity' | 'willValidate' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget'> {}
-_mixin($Input, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'validationMessage', 'validity', 'willValidate', 'formAction', 'formEnctype', 'formMethod', 'formNoValidate', 'formTarget'))
+mixin($Input, $HTMLElementAPIs.create('checkValidity', 'reportValidity', 'autocomplete', 'name', 'form', 'required', 'validationMessage', 'validity', 'willValidate', 'formAction', 'formEnctype', 'formMethod', 'formNoValidate', 'formTarget'))
 
 export interface $InputEventMap<T> extends $HTMLElementEventMap {
     input: [InputEvent, T]
@@ -129,7 +129,7 @@ export class $NumberInput extends $Input<number, $NumberInput> {
     }
 
     static from($input: $Input) {
-        return $.mixin($Input, this) as $NumberInput;
+        return mixin($input, this) as $NumberInput;
     }
     stepDown() { this.dom.stepDown(); return this }
     stepUp() { this.dom.stepUp(); return this }
@@ -154,7 +154,7 @@ export class $CheckInput extends $Input<string, $CheckInput> {
     }
 
     static from($input: $Input) {
-        return $.mixin($Input, this) as $CheckInput;
+        return mixin($input, this) as $CheckInput;
     }
 
     checked(): boolean;
@@ -173,7 +173,7 @@ export class $FileInput extends $Input<string, $FileInput> {
     }
 
     static from($input: $Input) {
-        return $.mixin($Input, this) as $FileInput;
+        return mixin($input, this) as $FileInput;
     }
     
     multiple(): boolean;
@@ -186,4 +186,4 @@ export class $FileInput extends $Input<string, $FileInput> {
 }
 
 export type $InputType<T extends InputType> = T extends 'number' ? $NumberInput : T extends 'radio' | 'checkbox' ? $CheckInput : T extends 'file' ? $FileInput : $Input<string>;
-_mixin($Input, [$NumberInput, $CheckInput, $FileInput])
+mixin($Input, [$NumberInput, $CheckInput, $FileInput])

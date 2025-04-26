@@ -4,17 +4,21 @@ import { $Node, type $NodeEventMap } from "./$Node";
 export interface $ElementOptions {
     id?: string;
     class?: string[];
-    dom?: HTMLElement | SVGElement;
+    dom?: Element;
     tagname?: string;
 }
 
-export class $Element<H extends HTMLElement | SVGElement = HTMLElement, $EM extends $ElementEventMap = $ElementEventMap, EM extends HTMLElementEventMap = HTMLElementEventMap> extends $Node<H, $EM, EM> {
+export class $Element<H extends Element = Element, $EM extends $ElementEventMap = $ElementEventMap, EM extends ElementEventMap & GlobalEventHandlersEventMap = ElementEventMap & GlobalEventHandlersEventMap> extends $Node<H, $EM, EM> {
     readonly dom: H;
-    private static_classes = new Set<string>();
+    // static class
+    private SC = new Set<string>();
+    // class list
+    private CL: DOMTokenList;
     constructor(tagname: string, options?: $ElementOptions) {
         super();
         this.dom = this.createDom(tagname, options) as H;
         this.dom.$ = this;
+        this.CL = this.dom.classList;
         this.setOptions(options);
     }
 
@@ -39,22 +43,17 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement, $EM exte
     /**Replace list of class name to element. @example Element.class('name1 name2 name3', 'name4') */
     class(): DOMTokenList;
     class(...name: (string | undefined)[]): this;
-    class(...name: (string | undefined)[]): this | DOMTokenList {return $.fluent(this, arguments, () => this.dom.classList, () => {this.dom.classList.forEach(n => this.static_classes.has(n) ?? this.dom.classList.remove(n)); this.dom.classList.add(..._classList(name))})}
+    class(...name: (string | undefined)[]): this | DOMTokenList {return $.fluent(this, arguments, () => this.CL, () => {this.CL.forEach(n => this.SC.has(n) ?? this.CL.remove(n)); this.CL.add(..._classList(name))})}
     /**Add class name to dom. */
-    addClass(...name: (string | undefined)[]): this {return $.fluent(this, arguments, () => this, () => {this.dom.classList.add(..._classList(name))})}
+    addClass(...name: (string | undefined)[]): this {return $.fluent(this, arguments, () => this, () => {this.CL.add(..._classList(name))})}
     /**Remove class name from dom */
-    removeClass(...name: (string | undefined)[]): this {return $.fluent(this, arguments, () => this, () => {this.dom.classList.remove(..._classList(name))})}
+    removeClass(...name: (string | undefined)[]): this {return $.fluent(this, arguments, () => this, () => {this.CL.remove(..._classList(name))})}
 
     staticClass(): Set<string>;
     staticClass(...name: (string | undefined)[]): this;
-    staticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this.static_classes, () => {name = _classList(name); this.removeClass(...this.static_classes); this.static_classes.clear(); this.addStaticClass(...name);})}
-    addStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name = _classList(name); name.detype().forEach(n => this.static_classes.add(n)); this.addClass(...name)})}
-    removeStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name = _classList(name); name.detype().forEach(n => this.static_classes.delete(n)); this.removeClass(...name)})}
-
-    /**Modify style of element. */
-    style(): CSSStyleDeclaration
-    style(style: Partial<CSSStyleDeclaration>): this;
-    style(style?: Partial<CSSStyleDeclaration>) { return $.fluent(this, arguments, () => this.dom.style, () => {Object.assign(this.dom.style, style)})}
+    staticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this.SC, () => {name = _classList(name); this.removeClass(...this.SC); this.SC.clear(); this.addStaticClass(...name);})}
+    addStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name = _classList(name); name.detype().forEach(n => this.SC.add(n)); this.addClass(...name)})}
+    removeStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name = _classList(name); name.detype().forEach(n => this.SC.delete(n)); this.removeClass(...name)})}
     
     innerHTML(): string;
     innerHTML(html: $StateArgument<string | undefined>): this;
@@ -81,13 +80,6 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement, $EM exte
         }
         return this;
     }
-    
-    tabIndex(): number;
-    tabIndex(tabIndex: number): this;
-    tabIndex(tabIndex?: number) { return $.fluent(this, arguments, () => this.dom.tabIndex, () => $.set(this.dom, 'tabIndex', tabIndex as any))}
-
-    focus(options?: FocusOptions) { this.dom.focus(options); return this; }
-    blur() { this.dom.blur(); return this; }
 
     animate(keyframes: $ElementAnimationKeyframe[] | $ElementAnimationPropertyIndexedKeyframes | null, options?: number | $ElementAnimationOptions<this>, callback?: (animation: Animation) => void) {
         const animation = this.dom.animate(keyframes, options);
@@ -102,22 +94,11 @@ export class $Element<H extends HTMLElement | SVGElement = HTMLElement, $EM exte
 
     getAnimations(options?: GetAnimationsOptions) { return this.dom.getAnimations(options) }
 
-    get dataset() { return this.dom.dataset }
-
-    domRect(target?: $Element | $DOMRect) {
-        const this_rect = this.dom.getBoundingClientRect();
-        if (!target) return this_rect;
-        const target_rect = target instanceof $Element ? target.dom.getBoundingClientRect() : target;
-        const rect: $DOMRect = {
-            ...this_rect,
-            top: this_rect.top - target_rect.top,
-            left: this_rect.left - target_rect.left,
-            right: this_rect.right - target_rect.left,
-            bottom: this_rect.bottom - target_rect.top,
-            x: this_rect.x - target_rect.x,
-            y: this_rect.y - target_rect.y,
-        }
-        return rect;
+    inViewport() {
+        if (!this.inDOM()) return false;
+        const {top, left, bottom, right} = this.dom.getBoundingClientRect();
+        const DE = document.documentElement;
+        return (top >= 0 && left >= 0 && bottom <= (window.innerHeight || DE.clientHeight) && right <= (window.innerWidth || DE.clientWidth))
     }
 }
 

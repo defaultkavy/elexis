@@ -1,6 +1,6 @@
 import { _orArrayResolve } from "./orArrayResolve";
 
-export function _mixin(target: any, constructors: OrArray<any>) {
+export function mixin(target: any, constructors: OrArray<any>) {
     _orArrayResolve(constructors).forEach(constructor => {
         Object.getOwnPropertyNames(constructor.prototype).forEach(name => {
         if (name === 'constructor') return;

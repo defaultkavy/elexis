@@ -1,11 +1,11 @@
 import { $Container, type $ContainerOptions } from "./$Container";
 import type { $StateArgument } from "../structure/$State";
 import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
-import { _mixin } from "../lib/mixin";
+import { mixin } from "../lib/mixin";
 
-export interface $OptGroupOptions extends $ContainerOptions {}
-export class $OptGroup extends $Container<HTMLOptGroupElement> {
-    constructor(options?: $OptGroupOptions) {
+export interface $OptionGroupOptions extends $ContainerOptions {}
+export class $OptionGroup extends $Container<HTMLOptGroupElement> {
+    constructor(options?: $OptionGroupOptions) {
         super('optgroup', options);
     }
     
@@ -14,5 +14,5 @@ export class $OptGroup extends $Container<HTMLOptGroupElement> {
     disabled(disabled?: $StateArgument<boolean> | undefined) { return $.fluent(this, arguments, () => this.dom.disabled, () => $.set(this.dom, 'disabled', disabled))}
 }
 
-export interface $OptGroup extends $HTMLElementAPIFilter<$OptGroup, 'disabled' | 'label'> {}
-_mixin($OptGroup, $HTMLElementAPIs.create('disabled', 'label'))
+export interface $OptionGroup extends $HTMLElementAPIFilter<$OptionGroup, 'disabled' | 'label'> {}
+mixin($OptionGroup, $HTMLElementAPIs.create('disabled', 'label'))

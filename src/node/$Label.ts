@@ -1,4 +1,4 @@
-import { _mixin } from "../lib/mixin";
+import { mixin } from "../lib/mixin";
 import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
 import type { $StateArgument } from "../structure/$State";
 import { $Container, type $ContainerOptions } from "./$Container";
@@ -16,4 +16,4 @@ export class $Label extends $Container<HTMLLabelElement> {
 }
 
 export interface $Label extends $HTMLElementAPIFilter<$Label, 'form'> {}
-_mixin($Label, $HTMLElementAPIs.create('form',))
+mixin($Label, $HTMLElementAPIs.create('form',))

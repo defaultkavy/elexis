@@ -4,6 +4,7 @@ import { $Node } from "./$Node";
 import { $State, type $StateArgument } from "../structure/$State";
 import { $Text } from "./$Text";
 import { $HTMLElement, type $HTMLElementEventMap, type $HTMLElementOptions } from "./$HTMLElement";
+import { $Async } from "./$Async";
 
 export interface $ContainerOptions extends $HTMLElementOptions {}
 export class $Container<H extends HTMLElement = HTMLElement, EM extends $ContainerEventMap = $ContainerEventMap> extends $HTMLElement<H, EM> {
@@ -54,11 +55,10 @@ export class $Container<H extends HTMLElement = HTMLElement, EM extends $Contain
                 }
                 continue;
             } else if (child instanceof $State) {
-                const ele = new $Text(child.value); // turn $State object into $Text element
+                const ele = new $Text(child.value()); // turn $State object into $Text element
                 child.use(ele, 'content'); // bind $Text elelment and function name to $State
                 this.children.add(ele, this.__position_cursor);
             } else if (child instanceof Promise) {
-                const $Async = (await import('./$Async')).$Async; // import $Async avoid extends error
                 const ele = new $Async().load(child) // using $Async.await resolve promise element
                 this.children.add(ele, this.__position_cursor); // insert $Async element at this position, leave a position for promised element
             } else if (typeof child === 'boolean' || typeof child === 'number') {

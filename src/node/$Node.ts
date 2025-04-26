@@ -6,7 +6,7 @@ import type { $Container } from "./$Container";
 
 export abstract class $Node<N extends Node = Node, $EM extends $NodeEventMap = $NodeEventMap, EM extends GlobalEventHandlersEventMap = GlobalEventHandlersEventMap> extends $EventTarget<$EM, EM> {
     abstract readonly dom: N;
-    protected __$property__: any = {
+    protected $data: any = {
         hidden: false,
         coordinate: undefined as $NodeCoordinate | undefined
     };
@@ -14,11 +14,13 @@ export abstract class $Node<N extends Node = Node, $EM extends $NodeEventMap = $
 
     hide(): boolean; 
     hide(hide?: boolean | $State<boolean>, render?: boolean): this; 
-    hide(hide?: boolean | $State<boolean>, render = true) { return $.fluent(this, arguments, () => this.__$property__.hidden, () => {
+    hide(hide?: boolean | $State<boolean>, render = true) { return $.fluent(this, arguments, () => this.$data.hidden, () => {
         if (hide === undefined) return;
-        if (hide instanceof $State) { this.__$property__.hidden = hide.value; hide.use(this, 'hide')}
-        else this.__$property__.hidden = hide;
-        if (render) this.parent?.children.render();
+        if (hide instanceof $State) { this.$data.hidden = hide.value(); hide.use(this, 'hide')}
+        else if (this.$data.hidden !== hide) {
+            this.$data.hidden = hide;
+            if (render) this.parent?.children.render();
+        }
         return this;
     })}
 
@@ -43,10 +45,11 @@ export abstract class $Node<N extends Node = Node, $EM extends $NodeEventMap = $
 
     coordinate(): $NodeCoordinate | undefined;
     coordinate(coordinate: $NodeCoordinate): this;
-    coordinate(coordinate?: $NodeCoordinate) { return $.fluent(this, arguments, () => this.__$property__.coordinate, () => $.set(this.__$property__, 'coordinate', coordinate))}
+    coordinate(coordinate?: $NodeCoordinate) { return $.fluent(this, arguments, () => this.$data.coordinate, () => $.set(this.$data, 'coordinate', coordinate))}
 
-    self(callback: OrArray<($node: this) => void>) { $.orArrayResolve(callback).forEach(fn => fn(this)); return this; }
+    use(callback: OrArray<($node: this) => void>) { $.orArrayResolve(callback).forEach(fn => fn(this)); return this; }
     inDOM() { return document.contains(this.dom); }
+
     await<T>(promise: Promise<T>, callback: ($node: this, result: T) => void): this {
         promise.then(result => callback(this, result));
         return this;
@@ -71,7 +74,3 @@ export interface $NodeCoordinate {
 
 export interface $NodeEventMap {
 }
-
-type $HTMLElementEventMap<$N> = {
-    [keys in keyof HTMLElementEventMap]: [event: HTMLElementEventMap[keys], $this: $N];
-};

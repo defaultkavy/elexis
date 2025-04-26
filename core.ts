@@ -1,29 +1,33 @@
-import { $EventManager, type $EventMap, $EventTarget, $FocusManager, type $StateObject, $PointerManager, $State, type $StateArgument, type $StateOption } from "../index";
-import { $Node } from "./node/$Node"
-import { $Document } from "./node/$Document"
-import { $Anchor } from "./node/$Anchor";
-import { $Button } from "./node/$Button";
-import { $Form } from "./node/$Form";
-import { $Input } from "./node/$Input";
-import { $Container } from "./node/$Container";
-import { $Element } from "./node/$Element";
-import { $Label } from "./node/$Label";
-import { $Image } from "./node/$Image";
-import { $Canvas } from "./node/$Canvas";
-import { $Dialog } from "./node/$Dialog";
-import { $Select } from "./node/$Select";
-import { $Option } from "./node/$Option";
-import { $OptGroup } from "./node/$OptGroup";
-import { $Textarea } from "./node/$Textarea";
-import { $HTMLElement } from "./node/$HTMLElement";
-import { $Async } from "./node/$Async";
-import { $Video } from "./node/$Video";
-import { $Window } from "./structure/$Window";
-import { $KeyboardManager } from "./structure/$KeyboardManager";
-import { _convertFrom } from "./lib/convertFrom";
-import { _classList } from "./lib/classList";
-import { _mixin } from "./lib/mixin";
-import { _uuidv7 } from "./lib/uuidv7";
+import './global';
+// core structure
+import { type $EventMap, $EventManager } from "./src/structure/$EventManager";
+import { type $StateArgument, $State, type $StateOption, type $StateObject } from "./src/structure/$State";
+import type { $EventTarget } from "./src/structure/$EventTarget";
+// core dom
+import { $Node } from "./src/node/$Node"
+import { $Element } from "./src/node/$Element";
+import { $HTMLElement } from "./src/node/$HTMLElement";
+import { $Container } from "./src/node/$Container";
+import { $Document } from "./src/node/$Document"
+import { $Async } from "./src/node/$Async";
+import { $Window } from "./src/node/$Window";
+// core lib
+import { _convertFrom } from "./src/lib/convertFrom";
+import { _classList } from "./src/lib/classList";
+// types
+import type { $Anchor } from './src/node/$Anchor';
+import type { $Button } from './src/node/$Button';
+import type { $Canvas } from './src/node/$Canvas';
+import type { $Dialog } from './src/node/$Dialog';
+import type { $Form } from './src/node/$Form';
+import type { $Image } from './src/node/$Image';
+import type { $Input } from './src/node/$Input';
+import type { $Label } from './src/node/$Label';
+import type { $OptionGroup } from './src/node/$OptGroup';
+import type { $Option } from './src/node/$Option';
+import type { $Select } from './src/node/$Select';
+import type { $Textarea } from './src/node/$Textarea';
+import type { $Video } from './src/node/$Video';
 
 export type $ = typeof $;
 /**
@@ -160,19 +164,16 @@ export function $(resolver: any, ...args: any[]) {
     }
     throw new Error(`$(): Target not supported. ${resolver instanceof Object ? resolver.constructor.name : resolver}`)
 }
-
 /**
  * `$` is basic API interface to calling function, All major tools can be found in `$` properties.
  * This is also a feature-rich function to help you create and select elements.
  */
 export namespace $ {
-    export let anchorHandler: null | (($a: $Anchor, e: Event) => void) = null;
     export const TagNameElementMap = {
         'html': $Container,
         'head': $Container,
         'document': $Document,
         'body': $Container,
-        'a': $Anchor,
         'p': $Container,
         'pre': $Container,
         'code': $Container,
@@ -189,27 +190,16 @@ export namespace $ {
         'ul': $Container,
         'dl': $Container,
         'li': $Container,
-        'input': $Input,
-        'label': $Label,
-        'button': $Button,
-        'form': $Form,
-        'img': $Image,
-        'dialog': $Dialog,
-        'canvas': $Canvas,
-        'select': $Select,
-        'option': $Option,
-        'optgroup': $OptGroup,
-        'textarea': $Textarea,
-        'video': $Video,
         'async': $Async,
     }
     export type TagNameElementMapType = typeof TagNameElementMap;
     export interface TagNameElementMap extends TagNameElementMapType {} 
     export type TagNameTypeMap = {
-        [key in keyof $.TagNameElementMap]: InstanceType<$.TagNameElementMap[key]>;
+        [key in keyof TagNameElementMap]: InstanceType<$.TagNameElementMap[key]>;
     };
-    export type ContainerTypeTagName = Exclude<keyof TagNameTypeMap, 'input'>;
+    export type ContainerTypeTagName = Exclude<keyof $.TagNameTypeMap, 'input'>;
     export type SelfTypeTagName = 'input';
+    
 
     export type $HTMLElementMap<H extends HTMLElement> = 
     H extends HTMLLabelElement ? $Label 
@@ -223,7 +213,7 @@ export namespace $ {
     : H extends HTMLDialogElement ? $Dialog
     : H extends HTMLSelectElement ? $Select
     : H extends HTMLOptionElement ? $Option
-    : H extends HTMLOptGroupElement ? $OptGroup
+    : H extends HTMLOptGroupElement ? $OptionGroup
     : H extends HTMLTextAreaElement ? $Textarea
     : H extends HTMLVideoElement ? $Video
     : $Container<H>;
@@ -259,24 +249,25 @@ export namespace $ {
             if (value === undefined) return;
             if (value instanceof $State) {
                 value.use(object, key);
-                if (object[key] instanceof Function) (object[key] as Function)(...value.value)
-                else if (value.value !== undefined) object[key] = value.value;
+                if (object[key] instanceof Function) (object[key] as Function)(...value.value())
+                else if (value.value() !== undefined) object[key] = value.value();
                 if (handle) handle(value);
                 return;
             } else if (typeof value === 'string') {
                 const template = $State.resolver(value);
                 const stateList = template.filter(item => item instanceof $State);
-                if (!stateList.length) return object[key] = value as any;
+                if (!stateList.length) { object[key] = value as any; return }
                 $State.templateMap.set(object, { template, attribute: key });
                 stateList.forEach(state$ => { state$.on('update', () => setTemplate()) })
                 setTemplate();
                 function setTemplate() {
-                    if (object[key] instanceof Function) object[key](template.map(item => item instanceof $State ? item.value : item).join(''))
-                    else object[key] = template.map(item => item instanceof $State ? item.value : item).join('') as any
+                    if (object[key] instanceof Function) object[key](template.map(item => item instanceof $State ? item.value() : item).join(''))
+                    else object[key] = template.map(item => item instanceof $State ? item.value() : item).join('') as any
                 }
             }
             if (object[key] instanceof Function) (object[key] as Function)(...value as any);
             else object[key] = value as any;
+            return;
     }
     
     export function state<T extends number>(value: T, options?: $StateOption<T>): $State<number>;
@@ -289,84 +280,14 @@ export namespace $ {
         return $State.create<T>(value, options as $StateOption<T>)
     }
 
-    export async function resize(object: Blob, size: number): Promise<string> {
-        return new Promise(resolve => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const $img = $('img');
-                $img.once('load', e => {
-                    const $canvas = $('canvas');
-                    const context = $canvas.getContext('2d');
-                    const ratio = $img.height() / $img.width();
-                    const [w, h] = [
-                        ratio > 1 ? size / ratio : size,
-                        ratio > 1 ? size : size * ratio,
-                    ]
-                    $canvas.height(h).width(w);
-                    context?.drawImage($img.dom, 0, 0, w, h);
-                    resolve($canvas.toDataURL(object.type))
-                })
-                if (!e.target) throw "$.resize(): e.target is null";
-                $img.src(e.target.result as string);
-            }
-            reader.readAsDataURL(object);
-        })
-    }
-
-    export function html(html: string) {
-        const body = new DOMParser().parseFromString(html, 'text/html').body;
-        return Array.from(body.children).map(child => $(child))
-    }
-
     export function registerTagName(string: string, node: {new(...args: undefined[]): $Node}) {
         Object.assign($.TagNameElementMap, {[string]: node});
         return $.TagNameElementMap;
     }
     
     export function orArrayResolve<T>(multable: OrArray<T>) { if (multable instanceof Array) return multable; else return [multable]; }
-    export function mixin(target: any, constructors: OrArray<any>) { return _mixin(target, constructors) }
     export function rem(amount: number = 1) { return parseInt(getComputedStyle(document.documentElement).fontSize) * amount }
     export function call<T>(fn: () => T): T { return fn() }
-    export function events<EM extends $EventMap>() { return new $EventManager<EM> }
-    export function pointers($node: $Node) { return new $PointerManager($node) }
-    export function keys($target: $EventTarget) { return new $KeyboardManager($target) }
-    export function focus() { return new $FocusManager() }
     export function classList(...name: (string | undefined)[]) { return _classList(name) }
-    export function pass(...args: any) { return true }/**
-    * UUIDv7 features a time-ordered value field derived from the widely implemented and well-known Unix Epoch timestamp source,
-    * the number of milliseconds since midnight 1 Jan 1970 UTC, leap seconds excluded. 
-    * ElexisJS UUIDv7 use the format as below:
-    * ```txt
-    *   0                   1                   2                   3
-        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |                           unix_ts_ms                          |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |          unix_ts_ms           |  ver  |       worker_id       |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |var|                        counter                            |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |                             rand                              |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       ```
-    * Which:
-       1. unix_ts_ms: 48-bit big-endian unsigned number of the Unix Epoch timestamp in milliseconds.
-       2. ver: 4-bit UUID version number, set to 0b0111 (7).
-       3. worker_id: 12-bit machine ID, which can defined by developer.
-       4. var: 2-bit variant field defined by [RFC 9562](https://www.rfc-editor.org/rfc/rfc9562#variant_field), set to 0b10.
-       5. counter: 30-bit counter that ensures the increasing order of IDs generated within a milisecond.
-       6. rand: 32-bit random number.
-    */
-    export function uuidv7(options: { workerId?: number } = { workerId: 0 }) { return _uuidv7(options) }
-    export function trycatch<D>(callback: () => D): Result<D, Error> {
-        try {
-            const data = callback();
-            return [data, null];
-        } catch (err) {
-            return [null, new Error(err as string)];
-        }
-    }
-    export function type<T>(): T { return undefined as T }
+    export function events<EM extends $EventMap>() { return new $EventManager<EM> }
 }
-
-globalThis.$ = $;

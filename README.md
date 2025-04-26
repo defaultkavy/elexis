@@ -3,19 +3,19 @@
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/defaultkavy-dev/elexis/refs/heads/assets/logo_dark.png">
   <img src="https://raw.githubusercontent.com/defaultkavy-dev/elexis/refs/heads/assets/logo_dark.png" alt="Elexis Logo">
 </picture>
-<p style="text-align: center">Build Web in Native JavaScript Syntax</p>
+<p style="text-align: center">Building Web App using only JavaScript</p>
 
-> ElexisJS is still in beta test now, some breaking changes might happened very often.
-
-## What does ElexisJS bring to developer?
+## What does ElexisJS bring to developers?
 1. Write website with Native JavaScript syntax and full TypeScript development experiance, no more HTML or JSX.
-2. For fluent method lovers.
-3. Easy to import or create extensions to extend more functional.
+2. TypeScript first class, typesafe is good.
+3. Method chain make code easy for reading.
+4. Everything can be modular, make bundle size smaller depend on you need.
 
 ## Installation
-1. Install from npm
+1. Install
     ```
     npm i elexis
+    bun i elexis
     ```
 2. Import to your project main entry js/ts file.
     ```ts
@@ -28,11 +28,13 @@ Just use the `$` function to create any element with node name.
 ```ts
 $('a');
 ```
+> [!NOTE]
 > This is not jQuery selector! It looks like same but it actually create `<a>` element, not selecting them.
 
 ## Fluent method
-Create and modify element in one line.
+Create and modify element attributes in one line.
 ```ts
+// set the class name and style
 $('h1').class('title').style({color: 'red'})
 ```
 
@@ -69,11 +71,13 @@ const number$ = $.state(42);
 This `$State` value has been set a number `42`, which will become a number type `$State`. We can simply put this state value into any display content!
 
 ```ts
-const value$ = $.state(42);
+// it's recommended place '$' after the variable name
+// to indicate this is $State object.
+const number$ = $.state(42);
 
 $(document.body).content([
-    $('input').type('number').value(value$),
-    $('p').content([`User input value: ${value$}`])
+    $('input').type('number').value(number$),
+    $('p').content([`User input value: ${number$}`])
 ])
 ```
 
@@ -81,7 +85,7 @@ You will see the `<input>` element is fill with number `42`, and also `<p>` elem
 
 Using `set` method to set value of `$State`, all displayed content of `value$` will be synced.
 ```ts
-value$.set(0)
+number$.value(0)
 ```
 
 ## Build Your Custom Element
@@ -101,8 +105,37 @@ $(document.body).content([
 ])
 ```
 
+## Minimize ElexisJS Codebase Size
+In default, ElexisJS imports all basic elements to your project. If you need more customize of ElexisJS modules, we offer the way to make your bundle size as small as possible. Use this import line instead `import 'elexis'`.
+```ts
+import 'elexis/core';
+```
+
+With this `elexis/core`, the minimum required modules will be imported. If you need more basic element API import to your project, you can write import like this:
+```ts
+import 'elexis/core'; // import basic element
+import 'elexis/node/img'; // import $Image
+import 'elexis/node/a'; // import $Anchor
+import 'elexis/method/trycatch';
+
+$('img').src(...) // => $Image
+$('a').href(...) // => $Anchor
+$.trycatch(() => true) // trycatch handler
+```
+Each module in `node/*` and `method/*` will register tag name and functions to `$` method, TypeScript server will handle these result of type for you. You can also directly import the element to your code and place element constructor inside `$` method:
+```ts
+import 'elexis/core';
+import { $Input } from 'elexis/src/node/$Input';
+
+$($Input).value(42) // => $Input
+```
+> [!CAUTION]
+> Don't use the import path like `import { $Input } from 'elexis'`, this will make compiler use the default entry point that import every things to your project.
+
 ## Extensions
 1. [@elexis.js/router](https://github.com/elexis-js/router): Router for Single Page App.
 2. [@elexis.js/layout](https://github.com/elexis-js/layout): Build waterfall/justified layout with automatic compute content size and position.
 3. [@elexis.js/view](https://github.com/elexis-js/view): Multiple content switch handler.
 4. [@elexis.js/css](https://github.com/elexis-js/css): Write CSS in JavaScript.
+5. [@elexis.js/idb](https://github.com/elexis-js/idb): Simplify API of IndexedDB.
+6. [@elexis.js/focus](https://github.com/elexis-js/focus): Element focus state controller.

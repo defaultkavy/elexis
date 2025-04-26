@@ -1,7 +1,7 @@
 import { $Container, type $ContainerOptions } from "./$Container";
 import type { $StateArgument } from "../structure/$State";
 import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
-import { _mixin } from "../lib/mixin";
+import { mixin } from "../lib/mixin";
 
 export interface $OptionOptions extends $ContainerOptions {}
 export class $Option extends $Container<HTMLOptionElement> {
@@ -25,10 +25,9 @@ export class $Option extends $Container<HTMLOptionElement> {
     value(value: $StateArgument<string> | undefined): this;
     value(value?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
     
-    get form() { return this.dom.form ? $(this.dom.form) : null }
     get index() { return this.dom.index }
 
 }
 
 export interface $Option extends $HTMLElementAPIFilter<$Option, 'form' | 'disabled' | 'label'> {}
-_mixin($Option, $HTMLElementAPIs.create('form', 'disabled', 'label'))
+mixin($Option, $HTMLElementAPIs.create('form', 'disabled', 'label'))
