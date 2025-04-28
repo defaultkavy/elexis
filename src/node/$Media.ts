@@ -5,7 +5,7 @@ import { $HTMLElement } from "./$HTMLElement";
 
 export interface $MediaOptions extends $ElementOptions {}
 export class $Media<H extends HTMLMediaElement> extends $HTMLElement<H> {
-    constructor(tagname: string, options?: $MediaOptions) {
+    constructor(tagname: string, options?: Partial<$MediaOptions>) {
         super(tagname, options);
     }
 

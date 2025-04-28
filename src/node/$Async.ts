@@ -6,7 +6,7 @@ import { $Text } from "./$Text";
 export interface $AsyncNodeOptions extends $ContainerOptions {}
 export class $Async<N extends $Node = $Node> extends $Element {
     #loaded: boolean = false;
-    constructor(options?: $AsyncNodeOptions) {
+    constructor(options?: Partial<$AsyncNodeOptions>) {
         super('async', options)
     }
 

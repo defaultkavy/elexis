@@ -6,7 +6,7 @@ import { mixin } from "../lib/mixin";
 
 export interface $InputOptions extends $HTMLElementOptions {}
 export class $Input<T extends string | number = string, I = $Input<T, never>> extends $HTMLElement<HTMLInputElement, $InputEventMap<I>> {
-    constructor(options?: $InputOptions) {
+    constructor(options?: Partial<$InputOptions>) {
         super('input', options);
     }
     

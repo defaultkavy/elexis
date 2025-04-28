@@ -5,7 +5,7 @@ import { assign } from "../lib/assign";
 
 export interface $OptionGroupOptions extends $ContainerOptions {}
 export class $OptionGroup extends $Container<HTMLOptGroupElement> {
-    constructor(options?: $OptionGroupOptions) {
+    constructor(options?: Partial<$OptionGroupOptions>) {
         super('optgroup', options);
     }
 }

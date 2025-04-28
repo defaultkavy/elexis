@@ -4,7 +4,7 @@ import { $Container, type $ContainerOptions } from "./$Container";
 
 export interface $AnchorOptions extends $ContainerOptions {}
 export class $Anchor extends $Container<HTMLAnchorElement> {
-    constructor(options?: $AnchorOptions) {
+    constructor(options?: Partial<$AnchorOptions>) {
         super('a', options);
         // Link Handler event
         this.dom.addEventListener('click', e => {

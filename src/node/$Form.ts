@@ -4,7 +4,7 @@ import type { $StateArgument } from "../structure/$State";
 import { $Container, type $ContainerOptions } from "./$Container";
 export interface $FormOptions extends $ContainerOptions {}
 export class $Form extends $Container<HTMLFormElement> {
-    constructor(options?: $FormOptions) {
+    constructor(options?: Partial<$FormOptions>) {
         super('form', options);
     }
     get elements() { return Array.from(this.dom.elements).map(ele => $(ele)) }

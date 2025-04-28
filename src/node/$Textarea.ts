@@ -5,7 +5,7 @@ import { assign } from "../lib/assign";
 
 export interface $TextareaOptions extends $ContainerOptions {}
 export class $Textarea extends $Container<HTMLTextAreaElement> {
-    constructor(options?: $TextareaOptions) {
+    constructor(options?: Partial<$TextareaOptions>) {
         super('textarea', options);
     }
     

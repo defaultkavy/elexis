@@ -4,7 +4,7 @@ import { $Media, type $MediaOptions } from "./$Media";
 
 export interface $VideoOptions extends $MediaOptions {}
 export class $Video extends $Media<HTMLVideoElement> {
-    constructor(options?: $VideoOptions) {
+    constructor(options?: Partial<$VideoOptions>) {
         super('video', options)
     }
 }

@@ -4,7 +4,7 @@ import { assign } from "../lib/assign";
 import type { $StateArgument } from "../structure/$State";
 export interface $ButtonOptions extends $ContainerOptions {}
 export class $Button extends $Container<HTMLButtonElement> {
-    constructor(options?: $ButtonOptions) {
+    constructor(options?: Partial<$ButtonOptions>) {
         super('button', options);
     }
 }

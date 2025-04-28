@@ -4,7 +4,7 @@ import type { $StateArgument } from "../structure/$State";
 import { $Container, type $ContainerOptions } from "./$Container";
 export interface $LabelOptions extends $ContainerOptions {}
 export class $Label extends $Container<HTMLLabelElement> {
-    constructor(options?: $LabelOptions) {
+    constructor(options?: Partial<$LabelOptions>) {
         super('label', options);
     }
 

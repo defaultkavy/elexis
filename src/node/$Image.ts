@@ -3,7 +3,7 @@ import type { $StateArgument } from "../structure/$State";
 import { assign } from "../lib/assign";
 export interface $ImageOptions extends $HTMLElementOptions {}
 export class $Image extends $HTMLElement<HTMLImageElement> {
-    constructor(options?: $ImageOptions) {
+    constructor(options?: Partial<$ImageOptions>) {
         super('img', options);
     }
 

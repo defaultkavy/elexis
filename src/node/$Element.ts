@@ -6,6 +6,7 @@ export interface $ElementOptions {
     id: string;
     class: string;
     dom: Element;
+    tagname: string;
 }
 export class $Element<
     H extends Element = Element, 
@@ -29,10 +30,10 @@ export class $Element<
     private static createDom(tagname: string, options?: Partial<$ElementOptions>) {
         if (options?.dom) return options.dom;
         if (tagname === 'svg') return document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        return document.createElement(tagname);
+        return document.createElement(options?.tagname ?? tagname);
     }
 
-    option(options: Partial<$StateArgumentOptions<Omit<Options, 'dom'>>> | {[key: string]: $StateArgument<any>} | undefined) {
+    option(options: Partial<$StateArgumentOptions<Omit<Options, 'dom' | 'tagname'>>> | {[key: string]: $StateArgument<any>} | undefined) {
         if (options) {
             for (const [key, value] of Object.entries(options)) {
                 if (value instanceof $State) {
