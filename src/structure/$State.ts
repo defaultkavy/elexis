@@ -9,7 +9,7 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
     static templateMap = new Map<Object, { template: (string | $State)[], attribute: string | number | symbol }>();
     protected _value!: T | $State<T>;
     protected _convert?: (value: any) => T;
-    readonly attributes = new Map<Object, Set<string | number | symbol>>();
+    readonly attributesMap = new Map<Object, Map<string | number | symbol, (this | any)[]>>();
     readonly linkStates = new Set<$State<T>>();
     readonly id: string;
     readonly options: Partial<$StateOption<T>> = {};
@@ -65,28 +65,26 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
 
     protected update() {
         // update element content for eatch attributes
-        for (const [node, attrList] of this.attributes.entries()) {
-            for (const attr of attrList) {
+        for (const [node, attrList] of this.attributesMap.entries()) {
+            for (const [name, argsTemplate] of attrList.entries()) {
                 //@ts-expect-error
-                if (node[attr] instanceof Function) {
+                if (node[name] instanceof Function) {
+                    const args = argsTemplate.map(v => v === this ? this.options.format ? this.options.format(this.value()) : this.value() : v);
                     //@ts-expect-error
-                    if (this.options.format) node[attr](this.options.format(this.value()))
-                    //@ts-expect-error
-                    else node[attr](this.value())
+                    node[name](...args);
                 }
-                else if (attr in node) {
+                else if (name in node) {
                     //@ts-expect-error
-                    node[attr] = this.value()
+                    node[name] = this.value()
                 }
             }
         }
         this.fire('update', this)
     }
 
-    use<O extends Object, K extends keyof O>(object: O, attrName: K) {
-        const attrList = this.attributes.get(object)
-        if (attrList) attrList.add(attrName);
-        else this.attributes.set(object, new Set<string | number | symbol>().add(attrName))
+    use<O extends Object, K extends keyof O>(object: O, attrName: K, args: (this | any)[] = [this]) {
+        const attrList = this.attributesMap.get(object) ?? new Map().set(attrName, args)
+        this.attributesMap.set(object, attrList)
     }
 
     convert<K>(fn: (value: T) => K) {
@@ -131,6 +129,10 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
 };
 
 export type $StateArgument<T> = $State<T> | $State<undefined | T> | undefined | T;
+export type $StateArgumentOptions<T> = {
+    [key in keyof T]: $StateArgument<T[key]>;
+};
+export type $StateParameter<T> = T extends [infer P, ...infer Rest] ? [$StateArgument<P>, ...$StateParameter<Rest>] : T;
 export interface $StateEventMap<T> extends $EventMap {
     update: [state$: $State<T>],
     change: [state$: $State<T>]

@@ -5,11 +5,12 @@ import { $State, type $StateArgument } from "../structure/$State";
 import { $Text } from "./$Text";
 import { $HTMLElement, type $HTMLElementEventMap, type $HTMLElementOptions } from "./$HTMLElement";
 import { $Async } from "./$Async";
+import { assign } from "../lib/assign";
 
 export interface $ContainerOptions extends $HTMLElementOptions {}
 export class $Container<H extends HTMLElement = HTMLElement, EM extends $ContainerEventMap = $ContainerEventMap> extends $HTMLElement<H, EM> {
     readonly children: $NodeManager = new $NodeManager(this);
-    constructor(tagname: string, options?: $ContainerOptions) {
+    constructor(tagname: string, options?: Partial<$ContainerOptions>) {
         super(tagname, options)
     }
 
@@ -81,17 +82,21 @@ export class $Container<H extends HTMLElement = HTMLElement, EM extends $Contain
         if (query.startsWith('::')) return Array.from(this.dom.querySelectorAll(query.replace(/^::/, ''))).map(dom => $(dom));
         else if (query.startsWith(':')) return $(this.dom.querySelector(query.replace(/^:/, '')));
     }
+}
+assign($Container, {
+    set: ['scrollTop', 'scrollLeft'],
+    get: ['scrollHeight', 'scrollWidth']
+})
 
-    get scrollHeight() { return this.dom.scrollHeight }
-    get scrollWidth() { return this.dom.scrollWidth }
+export interface $Container {
+    get scrollHeight(): number;
+    get scrollWidth(): number;
     
     scrollTop(): number;
-    scrollTop(scrollTop: $StateArgument<number> | undefined): this
-    scrollTop(scrollTop?: $StateArgument<number> | undefined) { return $.fluent(this, arguments, () => this.dom.scrollTop, () => $.set(this.dom, 'scrollTop', scrollTop as any))}
+    scrollTop(scrollTop: $StateArgument<number>): this
     
     scrollLeft(): number;
-    scrollLeft(scrollLeft: $StateArgument<number> | undefined): this
-    scrollLeft(scrollLeft?: $StateArgument<number> | undefined) { return $.fluent(this, arguments, () => this.dom.scrollLeft, () => $.set(this.dom, 'scrollLeft', scrollLeft as any))}
+    scrollLeft(scrollLeft: $StateArgument<number>): this
 }
 
 export type $ContainerContentBuilder<P extends $Container> = $ContainerContentGroup | (($node: P) => OrPromise<$ContainerContentGroup>)

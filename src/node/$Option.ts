@@ -1,7 +1,7 @@
 import { $Container, type $ContainerOptions } from "./$Container";
 import type { $StateArgument } from "../structure/$State";
-import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
-import { mixin } from "../lib/mixin";
+import { type $HTMLElementGeneralAPIFilter } from "../structure/$HTMLElementGeneralAPI";
+import { assign } from "../lib/assign";
 
 export interface $OptionOptions extends $ContainerOptions {}
 export class $Option extends $Container<HTMLOptionElement> {
@@ -9,25 +9,26 @@ export class $Option extends $Container<HTMLOptionElement> {
         super('option', options);
     }
 
-    defaultSelected(): boolean;
-    defaultSelected(defaultSelected: $StateArgument<boolean> | undefined): this;
-    defaultSelected(defaultSelected?: $StateArgument<boolean> | undefined) { return $.fluent(this, arguments, () => this.dom.defaultSelected, () => $.set(this.dom, 'defaultSelected', defaultSelected))}
-    
-    selected(): boolean;
-    selected(selected: $StateArgument<boolean> | undefined): this;
-    selected(selected?: $StateArgument<boolean> | undefined) { return $.fluent(this, arguments, () => this.dom.selected, () => $.set(this.dom, 'selected', selected))}
-    
-    text(): string;
-    text(text: $StateArgument<string> | undefined): this;
-    text(text?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.text, () => $.set(this.dom, 'text', text))}
-    
-    value(): string;
-    value(value: $StateArgument<string> | undefined): this;
-    value(value?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value))}
-    
-    get index() { return this.dom.index }
-
 }
 
-export interface $Option extends $HTMLElementAPIFilter<$Option, 'form' | 'disabled' | 'label'> {}
-mixin($Option, $HTMLElementAPIs.create('form', 'disabled', 'label'))
+assign($Option, {
+    set: ['defaultSelected', 'selected', 'text', 'value', 'disabled'],
+    get: ['index', 'form', 'label']
+})
+
+export interface $Option extends $HTMLElementGeneralAPIFilter<$Option, 'form' | 'disabled' | 'label'> {
+
+    defaultSelected(): boolean;
+    defaultSelected(defaultSelected: $StateArgument<boolean>): this;
+    
+    selected(): boolean;
+    selected(selected: $StateArgument<boolean>): this;
+    
+    text(): string;
+    text(text: $StateArgument<string>): this;
+    
+    value(): string;
+    value(value: $StateArgument<string>): this;
+    
+    get index():number
+}

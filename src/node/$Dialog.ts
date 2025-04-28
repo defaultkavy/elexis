@@ -1,19 +1,27 @@
+import { assign } from "../lib/assign";
+import type { $StateArgument } from "../structure/$State";
 import { $Container, type $ContainerOptions } from "./$Container";
 export interface $DialogOptions extends $ContainerOptions {}
 export class $Dialog extends $Container<HTMLDialogElement> {
     constructor(options?: $DialogOptions) {
         super('dialog', options);
     }
+}
+
+assign($Dialog, {
+    set: ['open', 'returnValue'],
+    fn: ['close', 'show', 'showModal']
+})
+
+export interface $Dialog {
 
     open(): boolean;
-    open(open?: boolean): this;
-    open(open?: boolean) { return $.fluent(this, arguments, () => this.dom.open, () => $.set(this.dom, 'open', open)) }
+    open(open: $StateArgument<boolean>): this;
 
     returnValue(): string;
-    returnValue(returnValue?: string): this;
-    returnValue(returnValue?: string) { return $.fluent(this, arguments, () => this.dom.returnValue, () => $.set(this.dom, 'returnValue', returnValue)) }
+    returnValue(returnValue: $StateArgument<string>): this;
 
-    close() { this.dom.close(); return this; }
-    show() { this.dom.show(); return this; }
-    showModal() { this.dom.showModal(); return this; }
+    close(): this;
+    show(): this;
+    showModal(): this;
 }

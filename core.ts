@@ -1,7 +1,7 @@
 import './global';
 // core structure
 import { type $EventMap, $EventManager } from "./src/structure/$EventManager";
-import { type $StateArgument, $State, type $StateOption, type $StateObject } from "./src/structure/$State";
+import { type $StateArgument, $State, type $StateOption, type $StateObject, type $StateParameter } from "./src/structure/$State";
 import type { $EventTarget } from "./src/structure/$EventTarget";
 // core dom
 import { $Node } from "./src/node/$Node"
@@ -190,7 +190,7 @@ export namespace $ {
         'ul': $Container,
         'dl': $Container,
         'li': $Container,
-        'async': $Async,
+        'async': $Async
     }
     export type TagNameElementMapType = typeof TagNameElementMap;
     export interface TagNameElementMap extends TagNameElementMapType {} 
@@ -243,7 +243,7 @@ export namespace $ {
         object: O, 
         key: K, 
         value: O[K] extends (...args: any) => any 
-            ? (undefined | [$StateArgument<Parameters<O[K]>>]) 
+            ? (undefined | $StateParameter<Parameters<O[K]>>) 
             : (undefined | $StateArgument<O[K]>), 
         handle?: ($state: $State<O[K]>) => any) {
             if (value === undefined) return;

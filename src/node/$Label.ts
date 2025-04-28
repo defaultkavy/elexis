@@ -1,5 +1,5 @@
-import { mixin } from "../lib/mixin";
-import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
+import { assign } from "../lib/assign";
+import { type $HTMLElementGeneralAPIFilter } from "../structure/$HTMLElementGeneralAPI";
 import type { $StateArgument } from "../structure/$State";
 import { $Container, type $ContainerOptions } from "./$Container";
 export interface $LabelOptions extends $ContainerOptions {}
@@ -12,8 +12,13 @@ export class $Label extends $Container<HTMLLabelElement> {
     for(name: $StateArgument<string>): this;
     for(name?: $StateArgument<string>) { return $.fluent(this, arguments, () => this.dom.htmlFor, () => { $.set(this.dom, 'htmlFor', name)}) }
 
-    get control() { return this.dom.control }
+    get control() { return $(this.dom.control) }
 }
 
-export interface $Label extends $HTMLElementAPIFilter<$Label, 'form'> {}
-mixin($Label, $HTMLElementAPIs.create('form',))
+assign($Label, {
+    get: ['form']
+})
+
+export interface $Label extends $HTMLElementGeneralAPIFilter<$Label, 'form'> {
+    
+}

@@ -1,3 +1,4 @@
+import { assign } from "../lib/assign";
 import type { $StateArgument } from "../structure/$State";
 import { $Container, type $ContainerOptions } from "./$Container";
 
@@ -13,14 +14,20 @@ export class $Anchor extends $Container<HTMLAnchorElement> {
             }
         })
     }
+}
+
+assign($Anchor, {
+    set: ['href', 'target']
+})
+
+export interface $Anchor {
     /**Set URL of anchor element. */
     href(): string;
     href(url: $StateArgument<string>): this;
-    href(url?: $StateArgument<string>) { return $.fluent(this, arguments, () => this.dom.href, () => $.set(this.dom, 'href', url)) }
+
     /**Link open with this window, new tab or other */
-    target(): $AnchorTarget | undefined;
-    target(target: $AnchorTarget | undefined): this;
-    target(target?: $AnchorTarget | undefined) { return $.fluent(this, arguments, () => (this.dom.target ?? undefined) as $AnchorTarget | undefined, () => {if (target) this.dom.target = target}) }
+    target(): $AnchorTarget;
+    target(target: $StateArgument<$AnchorTarget>): this;
 }
 
-export type $AnchorTarget = '_blank' | '_self' | '_parent' | '_top';
+export type $AnchorTarget = '_blank' | '_self' | '_parent' | '_top' | null;

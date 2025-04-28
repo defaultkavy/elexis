@@ -2,10 +2,10 @@ import { $Container } from "../node/$Container";
 import { $Node } from "../node/$Node";
 
 export class $NodeManager {
-    readonly $container: $Container;
+    readonly element: $Container;
     readonly childList = new Set<$Node>
     constructor(container: $Container) {
-        this.$container = container;
+        this.element = container;
     }
 
     add(element: $Node, position = -1) {
@@ -17,7 +17,7 @@ export class $NodeManager {
             this.childList.clear();
             children.forEach(child => this.childList.add(child));
         }
-        (element as Mutable<$Node>).parent = this.$container;
+        (element as Mutable<$Node>).parent = this.element;
     }
 
     remove(element: $Node) {
@@ -38,7 +38,7 @@ export class $NodeManager {
         target.remove();
         this.childList.clear();
         array.forEach(node => this.childList.add(node));
-        (replace as Mutable<$Node>).parent = this.$container;
+        (replace as Mutable<$Node>).parent = this.element;
         return this;
     }
 
@@ -66,7 +66,7 @@ export class $NodeManager {
     }
 
     iterate(callback: ($node: $Node) => boolean): boolean {
-        for (const child of this.$container.children.childList) {
+        for (const child of this.element.children.childList) {
             if (callback(child)) return true;
             if (child instanceof $Container && child.children.iterate(callback)) return true;
         }
@@ -79,5 +79,5 @@ export class $NodeManager {
 
     get array() {return [...this.childList.values()]};
 
-    get dom() {return this.$container.dom}
+    get dom() {return this.element.dom}
 }

@@ -1,44 +1,48 @@
+import { assign } from "../lib/assign";
 import { _classList } from "../lib/classList";
-import type { $StateArgument } from "../structure/$State";
+import { $State, type $StateArgument, type $StateArgumentOptions } from "../structure/$State";
 import { $Node, type $NodeEventMap } from "./$Node";
 export interface $ElementOptions {
-    id?: string;
-    class?: string[];
-    dom?: Element;
-    tagname?: string;
+    id: string;
+    class: string;
+    dom: Element;
 }
-
-export class $Element<H extends Element = Element, $EM extends $ElementEventMap = $ElementEventMap, EM extends ElementEventMap & GlobalEventHandlersEventMap = ElementEventMap & GlobalEventHandlersEventMap> extends $Node<H, $EM, EM> {
+export class $Element<
+    H extends Element = Element, 
+    $EM extends $ElementEventMap = $ElementEventMap, 
+    EM extends ElementEventMap & GlobalEventHandlersEventMap = ElementEventMap & GlobalEventHandlersEventMap,
+    Options extends $ElementOptions = $ElementOptions
+> extends $Node<H, $EM, EM> {
     readonly dom: H;
     // static class
     private SC = new Set<string>();
     // class list
     private CL: DOMTokenList;
-    constructor(tagname: string, options?: $ElementOptions) {
+    constructor(tagname: string, options?: Partial<$ElementOptions>) {
         super();
-        this.dom = this.createDom(tagname, options) as H;
+        this.dom = $Element.createDom(tagname, options) as H;
         this.dom.$ = this;
         this.CL = this.dom.classList;
-        this.setOptions(options);
+        this.option(options);
     }
 
-    private createDom(tagname: string, options?: $ElementOptions) {
+    private static createDom(tagname: string, options?: Partial<$ElementOptions>) {
         if (options?.dom) return options.dom;
         if (tagname === 'svg') return document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        return document.createElement(options?.tagname ?? tagname);
-
+        return document.createElement(tagname);
     }
 
-    setOptions(options: $ElementOptions | undefined) {
-        this.id(options?.id)
-        if (options && options.class) this.class(...options.class)
+    option(options: Partial<$StateArgumentOptions<Omit<Options, 'dom'>>> | {[key: string]: $StateArgument<any>} | undefined) {
+        if (options) {
+            for (const [key, value] of Object.entries(options)) {
+                if (value instanceof $State) {
+                    value.use(this, 'attribute', [key, value]);
+                    this.attribute(key, value.value());
+                } else this.attribute(key, value);
+            }
+        }
         return this;
     }
-
-    /**Replace id of element. @example Element.id('customId');*/
-    id(): string;
-    id(name: $StateArgument<string | undefined>): this;
-    id(name?: $StateArgument<string | undefined>): this | string {return $.fluent(this, arguments, () => this.dom.id, () => $.set(this.dom, 'id', name as any))}
 
     /**Replace list of class name to element. @example Element.class('name1 name2 name3', 'name4') */
     class(): DOMTokenList;
@@ -55,10 +59,6 @@ export class $Element<H extends Element = Element, $EM extends $ElementEventMap 
     addStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name = _classList(name); name.detype().forEach(n => this.SC.add(n)); this.addClass(...name)})}
     removeStaticClass(...name: (string | undefined)[]) {return $.fluent(this, arguments, () => this, () => {name = _classList(name); name.detype().forEach(n => this.SC.delete(n)); this.removeClass(...name)})}
     
-    innerHTML(): string;
-    innerHTML(html: $StateArgument<string | undefined>): this;
-    innerHTML(html?: $StateArgument<string | undefined>) { return $.fluent(this, arguments, () => this.dom.innerHTML, () => $.set(this.dom, 'innerHTML', html as any)) }
-
     /**
      * Get or set attribute from this element.
      * @param qualifiedName Attribute name
@@ -92,14 +92,25 @@ export class $Element<H extends Element = Element, $EM extends $ElementEventMap 
         return this;
     }
 
-    getAnimations(options?: GetAnimationsOptions) { return this.dom.getAnimations(options) }
-
-    inViewport() {
+    visible() {
         if (!this.inDOM()) return false;
         const {top, left, bottom, right} = this.dom.getBoundingClientRect();
         const DE = document.documentElement;
         return (top >= 0 && left >= 0 && bottom <= (window.innerHeight || DE.clientHeight) && right <= (window.innerWidth || DE.clientWidth))
     }
+}
+assign($Element, { set: ['id', 'innerHTML'], fn: ['getAnimations'] })
+
+export interface $Element {
+    /**Replace id of element. @example Element.id('customId');*/
+    id(): string;
+    id(name: $StateArgument<string>): this;
+    id(name?: $StateArgument<string>): this | string;
+
+    innerHTML(): string;
+    innerHTML(html: $StateArgument<string>): this;
+
+    getAnimations(options?: GetAnimationsOptions): Animation[];
 }
 
 export type $DOMRect = Omit<DOMRect, 'toJSON'>;

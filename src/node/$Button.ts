@@ -1,16 +1,20 @@
 import { $Container, type $ContainerOptions } from "./$Container";
-import { type $HTMLElementAPIFilter, $HTMLElementAPIs } from "../structure/$ElementTemplate";
-import { mixin } from "../lib/mixin";
+import { type $HTMLElementGeneralAPIFilter } from "../structure/$HTMLElementGeneralAPI";
+import { assign } from "../lib/assign";
+import type { $StateArgument } from "../structure/$State";
 export interface $ButtonOptions extends $ContainerOptions {}
 export class $Button extends $Container<HTMLButtonElement> {
     constructor(options?: $ButtonOptions) {
         super('button', options);
     }
-    
-    type(): ButtonType;
-    type(type: ButtonType): this;
-    type(type?: ButtonType) { return $.fluent(this, arguments, () => this.dom.type as ButtonType, () => $.set(this.dom, 'type', type as any))}
 }
 
-export interface $Button extends $HTMLElementAPIFilter<$Button, 'disabled' | 'checkValidity' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget' | 'reportValidity'> {}
-mixin($Button, $HTMLElementAPIs.create('disabled', 'checkValidity', 'formAction', 'formEnctype', 'formMethod', 'formNoValidate', 'formTarget', 'reportValidity'))
+assign($Button, {
+    set: ['type', 'disabled', 'formAction', 'formEnctype', 'formMethod', 'formNoValidate', 'formTarget'],
+    fn: ['checkValidity', 'reportValidity']
+})
+
+export interface $Button extends $HTMLElementGeneralAPIFilter<$Button, 'disabled' | 'checkValidity' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget' | 'reportValidity'> {
+    type(): ButtonType;
+    type(type: $StateArgument<ButtonType>): this;
+}

@@ -6,29 +6,27 @@ import { $Text } from "../node/$Text";
 
 export function _convertFrom(element: Node): $Node {
     if (element.$) return element.$;
-    if (element.nodeName.toLowerCase() === 'body') return new $Container('body', {dom: element as HTMLBodyElement});
-    if (element.nodeName.toLowerCase() === 'head') return new $Container('head', {dom: element as HTMLHeadElement});
-    if (element.nodeName.toLowerCase() === '#document') return $Document.from(element as Document);
-    else if (element instanceof Element) {
-        const instance = $.TagNameElementMap[element.tagName.toLowerCase() as keyof typeof $.TagNameElementMap];
-        const $node = !instance 
-            ? new $Container(element.tagName, {dom: element}) 
-            : instance === $Container 
-                ? new instance(element.tagName, {dom: element})
-                //@ts-expect-error
-                : new instance({dom: element} as any);
-        if ($node instanceof $Container) for (const childnode of Array.from($node.dom.childNodes)) {
-            $node.children.add($(childnode as any));
-        }
-        return $node as $Node;
+    const nodename = element.nodeName.toLowerCase();
+    switch (nodename) {
+        case 'body':
+        case 'head':
+            return new $Container(nodename, {dom: element as HTMLElement});
+        case '#document': 
+            return $Document.from(element as Document);
+        default: 
+            if (element instanceof Element) {
+                const instance = $.TagNameElementMap[element.tagName.toLowerCase() as keyof typeof $.TagNameElementMap];
+                const $node = !instance 
+                    ? new $Container(element.tagName, {dom: element}) 
+                    : instance === $Container 
+                        ? new instance(element.tagName, {dom: element})
+                        //@ts-expect-error
+                        : new instance({dom: element} as any);
+                if ($node instanceof $Container) for (const childnode of Array.from($node.dom.childNodes)) $node.children.add($(childnode as any));
+                return $node as $Node;
+            }
+            else if (element instanceof Text) return new $Text(element.textContent ?? '', element);
+            else if (element instanceof SVGElement) return new $SVGElement(nodename, {dom: element});
+            throw `$NODE.FROM: NOT SUPPORT TARGET ELEMENT TYPE (${nodename})`
     }
-    else if (element instanceof Text) {
-        const node = new $Text(element.textContent ?? '') as Mutable<$Node>;
-        node.dom = element;
-        return node as $Node;
-    }
-    else if (element instanceof SVGElement) {
-        if (element.tagName.toLowerCase() === 'svg') {return new $SVGElement('svg', {dom: element}) };
-    }
-    throw `$NODE.FROM: NOT SUPPORT TARGET ELEMENT TYPE (${element.nodeName})`
 }
