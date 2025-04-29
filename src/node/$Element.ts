@@ -24,7 +24,7 @@ export class $Element<
         this.dom = $Element.createDom(tagname, options) as H;
         this.dom.$ = this;
         this.CL = this.dom.classList;
-        this.option(options);
+        this.option({...options, dom: undefined, tagname: undefined});
     }
 
     private static createDom(tagname: string, options?: Partial<$ElementOptions>) {
