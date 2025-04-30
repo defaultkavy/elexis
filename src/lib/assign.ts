@@ -1,4 +1,5 @@
 import type { $Element } from "../node/$Element"
+import { $State } from "../structure/$State"
 
 export function assign(ele: any, options: {
     set?: string[], 
@@ -35,11 +36,8 @@ export function assign(ele: any, options: {
     options.set && options.set.forEach(attr => {
         Object.assign(ele.prototype, {
             [attr](this: $Element, args: any) {
-                //@ts-expect-error
-                if (!arguments.length) return this.dom[attr];
-                if (args === undefined) return this;
-                //@ts-expect-error
-                this.dom[attr] = args;
+                if (!arguments.length) return this.dom[attr as keyof typeof this.dom];
+                $State.set(this.dom, attr as any, args);
                 return this;
             }
         })

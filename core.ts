@@ -245,29 +245,9 @@ export namespace $ {
         value: O[K] extends (...args: any) => any 
             ? (undefined | $StateParameter<Parameters<O[K]>>) 
             : (undefined | $StateArgument<O[K]>), 
-        handle?: ($state: $State<O[K]>) => any) {
-            if (value === undefined) return;
-            if (value instanceof $State) {
-                value.use(object, key);
-                if (object[key] instanceof Function) (object[key] as Function)(...value.value())
-                else if (value.value() !== undefined) object[key] = value.value();
-                if (handle) handle(value);
-                return;
-            } else if (typeof value === 'string') {
-                const template = $State.resolver(value);
-                const stateList = template.filter(item => item instanceof $State);
-                if (!stateList.length) { object[key] = value as any; return }
-                $State.templateMap.set(object, { template, attribute: key });
-                stateList.forEach(state$ => { state$.on('update', () => setTemplate()) })
-                setTemplate();
-                function setTemplate() {
-                    if (object[key] instanceof Function) object[key](template.map(item => item instanceof $State ? item.value() : item).join(''))
-                    else object[key] = template.map(item => item instanceof $State ? item.value() : item).join('') as any
-                }
-            }
-            if (object[key] instanceof Function) (object[key] as Function)(...value as any);
-            else object[key] = value as any;
-            return;
+        handle?: ($state: $State<O[K]>) => any
+    ) {
+            return $State.set(object, key, value, handle);
     }
     
     export function state<T extends number>(value: T, options?: $StateOption<T>): $State<number>;
