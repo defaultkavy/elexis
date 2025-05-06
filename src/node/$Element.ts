@@ -97,10 +97,10 @@ export class $Element<
         if (!this.inDOM()) return false;
         const {top, left, bottom, right} = this.dom.getBoundingClientRect();
         const DE = document.documentElement;
-        return (top >= 0 && left >= 0 && bottom <= (window.innerHeight || DE.clientHeight) && right <= (window.innerWidth || DE.clientWidth))
+        return (top >= 0 && left >= 0 && bottom <= (window.innerHeight || DE.clientHeight) && right <= (window.innerWidth || DE.clientWidth));
     }
 }
-assign($Element, { set: ['id', 'innerHTML'], fn: ['getAnimations'] })
+assign($Element, { set: ['id', 'innerHTML'], fn: ['getAnimations'], get: ['clientHeight', 'clientLeft', 'clientTop', 'clientWidth', 'currentCSSZoom', 'localName', 'namespaceURI'] })
 
 export interface $Element {
     /**Replace id of element. @example Element.id('customId');*/
@@ -112,6 +112,14 @@ export interface $Element {
     innerHTML(html: $StateArgument<string>): this;
 
     getAnimations(options?: GetAnimationsOptions): Animation[];
+
+    readonly clientHeight: number;
+    readonly clientLeft: number;
+    readonly clientTop: number;
+    readonly clientWidth: number;
+    readonly currentCSSZoom: number;
+    readonly localName: string;
+    readonly namespaceURI: string | null;
 }
 
 export type $DOMRect = Omit<DOMRect, 'toJSON'>;
