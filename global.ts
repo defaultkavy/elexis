@@ -13,8 +13,8 @@ declare global {
         get array(): T[]
         sort(handler: ((a: T, b: T) => number) | undefined): T[];
     }
-    type Ok<D> = [D, null]
-    type Err<E> = [null, E]
+    type Ok<D> = [data: D, err: null];
+    type Err<E> = [data: null, err: E]
     type Result<D, E> = Ok<D> | Err<E>
     type OrMatrix<T> = T | OrMatrix<T>[];
     type OrArray<T> = T | T[];
