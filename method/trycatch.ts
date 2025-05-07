@@ -10,7 +10,7 @@ Object.assign($, {
             const data = callback();
             return [data, null];
         } catch (err) {
-            return [null, err instanceof Error ? err : new Error(err as string)];
+            return [null, err instanceof Error ? err : new Error(JSON.stringify(err))];
         }
     }
 })
