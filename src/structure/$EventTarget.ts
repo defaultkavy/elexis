@@ -6,10 +6,10 @@ export abstract class $EventTarget<$EM extends $EventMap = $EventMap, EM extends
     abstract dom: EventTarget
 
     //@ts-expect-error
-    on<K extends keyof $EM>(type: K | K[], callback: (...args: $EM[K]) => any): this;
-    on<K extends keyof EM>(type: K | K[], callback: (event: EM[K], $node: this) => any, options?: AddEventListenerOptions | boolean): this;
-    on<K extends string>(type: K | K[], callback: (event: Event, $node: this) => any, options?: AddEventListenerOptions | boolean): this;
-    on<K extends keyof EM>(types: K | K[], callback: (event: EM[K], $node: this) => any, options?: AddEventListenerOptions | boolean) { 
+    on<K extends keyof $EM>(type: OrArray<K>, callback: (...args: $EM[K]) => any): this;
+    on<K extends keyof EM>(type: OrArray<K>, callback: (event: EM[K], $node: this) => any, options?: AddEventListenerOptions | boolean): this;
+    on<K extends string>(type: OrArray<K>, callback: (event: Event, $node: this) => any, options?: AddEventListenerOptions | boolean): this;
+    on<K extends keyof EM>(types: OrArray<K>, callback: (event: EM[K], $node: this) => any, options?: AddEventListenerOptions | boolean) { 
         types = $.orArrayResolve(types);
         for (const type of types) {
             if (!this.domEvents[type]) this.domEvents[type] = new Map()
@@ -22,27 +22,33 @@ export abstract class $EventTarget<$EM extends $EventMap = $EventMap, EM extends
     }
 
     //@ts-expect-error
-    off<K extends keyof $EM>(type: K, callback: (...args: $EM[K]) => any): this;
-    off<K extends keyof EM>(type: K, callback: (event: EM[K], $node: this) => any, options?: AddEventListenerOptions | boolean): this;
-    off<K extends string>(type: K, callback: (event: Event, $node: this) => any, options?: AddEventListenerOptions | boolean): this;
-    off<K extends keyof EM>(type: K, callback: (event: EM[K], $node: this) => any, options?: AddEventListenerOptions | boolean) { 
-        const middleCallback = this.domEvents[type]?.get(callback);
-        if (middleCallback) this.dom.removeEventListener(type as string, middleCallback as EventListener, options);
-        this.events.off(type as any, callback);
+    off<K extends keyof $EM>(types: OrArray<K>, callback: (...args: $EM[K]) => any): this;
+    off<K extends keyof EM>(types: OrArray<K>, callback: (event: EM[K], $node: this) => any, options?: AddEventListenerOptions | boolean): this;
+    off<K extends string>(types: OrArray<K>, callback: (event: Event, $node: this) => any, options?: AddEventListenerOptions | boolean): this;
+    off<K extends keyof EM>(types: OrArray<K>, callback: (event: EM[K], $node: this) => any, options?: AddEventListenerOptions | boolean) { 
+        types = $.orArrayResolve(types);
+        for (const type of types) {
+            const middleCallback = this.domEvents[type]?.get(callback);
+            if (middleCallback) this.dom.removeEventListener(type as string, middleCallback as EventListener, options);
+            this.events.off(type as any, callback);
+        }
         return this;
     }
 
     //@ts-expect-error
-    once<K extends keyof $EM>(type: K, callback: (...args: $EM[K]) => any): this;
-    once<K extends keyof EM>(type: K, callback: (event: EM[K], $node: this) => any, options?: AddEventListenerOptions | boolean): this;
-    once<K extends string>(type: K, callback: (event: Event, $node: this) => any, options?: AddEventListenerOptions | boolean): this;
-    once<K extends keyof EM>(type: K, callback: (event: EM[K], $node: this) => any, options?: AddEventListenerOptions | boolean) { 
-        const onceFn = (event: Event) => {
-            this.dom.removeEventListener(type as string, onceFn, options)
-            callback(event as EM[K], this);
-        };
-        this.dom.addEventListener(type as string, onceFn, options);
-        this.events.once(type as any, callback);
+    once<K extends keyof $EM>(types: OrArray<K>, callback: (...args: $EM[K]) => any): this;
+    once<K extends keyof EM>(types: OrArray<K>, callback: (event: EM[K], $node: this) => any, options?: AddEventListenerOptions | boolean): this;
+    once<K extends string>(types: OrArray<K>, callback: (event: Event, $node: this) => any, options?: AddEventListenerOptions | boolean): this;
+    once<K extends keyof EM>(types: OrArray<K>, callback: (event: EM[K], $node: this) => any, options?: AddEventListenerOptions | boolean) { 
+        types = $.orArrayResolve(types);
+        for (const type of types) {
+            const onceFn = (event: Event) => {
+                this.dom.removeEventListener(type as string, onceFn, options)
+                callback(event as EM[K], this);
+            };
+            this.dom.addEventListener(type as string, onceFn, options);
+            this.events.once(type as any, callback);
+        }
         return this;
     }
 
