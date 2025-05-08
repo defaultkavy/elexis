@@ -18,7 +18,7 @@ export class $Input<T extends string | number = string, I = $Input<T, never>> ex
     }, () => $.set(this.dom, 'value', value as $State<string> | string, { stateHandler: (value$) => {
         this.on('input', () => {
             if (value$.attributesMap.has(this.dom) === false) return;
-const value = value$.value();
+            const value = value$.value();
             if (typeof value === 'string') (value$ as $State<string>).value(`${this.value()}`, {excludeUpdate: [this.dom]})
             else if (typeof value === 'number') (value$ as unknown as $State<number>).value(Number(this.value()), {excludeUpdate: [this.dom]})
         })
@@ -26,12 +26,12 @@ const value = value$.value();
 }
 
 assign($Input, {
-    set: ['type', 'capture', 'alt', 'height', 'width', 'defaultValue', 'dirName', 'pattern', 'placeholder', 'readOnly', 'selectionDirection', 'selectionEnd', 'selectionStart', 'size', 'src', 'inputMode', 'valueAsDate', 'webkitdirectory', 'formAction', 'formEnctype', 'formMethod', 'formNoValidate', 'formTarget', 'required', 'name', 'autocomplete', 'checked', 'defaultChecked', 'multiple'],
+    set: ['type', 'capture', 'alt', 'height', 'width', 'defaultValue', 'dirName', 'pattern', 'placeholder', 'readOnly', 'selectionDirection', 'selectionEnd', 'selectionStart', 'size', 'src', 'inputMode', 'valueAsDate', 'webkitdirectory', 'formAction', 'formEnctype', 'formMethod', 'formNoValidate', 'formTarget', 'required', 'name', 'autocomplete', 'checked', 'defaultChecked', 'multiple', 'disabled'],
     fn: ['select', 'setCustomValidity', 'setRangeText', 'setSelectionRange', 'showPicker', 'checkValidity', 'reportValidity', 'stepDown', 'stepUp'],
     get: ['files', 'webkitEntries', 'labels', 'form', 'validity', 'willValidate', 'validationMessage']
 })
 
-export interface $Input extends $HTMLElementGeneralAPIFilter<$Input, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'validationMessage' | 'validity' | 'willValidate' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget'> {
+export interface $Input extends $HTMLElementGeneralAPIFilter<$Input, 'disabled' | 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'validationMessage' | 'validity' | 'willValidate' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget'> {
     type(): InputType;
     type<T extends InputType>(type: T): $InputType<T>;
 
