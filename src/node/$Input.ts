@@ -15,13 +15,14 @@ export class $Input<T extends string | number = string, I = $Input<T, never>> ex
     value(value?: $StateArgument<T>) { return $.fluent(this, arguments, () => {
         if (this.type() === 'number') return Number(this.dom.value);
         return this.dom.value as T;
-    }, () => $.set(this.dom, 'value', value as $State<string> | string, (value$) => {
+    }, () => $.set(this.dom, 'value', value as $State<string> | string, { stateHandler: (value$) => {
         this.on('input', () => {
             if (value$.attributesMap.has(this.dom) === false) return;
-            if (typeof value$.value === 'string') (value$ as $State<string>).value(`${this.value()}`, {disableUpdate: true})
-            if (typeof value$.value === 'number') (value$ as unknown as $State<number>).value(Number(this.value()), {disableUpdate: true})
+const value = value$.value();
+            if (typeof value === 'string') (value$ as $State<string>).value(`${this.value()}`, {excludeUpdate: [this.dom]})
+            else if (typeof value === 'number') (value$ as unknown as $State<number>).value(Number(this.value()), {excludeUpdate: [this.dom]})
         })
-    }))}
+    }}))}
 }
 
 assign($Input, {

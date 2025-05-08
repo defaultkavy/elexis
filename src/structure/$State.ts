@@ -29,8 +29,8 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
     }
 
     value(): T;
-    value(value: T | $State<T> | ((state$: this) => T | $State<T>), config?: {disableUpdate?: boolean, disableUpdateLink?: boolean}): this
-    value(resolver?: T | $State<T> | ((state$: this) => T | $State<T>), config?: {disableUpdate?: boolean, disableUpdateLink?: boolean}): this | T {
+    value(value: T | $State<T> | ((state$: this) => T | $State<T>), config?: {excludeUpdate?: Object[], disableUpdate?: boolean, disableUpdateLink?: boolean}): this
+    value(resolver?: T | $State<T> | ((state$: this) => T | $State<T>), config?: {excludeUpdate?: Object[], disableUpdate?: boolean, disableUpdateLink?: boolean}): this | T {
         if (!arguments.length) return this._value instanceof $State ? this._convert ? this._convert(this._value.value()) : this._value.value() : this._value;
         if (resolver === undefined) return this;
         if (resolver instanceof Function) return this.value(resolver(this));
@@ -47,9 +47,9 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
             }
         }
         
-        this.fire('change', this)
-        if (!config?.disableUpdate) this.update();
-        if (!config?.disableUpdateLink) this.linkStates.forEach($state => $state.update());
+        this.fire('change', this);
+        if (!config?.disableUpdate) this.update(config?.excludeUpdate);
+        if (!config?.disableUpdateLink) this.linkStates.forEach($state => $state.update(config?.excludeUpdate));
         return this;
     }
 
@@ -63,9 +63,10 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
         return data;
     }
 
-    protected update() {
+    protected update(exclude?: Object[]) {
         // update element content for eatch attributes
         for (const [node, attrList] of this.attributesMap.entries()) {
+            if (exclude?.includes(node)) continue;
             for (const [name, argsTemplate] of attrList.entries()) {
                 //@ts-expect-error
                 if (node[name] instanceof Function) {
@@ -133,33 +134,47 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
         value: O[K] extends (...args: any) => any 
             ? (undefined | $StateParameter<Parameters<O[K]>>) 
             : (undefined | $StateArgument<O[K]>), 
-        handle?: ($state: $State<O[K]>) => any) {
+        options?: {
+            callback?: (value: O[K]) => void,
+            stateHandler?: ($state: $State<O[K]>) => void
+        }) {
             if (value === undefined) return;
             if (value instanceof $State) {
                 value.use(object, key);
-                if (object[key] instanceof Function) (object[key] as Function)(...value.value())
-                else if (value.value() !== undefined) object[key] = value.value();
-                if (handle) handle(value);
+                const val = value.value();
+                if (object[key] instanceof Function) (object[key] as Function)(...val)
+                else if (val !== undefined) object[key] = val;
+                options?.callback?.(val);
+                options?.stateHandler?.(value);
                 return;
             } else if (typeof value === 'string') {
                 const template = $State.resolver(value);
                 const stateList = template.filter(item => item instanceof $State);
-                if (!stateList.length) { object[key] = value as any; return }
+                if (!stateList.length) { 
+                    object[key] = value as any; 
+                    options?.callback?.(value as any);
+                    return 
+                }
                 $State.templateMap.set(object, { template, attribute: key });
                 stateList.forEach(state$ => { state$.on('update', () => setTemplate()) })
                 setTemplate();
                 function setTemplate() {
-                    if (object[key] instanceof Function) object[key](template.map(item => item instanceof $State ? item.value() : item).join(''))
-                    else object[key] = template.map(item => item instanceof $State ? item.value() : item).join('') as any
+                    const string = template.map(item => item instanceof $State ? item.value() : item).join('');
+                    if (object[key] instanceof Function) object[key](...string)
+                    else object[key] = string as any;
+                    options?.callback?.(string as any);
                 }
+                return;
+            } else {
+                if (object[key] instanceof Function) (object[key] as Function)(...value as any);
+                else object[key] = value as any;
+                options?.callback?.(value as any);
+                return;
             }
-            if (object[key] instanceof Function) (object[key] as Function)(...value as any);
-            else object[key] = value as any;
-            return;
     }
 };
 
-export type $StateArgument<T> = $State<T> | $State<undefined | T> | undefined | T;
+export type $StateArgument<T> = $State<T> | (T extends any ? $State<T> : never) | $State<undefined | T> | undefined | T;
 export type $StateArgumentOptions<T> = {
     [key in keyof T]: $StateArgument<T[key]>;
 };

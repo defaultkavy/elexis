@@ -19,13 +19,14 @@ export class $Select extends $Container<HTMLSelectElement> {
     
     value(): string;
     value(value?: $StateArgument<string> | undefined): this;
-    value(value?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value as $State<string> | string, (value$) => {
+    value(value?: $StateArgument<string> | undefined) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value as $State<string> | string, { stateHandler: (value$) => {
         this.on('input', () => {
             if (value$.attributesMap.has(this.dom) === false) return;
-            if (typeof value$.value === 'string') (value$ as $State<string>).value(`${this.value()}`)
-            if (typeof value$.value === 'number') (value$ as unknown as $State<number>).value(Number(this.value()))
+            const value = value$.value();
+            if (typeof value === 'string') (value$ as $State<string>).value(`${this.value()}`)
+            else if (typeof value === 'number') (value$ as unknown as $State<number>).value(Number(this.value()))
         })
-    }))}
+    }}))}
 
     get labels() { return Array.from(this.dom.labels ?? []).map(label => $(label)) }
 }

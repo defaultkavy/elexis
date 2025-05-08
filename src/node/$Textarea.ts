@@ -11,14 +11,12 @@ export class $Textarea extends $Container<HTMLTextAreaElement> {
     
     value(): string;
     value(value: $StateArgument<string>): this;
-    value(value?: $StateArgument<string>) { return $.fluent(this, arguments, () => {
-        return this.dom.value;
-    }, () => $.set(this.dom, 'value', value, (value$) => {
+    value(value?: $StateArgument<string>) { return $.fluent(this, arguments, () => this.dom.value, () => $.set(this.dom, 'value', value, { stateHandler: (value$) => {
         this.on('input', () => {
             if (value$.attributesMap.has(this.dom) === false) return;
-            value$.value(`${this.value()}`, {disableUpdate: true})
+            value$.value(`${this.value()}`)
         })
-    }))}
+    }}))}
 
     get labels() { return Array.from(this.dom.labels ?? []).map(label => $(label)) }
 }

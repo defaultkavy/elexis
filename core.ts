@@ -236,7 +236,7 @@ export namespace $ {
      * @param object Target object.
      * @param key The key of target object.
      * @param value Value of target property or parameter of method (Using Tuple to apply parameter).
-     * @param handle callback when param `value` is $State object.
+     * @param callback callback when param `value` is $State object.
      * @returns 
      */
     export function set<O extends Object, K extends keyof O>(
@@ -245,10 +245,11 @@ export namespace $ {
         value: O[K] extends (...args: any) => any 
             ? (undefined | $StateParameter<Parameters<O[K]>>) 
             : (undefined | $StateArgument<O[K]>), 
-        handle?: ($state: $State<O[K]>) => any
-    ) {
-            return $State.set(object, key, value, handle);
-    }
+        options?: {
+            callback?: (value: O[K]) => void,
+            stateHandler?: ($state: $State<O[K]>) => void
+        }
+    ) { return $State.set(object, key, value, options); }
     
     export function state<T extends number>(value: T, options?: $StateOption<T>): $State<number>;
     export function state<T extends string>(value: T, options?: $StateOption<T>): $State<string>;
