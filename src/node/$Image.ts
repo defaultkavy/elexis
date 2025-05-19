@@ -1,6 +1,6 @@
 import { $HTMLElement, type $HTMLElementOptions } from "./$HTMLElement";
-import type { $StateArgument } from "../structure/$State";
-import { assign } from "../lib/assign";
+import type { $StateArgument } from "#structure/$State";
+import { assign } from "#lib/assign";
 export interface $ImageOptions extends $HTMLElementOptions {}
 export class $Image extends $HTMLElement<HTMLImageElement> {
     constructor(options?: Partial<$ImageOptions>) {

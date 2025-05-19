@@ -1,4 +1,4 @@
-import type { $StateArgument } from "../structure/$State";
+import type { $StateArgument } from "#structure/$State";
 import { $Node } from "./$Node";
 
 export class $Text extends $Node<Text> {

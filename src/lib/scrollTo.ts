@@ -1,4 +1,4 @@
-import type { $Element } from "../node/$Element";
+import type { $Element } from "#node/$Element";
 
 export function _scrollTo($element: $Element | undefined, options?: {threshold?: number, behavior?: ScrollBehavior | undefined}) {
     if (!$element) return;

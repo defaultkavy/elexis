@@ -1,5 +1,5 @@
-import { assign } from "../lib/assign";
-import type { $StateArgument } from "../structure/$State";
+import { assign } from "#lib/assign";
+import type { $StateArgument } from "#structure/$State";
 import { type $ElementOptions } from "./$Element";
 import { $HTMLElement } from "./$HTMLElement";
 

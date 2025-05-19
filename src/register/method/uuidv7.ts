@@ -1,6 +1,6 @@
-import { uuidv7, type UUIDV7 } from "../src/lib/uuidv7"
+import { uuidv7, type UUIDV7 } from "#lib/uuidv7"
 
-declare module '../core' {
+declare module '../../core' {
     /**
     * UUIDv7 features a time-ordered value field derived from the widely implemented and well-known Unix Epoch timestamp source,
     * the number of milliseconds since midnight 1 Jan 1970 UTC, leap seconds excluded. 

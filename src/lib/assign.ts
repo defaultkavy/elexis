@@ -1,5 +1,5 @@
-import type { $Element } from "../node/$Element"
-import { $State } from "../structure/$State"
+import type { $Element } from "#node/$Element"
+import { $State } from "#structure/$State"
 
 export function assign(ele: any, options: {
     set?: string[], 

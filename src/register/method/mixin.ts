@@ -1,6 +1,6 @@
-import { mixin } from '../src/lib/mixin';
+import { mixin } from '#lib/mixin';
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export function mixin(target: any, constructors: OrArray<any>): any;
     }

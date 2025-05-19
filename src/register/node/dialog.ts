@@ -1,6 +1,6 @@
-import { $Dialog } from "../src/node/$Dialog";
+import { $Dialog } from "#node/$Dialog";
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export interface TagNameElementMap {
             'dialog': typeof $Dialog

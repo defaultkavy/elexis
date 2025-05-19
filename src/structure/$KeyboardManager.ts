@@ -1,4 +1,4 @@
-import { _orArrayResolve } from "../lib/orArrayResolve";
+import { _orArrayResolve } from "#lib/orArrayResolve";
 import { $EventTarget } from "./$EventTarget";
 
 /**

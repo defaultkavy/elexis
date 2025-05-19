@@ -1,4 +1,4 @@
-import { uuidv7 } from "../lib/uuidv7";
+import { uuidv7 } from "#lib/uuidv7";
 import { $EventManager, type $EventMap } from "./$EventManager";
 
 export interface $StateOption<T> {
@@ -144,7 +144,7 @@ export class $State<T = any> extends $EventManager<$StateEventMap<T>> {
                 const val = value.value();
                 if (object[key] instanceof Function) (object[key] as Function)(...val)
                 else if (val !== undefined) object[key] = val;
-                options?.callback?.(val);
+                if (val !== undefined) options?.callback?.(val);
                 options?.stateHandler?.(value);
                 return;
             } else if (typeof value === 'string') {

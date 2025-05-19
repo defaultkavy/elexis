@@ -1,33 +1,34 @@
 import './global';
 // core structure
-import { type $EventMap, $EventManager } from "./src/structure/$EventManager";
-import { type $StateArgument, $State, type $StateOption, type $StateObject, type $StateParameter } from "./src/structure/$State";
-import type { $EventTarget } from "./src/structure/$EventTarget";
+import { type $EventMap, $EventManager } from "#structure/$EventManager";
+import { type $StateArgument, $State, type $StateOption, type $StateObject, type $StateParameter } from "#structure/$State";
+import type { $EventTarget } from "#structure/$EventTarget";
 // core dom
-import { $Node } from "./src/node/$Node"
-import { $Element } from "./src/node/$Element";
-import { $HTMLElement } from "./src/node/$HTMLElement";
-import { $Container } from "./src/node/$Container";
-import { $Document } from "./src/node/$Document"
-import { $Async } from "./src/node/$Async";
-import { $Window } from "./src/node/$Window";
+import { $Node } from "#node/$Node"
+import { $Element } from "#node/$Element";
+import { $HTMLElement } from "#node/$HTMLElement";
+import { $Container } from "#node/$Container";
+import { $Document } from "#node/$Document"
+import { $Async } from "#node/$Async";
+import { $Window } from "#node/$Window";
 // core lib
-import { _convertFrom } from "./src/lib/convertFrom";
-import { _classList } from "./src/lib/classList";
+import { _convertFrom } from "#lib/convertFrom";
+import { _classList } from "#lib/classList";
 // types
-import type { $Anchor } from './src/node/$Anchor';
-import type { $Button } from './src/node/$Button';
-import type { $Canvas } from './src/node/$Canvas';
-import type { $Dialog } from './src/node/$Dialog';
-import type { $Form } from './src/node/$Form';
-import type { $Image } from './src/node/$Image';
-import type { $Input } from './src/node/$Input';
-import type { $Label } from './src/node/$Label';
-import type { $OptionGroup } from './src/node/$OptGroup';
-import type { $Option } from './src/node/$Option';
-import type { $Select } from './src/node/$Select';
-import type { $Textarea } from './src/node/$Textarea';
-import type { $Video } from './src/node/$Video';
+import type { $Anchor } from '#node/$Anchor';
+import type { $Button } from '#node/$Button';
+import type { $Canvas } from '#node/$Canvas';
+import type { $Dialog } from '#node/$Dialog';
+import type { $Form } from '#node/$Form';
+import type { $Image } from '#node/$Image';
+import type { $Input } from '#node/$Input';
+import type { $Label } from '#node/$Label';
+import type { $OptionGroup } from '#node/$OptGroup';
+import type { $Option } from '#node/$Option';
+import type { $Select } from '#node/$Select';
+import type { $Textarea } from '#node/$Textarea';
+import type { $Video } from '#node/$Video';
+import { $SVGElement } from '#node/$SVGElement';
 
 export type $ = typeof $;
 /**
@@ -74,18 +75,21 @@ export function $(window: Window): $Window;
  * @param htmlElement - {@link HTMLElement} Object.
  * @example ${document.body}
  */
-export function $<H extends HTMLElement>(htmlElement: H): $.$HTMLElementMap<H>;
+export function $<E extends HTMLElement>(htmlElement: E): $.$HTMLElementMap<E>;
+export function $<E extends HTMLElement>(htmlElement: OrNullish<E>): OrNullish<$.$HTMLElementMap<E>>;
+export function $<E extends SVGElement>(svgElement: E): $SVGElement;
+export function $<E extends SVGElement>(svgElement: OrNullish<E>): OrNullish<$SVGElement>;
 /**
  * Return {@link $Element} Object.
  * @param element - {@link Element} Object.
  */
-export function $<H extends Element>(element: H): $Element;
+export function $<E extends Element>(element: E): $Element;
 /**
  * Return {@link $Node} Object
  * @param node - {@link Node} Object.
  */
 export function $<N extends $Node>(node: N): N;
-export function $<H extends EventTarget>(element: H): $Element;
+export function $<E extends EventTarget>(element: E): $Element;
 /**
  * Using {@link $Node} builder function as parameter.
  * @param builder - function of {@link $Node} builder.
@@ -145,6 +149,7 @@ export function $(resolver: any, ...args: any[]) {
             const instance = $.TagNameElementMap[resolver as any]
             if (instance === $HTMLElement) return new $HTMLElement(resolver);
             if (instance === $Container) return new $Container(resolver);
+            if (instance === $SVGElement) return new $SVGElement(resolver);
             return new instance();
         } else return new $Container(resolver);
     }
@@ -190,7 +195,9 @@ export namespace $ {
         'ul': $Container,
         'dl': $Container,
         'li': $Container,
-        'async': $Async
+        'async': $Async,
+        'svg': $SVGElement,
+        'circle': $SVGElement
     }
     export type TagNameElementMapType = typeof TagNameElementMap;
     export interface TagNameElementMap extends TagNameElementMapType {} 

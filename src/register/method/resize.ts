@@ -1,7 +1,7 @@
-import '../node/img';
-import '../node/canvas';
+import '#register/node/img';
+import '#register/node/canvas';
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export function resize(object: Blob, size: number): Promise<string>;
     }

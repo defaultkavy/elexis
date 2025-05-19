@@ -1,6 +1,6 @@
-import { assign } from "../lib/assign";
-import { type $HTMLElementGeneralAPIFilter } from "../structure/$HTMLElementGeneralAPI";
-import type { $StateArgument } from "../structure/$State";
+import { assign } from "#lib/assign";
+import { type $HTMLElementCommonAPIFilter } from "#structure/$HTMLElementCommonAPI";
+import type { $StateArgument } from "#structure/$State";
 import { $Container, type $ContainerOptions } from "./$Container";
 export interface $FormOptions extends $ContainerOptions {}
 export class $Form extends $Container<HTMLFormElement> {
@@ -16,7 +16,7 @@ assign($Form, {
     get: ['length']
 })
 
-export interface $Form extends $HTMLElementGeneralAPIFilter<$Form, 'checkValidity' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget' | 'reportValidity' | 'autocomplete'> {
+export interface $Form extends $HTMLElementCommonAPIFilter<$Form, 'checkValidity' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget' | 'reportValidity' | 'autocomplete'> {
     acceptCharset(): string;
     acceptCharset(acceptCharset: $StateArgument<string>): this;
 

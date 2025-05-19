@@ -1,8 +1,8 @@
-import { $State, type $StateArgument } from "../structure/$State";
-import { type $HTMLElementGeneralAPIFilter } from "../structure/$HTMLElementGeneralAPI";
+import { $State, type $StateArgument } from "#structure/$State";
+import { type $HTMLElementCommonAPIFilter } from "#structure/$HTMLElementCommonAPI";
 import { $HTMLElement, type $HTMLElementEventMap, type $HTMLElementOptions } from "./$HTMLElement";
-import { assign } from "../lib/assign";
-import { mixin } from "../lib/mixin";
+import { assign } from "#lib/assign";
+import { mixin } from "#lib/mixin";
 
 export interface $InputOptions extends $HTMLElementOptions {}
 export class $Input<T extends string | number = string, I = $Input<T, never>> extends $HTMLElement<HTMLInputElement, $InputEventMap<I>> {
@@ -31,7 +31,7 @@ assign($Input, {
     get: ['files', 'webkitEntries', 'labels', 'form', 'validity', 'willValidate', 'validationMessage']
 })
 
-export interface $Input extends $HTMLElementGeneralAPIFilter<$Input, 'disabled' | 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'validationMessage' | 'validity' | 'willValidate' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget'> {
+export interface $Input extends $HTMLElementCommonAPIFilter<$Input, 'disabled' | 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'validationMessage' | 'validity' | 'willValidate' | 'formAction' | 'formEnctype' | 'formMethod' | 'formNoValidate' | 'formTarget'> {
     type(): InputType;
     type<T extends InputType>(type: T): $InputType<T>;
 

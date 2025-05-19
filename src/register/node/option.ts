@@ -1,6 +1,6 @@
-import { $Option } from "../src/node/$Option";
+import { $Option } from "#node/$Option";
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export interface TagNameElementMap {
             'option': typeof $Option

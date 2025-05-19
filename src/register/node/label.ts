@@ -1,6 +1,6 @@
-import { $Label } from "../src/node/$Label";
+import { $Label } from "#node/$Label";
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export interface TagNameElementMap {
             'label': typeof $Label

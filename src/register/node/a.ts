@@ -1,6 +1,6 @@
-import { $Anchor } from "../src/node/$Anchor";
+import { $Anchor } from "#node/$Anchor";
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export interface TagNameElementMap {
             'a': typeof $Anchor

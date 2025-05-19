@@ -1,5 +1,5 @@
-import { assign } from "../lib/assign";
-import type { $StateArgument } from "../structure/$State";
+import { assign } from "#lib/assign";
+import type { $StateArgument } from "#structure/$State";
 import { $Container, type $ContainerOptions } from "./$Container";
 export interface $CanvasOptions extends $ContainerOptions {}
 export class $Canvas extends $Container<HTMLCanvasElement> {

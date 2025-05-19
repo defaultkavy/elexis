@@ -1,6 +1,6 @@
-import { assign } from "../lib/assign";
-import { type $HTMLElementGeneralAPIFilter } from "../structure/$HTMLElementGeneralAPI";
-import type { $StateArgument } from "../structure/$State";
+import { assign } from "#lib/assign";
+import { type $HTMLElementCommonAPIFilter } from "#structure/$HTMLElementCommonAPI";
+import type { $StateArgument } from "#structure/$State";
 import { $Container, type $ContainerOptions } from "./$Container";
 export interface $LabelOptions extends $ContainerOptions {}
 export class $Label extends $Container<HTMLLabelElement> {
@@ -19,6 +19,6 @@ assign($Label, {
     get: ['form']
 })
 
-export interface $Label extends $HTMLElementGeneralAPIFilter<$Label, 'form'> {
+export interface $Label extends $HTMLElementCommonAPIFilter<$Label, 'form'> {
     
 }

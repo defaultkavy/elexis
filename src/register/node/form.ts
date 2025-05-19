@@ -1,6 +1,6 @@
-import { $Form } from "../src/node/$Form";
+import { $Form } from "#node/$Form";
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export interface TagNameElementMap {
             'form': typeof $Form

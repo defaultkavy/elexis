@@ -1,5 +1,5 @@
 import { $EventManager, type $EventMap } from "./$EventManager";
-import { type $Node } from "../node/$Node";
+import { type $Node } from "#node/$Node";
 
 export class $PointerManager extends $EventManager<$PointerManagerEventMap> {
     $node: $Node;

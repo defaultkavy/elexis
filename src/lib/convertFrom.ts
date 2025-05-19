@@ -1,8 +1,8 @@
-import { $Container } from "../node/$Container";
-import { $Document } from "../node/$Document";
-import { $Node } from "../node/$Node";
-import { $SVGElement } from "../node/$SVGElement";
-import { $Text } from "../node/$Text";
+import { $Container } from "#node/$Container";
+import { $Document } from "#node/$Document";
+import { $Node } from "#node/$Node";
+import { $SVGElement } from "#node/$SVGElement";
+import { $Text } from "#node/$Text";
 
 export function _convertFrom(element: Node): $Node {
     if (element.$) return element.$;

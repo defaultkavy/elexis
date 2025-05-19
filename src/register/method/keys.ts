@@ -1,7 +1,7 @@
-import type { $EventTarget } from '../src/structure/$EventTarget';
-import { $KeyboardManager } from '../src/structure/$KeyboardManager';
+import type { $EventTarget } from '#structure/$EventTarget';
+import { $KeyboardManager } from '#structure/$KeyboardManager';
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export function keys($target: $EventTarget): $KeyboardManager;
     }

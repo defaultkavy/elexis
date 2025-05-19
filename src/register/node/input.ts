@@ -1,6 +1,6 @@
-import { $Input } from "../src/node/$Input"
+import { $Input } from "#node/$Input"
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export interface TagNameElementMap {
             'input': typeof $Input

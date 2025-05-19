@@ -1,6 +1,6 @@
-import type { $Element } from '../src/node/$Element';
+import type { $Element } from '#node/$Element';
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export function html(html: string): $Element[]
     }

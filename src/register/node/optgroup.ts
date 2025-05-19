@@ -1,6 +1,6 @@
-import { $OptionGroup } from "../src/node/$OptGroup";
+import { $OptionGroup } from "#node/$OptGroup";
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export interface TagNameElementMap {
             'optgroup': typeof $OptionGroup

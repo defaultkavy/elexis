@@ -1,4 +1,4 @@
-import { $State } from "../structure/$State";
+import { $State } from "#structure/$State";
 import { type $ContainerContentType, type $ContainerOptions } from "./$Container";
 import { $Element } from "./$Element";
 import { $Node } from "./$Node";

@@ -1,4 +1,4 @@
-import { assign } from "../lib/assign";
+import { assign } from "#lib/assign";
 import { $Element, type $ElementEventMap, type $ElementOptions } from "./$Element";
 
 export interface $HTMLElementOptions extends $ElementOptions {

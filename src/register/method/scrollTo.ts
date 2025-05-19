@@ -1,7 +1,7 @@
-import { _scrollTo } from "../src/lib/scrollTo";
-import type { $Element } from "../src/node/$Element";
+import { _scrollTo } from "#lib/scrollTo";
+import type { $Element } from "#node/$Element";
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export function scrollTo($element: $Element | undefined, options?: {threshold?: number, behavior?: ScrollBehavior | undefined}): void;
     }

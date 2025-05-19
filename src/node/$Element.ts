@@ -1,6 +1,6 @@
-import { assign } from "../lib/assign";
-import { _classList } from "../lib/classList";
-import { $State, type $StateArgument, type $StateArgumentOptions } from "../structure/$State";
+import { assign } from "#lib/assign";
+import { _classList } from "#lib/classList";
+import { $State, type $StateArgument, type $StateArgumentOptions } from "#structure/$State";
 import { $Node, type $NodeEventMap } from "./$Node";
 export interface $ElementOptions {
     id: string;
@@ -29,7 +29,7 @@ export class $Element<
 
     private static createDom(tagname: string, options?: Partial<$ElementOptions>) {
         if (options?.dom) return options.dom;
-        if (tagname === 'svg') return document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        if (['svg', 'circle'].includes(tagname)) return document.createElementNS("http://www.w3.org/2000/svg", tagname);
         return document.createElement(options?.tagname ?? tagname);
     }
 

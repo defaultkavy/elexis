@@ -1,6 +1,6 @@
-import { $Image } from "../src/node/$Image";
+import { $Image } from "#node/$Image";
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export interface TagNameElementMap {
             'img': typeof $Image

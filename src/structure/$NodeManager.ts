@@ -1,14 +1,15 @@
-import { $Container } from "../node/$Container";
-import { $Node } from "../node/$Node";
+import { $Container } from "#node/$Container";
+import type { $Element } from "#node/$Element";
+import { $Node } from "#node/$Node";
 
-export class $NodeManager {
-    readonly element: $Container;
-    readonly childList = new Set<$Node>
-    constructor(container: $Container) {
+export class $NodeManager<Element extends $Element & {children: $NodeManager<Element, Child>}, Child extends $Node> {
+    readonly element: Element;
+    readonly childList = new Set<Child>
+    constructor(container: Element) {
         this.element = container;
     }
 
-    add(element: $Node, position = -1) {
+    add(element: Child, position = -1) {
         if (this.childList.size === 0 || position === -1) {
             this.childList.add(element);
         } else {
@@ -17,13 +18,14 @@ export class $NodeManager {
             this.childList.clear();
             children.forEach(child => this.childList.add(child));
         }
-        (element as Mutable<$Node>).parent = this.element;
+        //@ts-expect-error
+        (element as Mutable<Child>).parent = this.element;
     }
 
-    remove(element: $Node) {
+    remove(element: Child) {
         if (!this.childList.has(element)) return this;
         this.childList.delete(element);
-        (element as Mutable<$Node>).parent = undefined;
+        (element as Mutable<Child>).parent = undefined;
         return this;
     }
 
@@ -32,13 +34,14 @@ export class $NodeManager {
         if (render) this.render();
     }
 
-    replace(target: $Node, replace: $Node) {
+    replace(target: Child, replace: Child) {
         const array = this.array
         array.splice(array.indexOf(target), 1, replace);
         target.remove();
         this.childList.clear();
         array.forEach(node => this.childList.add(node));
-        (replace as Mutable<$Node>).parent = this.element;
+        //@ts-expect-error
+        (replace as Mutable<Child>).parent = this.element;
         return this;
     }
 
@@ -73,7 +76,7 @@ export class $NodeManager {
         return false;
     }
 
-    indexOf(target: $Node) {
+    indexOf(target: Child) {
         return this.array.indexOf(target);
     }
 

@@ -1,12 +1,12 @@
-import { $EventTarget } from "../structure/$EventTarget";
-import { $State } from "../structure/$State";
-import type { $Element } from "./$Element";
-import type { $HTMLElement } from "./$HTMLElement";
-import type { $Container } from "./$Container";
+import { $EventTarget } from "#structure/$EventTarget";
+import { $State } from "#structure/$State";
+import type { $Element } from "#node/$Element";
+import type { $HTMLElement } from "#node/$HTMLElement";
+import type { $Container } from "#node/$Container";
 
 export abstract class $Node<N extends Node = Node, $EM extends $NodeEventMap = $NodeEventMap, EM extends GlobalEventHandlersEventMap = GlobalEventHandlersEventMap> extends $EventTarget<$EM, EM> {
     abstract readonly dom: N;
-    protected $data: any = {
+    protected $data = {
         hidden: false,
         coordinate: undefined as $NodeCoordinate | undefined
     };

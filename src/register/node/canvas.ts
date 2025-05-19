@@ -1,6 +1,6 @@
-import { $Canvas } from "../src/node/$Canvas"
+import { $Canvas } from "#node/$Canvas"
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export interface TagNameElementMap {
             'canvas': typeof $Canvas

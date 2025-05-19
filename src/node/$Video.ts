@@ -1,5 +1,5 @@
-import { assign } from "../lib/assign";
-import { type $StateArgument } from "../structure/$State";
+import { assign } from "#lib/assign";
+import { type $StateArgument } from "#structure/$State";
 import { $Media, type $MediaOptions } from "./$Media";
 
 export interface $VideoOptions extends $MediaOptions {}

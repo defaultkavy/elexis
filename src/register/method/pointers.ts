@@ -1,7 +1,7 @@
-import type { $Node } from '../src/node/$Node';
-import { $PointerManager } from '../src/structure/$PointerManager';
+import type { $Node } from '#node/$Node';
+import { $PointerManager } from '#structure/$PointerManager';
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export function pointers($node: $Node): $PointerManager;
     }

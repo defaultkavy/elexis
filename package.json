@@ -4,18 +4,18 @@
   "author": {
     "name": "defaultkavy",
     "email": "defaultkavy@gmail.com",
-    "url": "https://git.defaultkavy.com/defaultkavy"
+    "url": "https://github.com/defaultkavy"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://git.defaultkavy.com/defaultkavy/elexis.git"
+    "url": "git+https://github.com/defaultkavy/elexis.git"
   },
-  "module": "index.ts",
+  "module": "src/index.ts",
   "bugs": {
-    "url": "https://git.defaultkavy.com/defaultkavy/elexis/issues"
+    "url": "https://github.com/defaultkavy/elexis/issues"
   },
   "description": "Building Web App using only JavaScript",
-  "homepage": "https://git.defaultkavy.com/defaultkavy/elexis",
+  "homepage": "https://github.com/defaultkavy/elexis",
   "keywords": [
     "web",
     "front-end",
@@ -24,5 +24,19 @@
     "framework"
   ],
   "license": "ISC",
-  "type": "module"
+  "type": "module",
+  "imports": {
+    "#register/*": "./src/register/*.ts",
+    "#node/*": "./src/node/*.ts",
+    "#structure/*": "./src/structure/*.ts",
+    "#lib/*": "./src/lib/*.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./core": "./src/core.ts",
+    "./register/*": "./src/register/*.ts",
+    "./node/*": "./src/node/*.ts",
+    "./structure/*": "./src/structure/*.ts",
+    "./lib/*": "./src/lib/*.ts"
+  }
 }

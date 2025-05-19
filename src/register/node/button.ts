@@ -1,6 +1,6 @@
-import { $Button } from "../src/node/$Button";
+import { $Button } from "#node/$Button";
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export interface TagNameElementMap {
             'button': typeof $Button

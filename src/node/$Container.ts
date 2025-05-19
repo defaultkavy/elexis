@@ -1,15 +1,15 @@
 import { $Element } from "./$Element";
-import { $NodeManager } from "../structure/$NodeManager";
+import { $NodeManager } from "#structure/$NodeManager";
 import { $Node } from "./$Node";
-import { $State, type $StateArgument } from "../structure/$State";
+import { $State, type $StateArgument } from "#structure/$State";
 import { $Text } from "./$Text";
 import { $HTMLElement, type $HTMLElementEventMap, type $HTMLElementOptions } from "./$HTMLElement";
 import { $Async } from "./$Async";
-import { assign } from "../lib/assign";
+import { assign } from "#lib/assign";
 
 export interface $ContainerOptions extends $HTMLElementOptions {}
 export class $Container<H extends HTMLElement = HTMLElement, EM extends $ContainerEventMap = $ContainerEventMap> extends $HTMLElement<H, EM> {
-    readonly children: $NodeManager = new $NodeManager(this);
+    readonly children: $NodeManager<this, $Node> = new $NodeManager(this);
     constructor(tagname: string, options?: Partial<$ContainerOptions>) {
         super(tagname, options)
     }

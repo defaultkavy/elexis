@@ -1,6 +1,6 @@
 import type { $StateArgument } from "./$State";
-import type { $Form } from "../node/$Form";
-export interface $HTMLElementGeneralAPI<This = any> {
+import type { $Form } from "#node/$Form";
+export interface $HTMLElementCommonAPI<This = any> {
     disabled(): boolean;
     disabled(disabled: $StateArgument<boolean>): This;
     
@@ -45,4 +45,4 @@ export interface $HTMLElementGeneralAPI<This = any> {
     get validity(): ValidityState
     get willValidate(): boolean
 }
-export type $HTMLElementGeneralAPIFilter<This, M extends keyof $HTMLElementGeneralAPI> = Pick<$HTMLElementGeneralAPI<This>, M>
+export type $HTMLElementCommonAPIFilter<This, M extends keyof $HTMLElementCommonAPI> = Pick<$HTMLElementCommonAPI<This>, M>

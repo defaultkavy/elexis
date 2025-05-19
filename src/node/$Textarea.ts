@@ -1,7 +1,7 @@
 import { $Container, type $ContainerOptions } from "./$Container";
-import { type $StateArgument } from "../structure/$State";
-import { type $HTMLElementGeneralAPIFilter } from "../structure/$HTMLElementGeneralAPI";
-import { assign } from "../lib/assign";
+import { type $StateArgument } from "#structure/$State";
+import { type $HTMLElementCommonAPIFilter } from "#structure/$HTMLElementCommonAPI";
+import { assign } from "#lib/assign";
 
 export interface $TextareaOptions extends $ContainerOptions {}
 export class $Textarea extends $Container<HTMLTextAreaElement> {
@@ -27,7 +27,7 @@ assign($Textarea, {
     get: ['form', 'validationMessage', 'validity', 'willValidate']
 })
 
-export interface $Textarea extends $HTMLElementGeneralAPIFilter<$Textarea, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'disabled' | 'minLength' | 'maxLength' | 'validationMessage' | 'validity' | 'willValidate'> {
+export interface $Textarea extends $HTMLElementCommonAPIFilter<$Textarea, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'disabled' | 'minLength' | 'maxLength' | 'validationMessage' | 'validity' | 'willValidate'> {
     cols(): number;
     cols(cols: number): this;
     

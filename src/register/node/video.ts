@@ -1,6 +1,6 @@
-import { $Video } from "../src/node/$Video";
+import { $Video } from "#node/$Video";
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export interface TagNameElementMap {
             'video': typeof $Video

@@ -1,4 +1,4 @@
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export function type<T>(): T
     }

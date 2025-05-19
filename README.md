@@ -125,7 +125,7 @@ $.trycatch(() => true) // trycatch handler
 Each module in `node/*` and `method/*` will register tag name and functions to `$` method, TypeScript server will handle these result of type for you. You can also directly import the element to your code and place element constructor inside `$` method:
 ```ts
 import 'elexis/core';
-import { $Input } from 'elexis/src/node/$Input';
+import { $Input } from 'elexis/node/$Input';
 
 $($Input).value(42) // => $Input
 ```

@@ -1,9 +1,9 @@
 import { $Container, type $ContainerOptions } from "./$Container";
 import { $OptionGroup } from "./$OptGroup";
 import { $Option } from "./$Option";
-import { $State, type $StateArgument } from "../structure/$State";
-import { type $HTMLElementGeneralAPIFilter } from "../structure/$HTMLElementGeneralAPI";
-import { assign } from "../lib/assign";
+import { $State, type $StateArgument } from "#structure/$State";
+import { type $HTMLElementCommonAPIFilter } from "#structure/$HTMLElementCommonAPI";
+import { assign } from "#lib/assign";
 
 export interface $SelectOptions extends $ContainerOptions {}
 export class $Select extends $Container<HTMLSelectElement> {
@@ -37,7 +37,7 @@ assign($Select, {
     fn: ['checkValidity', 'reportValidity']
 })
 
-export interface $Select extends $HTMLElementGeneralAPIFilter<$Select, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'disabled' | 'validationMessage' | 'validity' | 'willValidate'> {
+export interface $Select extends $HTMLElementCommonAPIFilter<$Select, 'checkValidity' | 'reportValidity' | 'autocomplete' | 'name' | 'form' | 'required' | 'disabled' | 'validationMessage' | 'validity' | 'willValidate'> {
     multiple(): boolean;
     multiple(multiple: $StateArgument<boolean> | undefined): this;
     get length(): number;

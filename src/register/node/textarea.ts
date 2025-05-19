@@ -1,6 +1,6 @@
-import { $Textarea } from "../src/node/$Textarea";
+import { $Textarea } from "#node/$Textarea";
 
-declare module '../core' {
+declare module '../../core' {
     export namespace $ {
         export interface TagNameElementMap {
             'textarea': typeof $Textarea

@@ -1,4 +1,4 @@
-import type { $Node } from "./src/node/$Node";
+import type { $Node } from "#node/$Node";
 import { $ } from './core';
 declare global {
     /**
@@ -13,12 +13,14 @@ declare global {
         get array(): T[]
         sort(handler: ((a: T, b: T) => number) | undefined): T[];
     }
+    type Nullish = null | undefined;
     type Ok<D> = [data: D, err: null];
     type Err<E> = [data: null, err: E]
     type Result<D, E> = Ok<D> | Err<E>
     type OrMatrix<T> = T | OrMatrix<T>[];
     type OrArray<T> = T | T[];
     type OrPromise<T> = T | Promise<T>;
+    type OrNullish<T> = T | Nullish;
     type Mutable<T> = {
         -readonly [k in keyof T]: T[k];
      };
